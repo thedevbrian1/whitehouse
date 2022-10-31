@@ -3,8 +3,8 @@ import { json, redirect } from "@remix-run/node";
 import { useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
-import { getTenant, getTenants } from "../../../models/tenant.server";
-import { createTenantPayment, getYear, getYears } from "../../../models/year.server";
+import { getTenants } from "../../../models/tenant.server";
+import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../utils";
 

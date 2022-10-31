@@ -17,7 +17,7 @@ import { badRequest, validateAmount } from "../../../../utils";
 
 export async function loader({ request, params }) {
     const session = await getSession(request);
-    const successStatus = session.get('success');
+    // const successStatus = session.get('success');
     // console.log({ successStatus });
     const id = params.id;
     const employee = await getEmployee(id);
@@ -63,7 +63,7 @@ export async function action({ request, params }) {
     }
 
     // Add advance to the employee advance field
-    const advance = await createAdvance(id, Number(amount));
+    await createAdvance(id, Number(amount));
     // console.log({ advance });
     const session = await getSession(request);
     session.flash("success", true);

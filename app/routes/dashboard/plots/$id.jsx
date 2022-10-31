@@ -56,10 +56,7 @@ export default function House() {
 
     const months = Object.entries(data.years[0]).slice(2, 14);
     const years = data.years.map(year => {
-        let yearObj = {};
-        yearObj.year = year.year,
-            yearObj.id = year.id
-        return yearObj;
+        return { year: year.year, id: year.id }
     });
 
     const submit = useSubmit();

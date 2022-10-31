@@ -1,5 +1,5 @@
-import { CashIcon, HomeIcon, UserCircleIcon } from "@heroicons/react/outline";
-import { Form, NavLink, Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { CashIcon, HomeIcon } from "@heroicons/react/outline";
+import { Form, Link, NavLink, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 import { getTenantByEmail } from "../models/tenant.server";
 import { requireUser } from "../session.server";
 

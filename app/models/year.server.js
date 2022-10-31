@@ -2,8 +2,8 @@ import { prisma } from "~/db.server";
 import { getTenant } from "./tenant.server";
 
 export async function createTenantPayment(tenantId, amount) {
-    const currentYear = new Date().getFullYear();
-    const month = new Date().toLocaleString('default', { month: 'long' }).toLowerCase();
+    // const currentYear = new Date().getFullYear();
+    // const month = new Date().toLocaleString('default', { month: 'long' }).toLowerCase();
     // Check if tenant exists
     const tenant = await getTenant(tenantId);
     if (!tenant) {

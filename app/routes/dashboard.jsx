@@ -1,7 +1,7 @@
 import { Form, Link, NavLink, Outlet, useCatch, useLoaderData, useTransition } from "@remix-run/react";
-import { ChartBarIcon, HomeIcon, UserCircleIcon, CashIcon, UsersIcon, NewspaperIcon, TicketIcon } from "@heroicons/react/outline";
-import { redirect } from "@remix-run/node";
-import { requireAdminUser, requireUser } from "../session.server";
+import { ChartBarIcon, HomeIcon, UsersIcon, NewspaperIcon, TicketIcon } from "@heroicons/react/outline";
+// import { redirect } from "@remix-run/node";
+import { requireAdminUser } from "../session.server";
 import { getTenantByEmail } from "../models/tenant.server";
 
 export function meta() {

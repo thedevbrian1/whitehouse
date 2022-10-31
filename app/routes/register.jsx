@@ -1,12 +1,12 @@
 import { Form, Link, useActionData, useCatch, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { useRef, useEffect } from "react";
-import { createHouse, getHouses } from "../models/house.server";
-import { createTenant, getTenants } from "../models/tenant.server";
+import { createHouse } from "../models/house.server";
+import { createTenant } from "../models/tenant.server";
 import { badRequest, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePassword, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../utils";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { createUser } from "../models/user.server";
-import { useState } from "react";
+// import { useState } from "react";
 import Input from "../components/Input";
 
 // TODO: Add toasts for user feedback

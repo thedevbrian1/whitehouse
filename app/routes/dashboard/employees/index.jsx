@@ -1,9 +1,9 @@
 import { PlusIcon } from "@heroicons/react/outline";
-import { Form, Link, useLoaderData } from "@remix-run/react";
-import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
-import { VisuallyHidden } from "@reach/visually-hidden";
+import { Link, useLoaderData } from "@remix-run/react";
+// import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
+// import { VisuallyHidden } from "@reach/visually-hidden";
 import dialogStyles from "@reach/dialog/styles.css";
-import { useState } from "react";
+
 import TableHeader from "../../../components/TableHeader";
 import TableRow from "../../../components/TableRow";
 import Heading from "../../../components/Heading";
@@ -43,13 +43,13 @@ export default function EmployeesIndex() {
 
     // const [showDialog, setShowDialog] = useState(false);
 
-    function open() {
-        setShowDialog(true);
-    }
+    // function open() {
+    //     setShowDialog(true);
+    // }
 
-    function close() {
-        setShowDialog(false);
-    }
+    // function close() {
+    //     setShowDialog(false);
+    // }
     return (
         <div className="space-y-5 max-w-5xl mx-auto">
             <Heading title='Employees' />

@@ -1,8 +1,8 @@
 import { Form, Link, useActionData, useTransition } from "@remix-run/react";
-import { json, redirect } from "@remix-run/node";
-import { useState } from "react";
-import { Dialog } from "@reach/dialog";
-import { VisuallyHidden } from "@reach/visually-hidden";
+import { redirect } from "@remix-run/node";
+// import { useState } from "react";
+// import { Dialog } from "@reach/dialog";
+// import { VisuallyHidden } from "@reach/visually-hidden";
 import Heading from "../../../components/Heading";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { badRequest, validateEmail, validateName, validateNationalId, validatePhone, validateAmount } from "../../../utils";
@@ -59,15 +59,15 @@ export default function NewEntry() {
     const emailRef = useRef(null);
     const salaryRef = useRef(null);
 
-    const [showDialog, setShowDialog] = useState(true);
+    // const [showDialog, setShowDialog] = useState(true);
 
-    function open() {
-        setShowDialog(true);
-    }
+    // function open() {
+    //     setShowDialog(true);
+    // }
 
-    function close() {
-        setShowDialog(false);
-    }
+    // function close() {
+    //     setShowDialog(false);
+    // }
     useEffect(() => {
         nameRef.current?.focus();
 

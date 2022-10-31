@@ -32,7 +32,7 @@ export async function loader() {
 }
 export default function EmployeeDetails() {
     const data = useLoaderData();
-    const tableHeadings = ['Employee ID', 'Name', 'Phone number', 'Amount', , 'Date Issued'];
+    const tableHeadings = ['Employee ID', 'Name', 'Phone number', 'Amount', 'Date Issued'];
 
     return (
         <div className="space-y-5 max-w-5xl mx-auto">

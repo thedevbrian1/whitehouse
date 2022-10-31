@@ -1,6 +1,5 @@
-import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useCatch, useLoaderData, useSubmit, useTransition } from "@remix-run/react";
+import { Form, Link, useActionData, useCatch, useLoaderData, useSubmit } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
@@ -67,9 +66,9 @@ export async function action({ request, params }) {
 export default function UserIndex() {
     const actionData = useActionData();
     const data = useLoaderData();
-    const transition = useTransition();
+    // const transition = useTransition();
     const toastId = useRef(null);
-    const formRef = useRef(null);
+    // const formRef = useRef(null);
 
     // console.log('House: ', data);
     const months = Object.entries(data.tenant.years[0]).slice(2, 14);

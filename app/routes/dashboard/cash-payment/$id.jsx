@@ -1,7 +1,6 @@
 import { Form, useActionData, useLoaderData, useLocation, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/server-runtime";
-import { useEffect } from "react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { getTenant } from "../../../models/tenant.server";
 import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";

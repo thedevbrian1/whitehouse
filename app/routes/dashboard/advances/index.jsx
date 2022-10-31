@@ -33,7 +33,7 @@ export async function loader() {
 
 export default function Advances() {
     const data = useLoaderData();
-    const tableHeadings = ['Employee ID', 'Name', 'Phone number', 'Amount', , 'Date Issued',];
+    const tableHeadings = ['Employee ID', 'Name', 'Phone number', 'Amount', 'Date Issued',];
     // console.log({ data });
     return (
         <div className="space-y-5 max-w-5xl mx-auto">

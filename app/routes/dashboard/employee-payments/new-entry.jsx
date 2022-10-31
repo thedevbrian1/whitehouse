@@ -36,7 +36,7 @@ export function links() {
 }
 
 export default function PayInFull() {
-    const transition = useTransition();
+    // const transition = useTransition();
     return (
         <div className="space-y-4">
             <Link to="/dashboard/employee-payments" className="text-black hover:underline hover:text-blue-500">

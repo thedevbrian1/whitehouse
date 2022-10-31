@@ -1,10 +1,10 @@
-import { Form, Link, Outlet, useActionData, useCatch, useTransition } from "@remix-run/react";
+import { Link, Outlet, useActionData, useCatch, useTransition } from "@remix-run/react";
 import algoliasearch from "algoliasearch";
 import algoliaStyles from "instantsearch.css/themes/satellite.css";
 import { useEffect, useRef } from "react";
 import { Highlight, Hits, InstantSearch, SearchBox } from "react-instantsearch-hooks-web";
 import Heading from "../../components/Heading";
-import { getTenant, getTenants } from "../../models/tenant.server";
+import { getTenants } from "../../models/tenant.server";
 
 const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
 const index = searchClient.initIndex('tenants');
@@ -48,8 +48,8 @@ export async function action({ request }) {
     return null;
 }
 export default function CashPayment() {
-    const transition = useTransition();
-    const actionData = useActionData();
+    // const transition = useTransition();
+    // const actionData = useActionData();
     const searchRef = useRef(null);
 
     useEffect(() => {
