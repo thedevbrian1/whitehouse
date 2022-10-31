@@ -1,0 +1,135 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  password Password?
+  notes    Note[]
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model Note {
+  id    String @id @default(cuid())
+  title String
+  body  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+}
+
+model Post {
+  slug     String @id
+  title    String
+  markdown String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tenant {
+  id                  String   @id @default(cuid())
+  name                String
+  mobile              String   @unique
+  email               String?  @unique
+  nationalId          Int
+  house               House?
+  vehicleRegistration String?
+  years               Year[]
+  arrears             Int?
+  moveInDate          DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model House {
+  id          String   @id @default(cuid())
+  houseNumber String
+  plotNumber  Int
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+  tenantId    String   @unique
+  occupied    Boolean?
+  // arrears     Int?
+  // years       Year[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Year {
+  id        String  @id @default(cuid())
+  year      Int
+  january   String?
+  february  String?
+  march     String?
+  april     String?
+  may       String?
+  june      String?
+  july      String?
+  august    String?
+  september String?
+  october   String?
+  november  String?
+  december  String?
+  // house     House   @relation(fields: [yearId], references: [id])
+  // yearId    String
+  tenant    Tenant  @relation(fields: [tenantId], references: [id])
+  tenantId  String  @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Employee {
+  id         String    @id @default(cuid())
+  name       String
+  mobile     String
+  email      String?   @unique
+  nationalId Int
+  salary     Int
+  advance    Advance[]
+  paid       Salary[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Advance {
+  id         String    @id @default(cuid())
+  amount     Int
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Salary {
+  id         String    @id @default(cuid())
+  amount     Int
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
