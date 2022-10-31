@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+const { faker } = require("@faker-js/faker");
 
 function login({
   email = faker.internet.email(undefined, undefined, "example.com"),
