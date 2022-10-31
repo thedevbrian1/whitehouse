@@ -1,5 +1,4 @@
 const { faker } = require("@faker-js/faker");
-const { describe, afterEach } = require("mocha");
 
 describe("smoke tests", () => {
   afterEach(() => {
