@@ -38,6 +38,7 @@
     "@remix-run/server-runtime": "^1.6.5",
     "algoliasearch": "^4.14.2",
     "bcryptjs": "^2.4.3",
+    "eslint-plugin-cypress": "^2.12.1",
     "instantsearch.css": "^7.4.5",
     "isbot": "^3.5.0",
     "marked": "^4.0.18",
