@@ -1,13 +1,16 @@
 // Use this to create a new user and login with that user
 // Simply call this with:
-// npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts username@example.com
+// node --require tsconfig-paths/register ./cypress/support/create-user.js username@example.com
 // and it will log out the cookie value you can use to interact with the server
 // as that new user.
 
-import { parse } from "cookie";
-import { installGlobals } from "@remix-run/node";
-import { createUserSession } from "~/session.server";
-import { createUser } from "~/models/user.server";
+const { installGlobals } = require("@remix-run/node");
+
+const { parse } = require("cookie");
+
+const { createUser } = require("~/models/user.server");
+
+const { createUserSession } = require("~/session.server");
 
 installGlobals();
 

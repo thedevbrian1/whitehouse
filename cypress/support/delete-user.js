@@ -1,11 +1,13 @@
 // Use this to delete a user by their email
 // Simply call this with:
-// npx ts-node --require tsconfig-paths/register ./cypress/support/delete-user.ts username@example.com
+// node --require tsconfig-paths/register ./cypress/support/delete-user.js username@example.com
 // and that user will get deleted
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
-import { installGlobals } from "@remix-run/node";
-import { prisma } from "~/db.server";
+const { PrismaClientKnownRequestError } = require("@prisma/client/runtime");
+
+const { installGlobals } = require("@remix-run/node");
+
+const { prisma } = require("~/db.server");
 
 installGlobals();
 
@@ -28,6 +30,8 @@ async function deleteUser(email) {
     } else {
       throw error;
     }
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

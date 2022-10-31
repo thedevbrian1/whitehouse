@@ -5,7 +5,7 @@ function login({
 } = {}) {
   cy.then(() => ({ email })).as("user");
   cy.exec(
-    `npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "${email}"`
+    `node --require tsconfig-paths/register ./cypress/support/create-user.js "${email}"`
   ).then(({ stdout }) => {
     const cookieValue = stdout
       .replace(/.*<cookie>(?<cookieValue>.*)<\/cookie>.*/s, "$<cookieValue>")
@@ -31,7 +31,7 @@ function cleanupUser({ email } = {}) {
 
 function deleteUserByEmail(email) {
   cy.exec(
-    `npx ts-node --require tsconfig-paths/register ./cypress/support/delete-user.ts "${email}"`
+    `node --require tsconfig-paths/register ./cypress/support/delete-user.js "${email}"`
   );
 
   cy.clearCookie("__session");
@@ -50,8 +50,3 @@ function visitAndCheck(url, waitTime = 1000) {
 Cypress.Commands.add("login", login);
 Cypress.Commands.add("cleanupUser", cleanupUser);
 Cypress.Commands.add("visitAndCheck", visitAndCheck);
-
-/*
-eslint
-  @typescript-eslint/no-namespace: "off",
-*/
