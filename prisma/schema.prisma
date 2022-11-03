@@ -47,16 +47,16 @@ model Post {
 }
 
 model Tenant {
-  id                  String   @id @default(cuid())
+  id                  String  @id @default(cuid())
   name                String
-  mobile              String   @unique
-  email               String?  @unique
+  mobile              String  @unique
+  email               String? @unique
   nationalId          Int
   house               House?
   vehicleRegistration String?
   years               Year[]
   arrears             Int?
-  moveInDate          DateTime
+  moveInDate          String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

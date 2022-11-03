@@ -20,13 +20,13 @@ export function links() {
 
 export async function loader({ request }) {
     const user = await requireUser(request);
-    console.log({ user });
+    // console.log({ user });
     if (!user) {
         return redirect('/login');
     }
     const session = await getSession(request);
     const successStatus = session.get('success');
-    console.log({ successStatus });
+    // console.log({ successStatus });
     const userEmail = user.email;
     const tenant = await getTenantByEmail(userEmail);
     // console.log({ tenant });
@@ -111,30 +111,34 @@ export default function UserIndex() {
     return (
         <div className="py-4">
             <h1 className="font-bold text-xl lg:text-3xl">User profile</h1>
-            <div className="flex gap-5 mt-3">
-                <div className="basis-1/2 border border-slate-200 px-3 py-2 rounded-lg space-y-4">
+            <div className="flex flex-col lg:flex-row gap-5 mt-3">
+                <div className="lg:basis-1/2 border border-slate-200 px-3 py-2 rounded-lg space-y-4">
                     {/* Details and payment history */}
-                    <div className="text-gray-800">
+                    <div className="text-gray-800 px-2 py-1">
                         <h2 className="font-semibold text-gray-900 text-lg">Personal info</h2>
-                        <TenantDetail name="Name" value={data.tenant.name} />
-                        <TenantDetail name="Phone" value={data.tenant.mobile} />
-                        <TenantDetail name="Arrears" value={`Ksh ${data.tenant.arrears}`} />
-                        <TenantDetail name="Plot No" value={data.tenant.house.plotNumber} />
-                        <TenantDetail name="House No" value={data.tenant.house.houseNumber} />
+                        <div className="mt-2">
+
+
+                            <TenantDetail name="Name" value={data.tenant.name} />
+                            <TenantDetail name="Phone" value={data.tenant.mobile} />
+                            <TenantDetail name="Arrears" value={`Ksh ${data.tenant.arrears}`} />
+                            <TenantDetail name="Plot No" value={data.tenant.house.plotNumber} />
+                            <TenantDetail name="House No" value={data.tenant.house.houseNumber} />
+                        </div>
                     </div>
 
                     <div className="flex justify-center">
-                        <Link to="payment" className=" rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
+                        <Link to="payment" className=" rounded bg-blue-500 w-full lg:w-auto py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex justify-center items-center gap-2">
                             {/* <PlusIcon className="w-5 h-5 inline" />  */}
                             Make payment
                         </Link>
                     </div>
 
-                    <div className="mt-4">
-                        <div className="flex justify-between">
+                    <div className="mt-4 px-2 py-1">
+                        <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between">
                             <h2 className="font-bold text-gray-900 text-lg">Payment history</h2>
                             <Form method="post" onChange={handleYearChange}>
-                                <label htmlFor="year">Year:</label>
+                                <label htmlFor="year">Select year:</label>
                                 <select
                                     name="year"
                                     id="year"
@@ -147,7 +151,7 @@ export default function UserIndex() {
                             </Form>
                         </div>
                     </div>
-                    <div className="grid grid-cols-4 gap-4 mt-4">
+                    <div className="grid grid-cols-3 lg:grid-cols-3 gap-4 mt-4">
                         {actionData
                             ? actionData?.map((month, index) => (
                                 <div key={index} className={`border border-slate-100 grid place-items-center h-12 ${month[1] !== null ? 'bg-green-500 text-white' : month[1] === 'not paid' ? 'bg-red-500 text-white' : 'bg-gray-200'}`}>
@@ -156,7 +160,7 @@ export default function UserIndex() {
                             ))
                             :
                             months.map((month, index) => (
-                                <div key={index} className={`border border-slate-100 grid place-items-center h-12 ${month[1] >= 200
+                                <div key={index} className={`border border-slate-100 grid place-items-center text-sm md:text-base h-12 ${month[1] >= 200
                                     ? 'bg-green-500 text-white'
                                     : month[1] === 0
                                         ? 'bg-red-500 text-white'
@@ -170,11 +174,11 @@ export default function UserIndex() {
                                 </div>
                             ))}
                     </div>
-                    <p className="text-gray-500 italic">
+                    <p className="text-gray-500 italic text-sm">
                         Excess payments will be used to clear arrears.The earliest arrears will be cleared first.
                     </p>
                 </div>
-                <div className="basis-1/2 border border-slate-200 px-3 py-2 rounded-lg">
+                <div className="lg:basis-1/2 border border-slate-200 px-4 py-3 rounded-lg">
                     {/* Transaction history */}
                     <h2 className="font-bold text-gray-900 text-lg">Transaction history</h2>
                     <table className="w-full mt-4">
@@ -191,9 +195,9 @@ export default function UserIndex() {
                     </table>
                 </div>
             </div>
-            <div className="text-light-black">
+            <div className="text-light-black px-4 py-3">
                 <h2 className="font-semibold text-gray-900">Key</h2>
-                <div className="flex gap-5">
+                <div className="flex gap-5 flex-wrap mt-2">
                     <div className="flex items-center gap-3">
                         <div className="bg-green-500 w-20 h-8"></div>
                         <span>Month is fully paid</span>

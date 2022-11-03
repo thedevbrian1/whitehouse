@@ -11,10 +11,10 @@ export function meta() {
 
 export async function loader({ request }) {
     const user = await requireUser(request);
-    console.log({ user });
+    // console.log({ user });
     const userEmail = user.email;
     const tenant = await getTenantByEmail(userEmail);
-    console.log({ tenant });
+    // console.log({ tenant });
     // if (!tenant) {
     //     throw new Response('User details not found!', {
     //         status: 404
@@ -30,11 +30,18 @@ export default function UserPage() {
         <div className="h-full divide-solid divide-y">
 
             <header className="flex py-[14px]">
-                <div className="w-72 bg-[#F8F8F8] fixed z-10 flex justify-between px-3">
-                    <span>Logo</span>
-                    <span>Estate control</span>
+                <div className="w-14 lg:w-72 bg-[#F8F8F8] fixed z-10 flex justify-between px-3">
+                    {/* <span>Logo</span> */}
+                    <div className="w-5 h-5">
+                        <img
+                            src="/W.svg"
+                            alt="W"
+                            className="w-full h-full"
+                        />
+                    </div>
+                    <span className="hidden lg:inline font-semibold">White House</span>
                 </div>
-                <div className="px-6 relative z-10 ml-72 flex justify-end items-center w-full gap-x-12">
+                <div className="lg:px-6 relative z-10 ml-14 lg:ml-72 flex justify-end items-center w-full  gap-x-4 lg:gap-x-12 ">
                     <span>{new Date().toLocaleDateString()}</span>
                     <span>Hi {data}</span>
                     <Form action="/logout" method="post">
@@ -51,7 +58,7 @@ export default function UserPage() {
                 </div> */}
             </header>
             <main className="flex h-full">
-                <div className="h-full fixed top-0 left-0 w-72 bg-[#F8F8F8] pt-20 pl-4">
+                <div className="h-full fixed top-0 left-0 w-14 lg:w-72 bg-[#F8F8F8] pt-20 pl-2 lg:pl-4">
                     <ul className="divide-solid divide-y border-t -mt-3">
                         <li className="h-12">
                             <NavLink
@@ -60,7 +67,7 @@ export default function UserPage() {
                                 className={({ isActive }) => isActive ? 'text-blue-600 bg-white  h-full pl-1 flex items-center' : 'h-full pl-1 flex items-center'}
                                 end
                             >
-                                <HomeIcon className="w-5 h-5 inline" /> <span className="ml-2">Home</span>
+                                <HomeIcon className="w-5 h-5 inline" /> <span className="ml-2 hidden lg:inline">Home</span>
                             </NavLink>
                         </li>
 
@@ -71,12 +78,12 @@ export default function UserPage() {
                                 className={({ isActive }) => isActive ? 'text-blue-600 bg-white  h-full pl-1 flex items-center' : 'h-full pl-1 flex items-center'}
                                 end
                             >
-                                <CashIcon className="w-5 h-5 inline" /> <span className="ml-2">Make payment</span>
+                                <CashIcon className="w-5 h-5 inline" /> <span className="ml-2 hidden lg:inline">Make payment</span>
                             </NavLink>
                         </li>
                     </ul>
                 </div>
-                <div className="flex-1 ml-72 px-6 pt-4">
+                <div className="flex-1 ml-14 lg:ml-72 px-6 pt-4">
                     <Outlet />
                 </div>
             </main>

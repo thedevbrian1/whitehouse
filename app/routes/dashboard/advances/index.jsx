@@ -39,14 +39,14 @@ export default function Advances() {
         <div className="space-y-5 max-w-5xl mx-auto">
             <Heading title='Advances' />
             <div className="flex justify-end">
-                <Link to="new-entry" className=" rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
+                <Link to="new-entry" className=" rounded bg-blue-500  py-2 px-4 text-sm lg:text-base text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
                     Give advance
                 </Link>
             </div>
             {
                 data.length === 0
                     ? <div className="flex flex-col items-center">
-                        <div className="w-40 h-40">
+                        <div className="w-20 h-20 lg:w-40 lg:h-40">
                             <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
 
                         </div>

@@ -117,7 +117,7 @@ export default function LoginPage() {
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="w-full rounded border border-gray-500 px-2 py-1 text-lg focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
               {actionData?.errors?.email && (
@@ -145,7 +145,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="w-full rounded border border-gray-500 px-2 py-1 text-lg focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
               {actionData?.errors?.password && (
@@ -165,13 +165,13 @@ export default function LoginPage() {
             {transition.submission ? 'Logging in...' : 'Log in'}
           </button>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-start lg:items-center justify-between">
             <div className="flex items-center">
               <input
                 id="remember"
                 name="remember"
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:border-none focus:ring-blue-500"
               />
 
               <label
@@ -182,10 +182,10 @@ export default function LoginPage() {
               </label>
             </div>
 
-            <div className="text-center text-sm text-gray-500">
+            <div className="lg:text-center text-sm text-gray-500">
               Don't have an account?{" "}
               <Link
-                className="text-blue-500 underline"
+                className="text-blue-500 underline block md:inline focus:ring-2 focus:ring-blue-500"
                 to={{
                   pathname: "/register",
                   search: searchParams.toString(),

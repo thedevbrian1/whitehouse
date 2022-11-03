@@ -126,6 +126,7 @@ export default function PlotsIndex() {
     return (
         <div className={`max-w-5xl mx-auto ${transition.state === 'loading' ? 'opacity-50' : ''}`}>
             {/* <Select plots={plots} /> */}
+            <Heading title='Tenants' />
             <div className="flex justify-end">
                 <Link to="new-entry" className=" rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
                     <PlusIcon className="w-5 h-5 inline" /> Add Tenant

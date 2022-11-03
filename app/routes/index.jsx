@@ -31,23 +31,23 @@ export default function Index() {
             )
             : null}
 
-          <div className="relative border border-gray-100 sm:overflow-hidden sm:rounded-2xl">
+          <div className="relative border bg-[#0b011e] bg-[url('/building.jpg')] bg-center bg-no-repeat bg-cover bg-blend-overlay bg-opacity-50 border-gray-100 sm:overflow-hidden sm:rounded-2xl">
             <div className="relative px-4 pt-16 pb-8 sm:px-6 sm:pt-24 sm:pb-14 lg:px-8 lg:pb-20 lg:pt-32">
               <div className="mx-auto mt-10 max-w-sm sm:flex sm:max-w-none sm:justify-center">
                 {user ? (
                   <div>
-                    <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                      Hello {user.email}
+                    <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-white">
+                      Welcome to White House Court
                     </h1>
 
                     <div className="flex justify-center mt-4">
-                      <Link to="/dashboard" className=" rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
+                      <Link to={user.email === 'admin@whitehouse.co.ke' ? "/dashboard" : "/user"} className=" rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
                         Go to dashboard
                       </Link>
                     </div>
                   </div>
                 ) : (
-                  <div className="mx-auto max-w-7xl">
+                  <div className="mx-auto max-w-7xl text-white">
                     <h1 className="font-bold text-3xl lg:text-6xl"> White House Court</h1>
                     <h2 className="font-semibold text-xl lg:text-3xl text-center">Kindly login to continue</h2>
                     <div className="flex justify-center">
@@ -71,13 +71,13 @@ export default function Index() {
                 )}
               </div>
 
-              <a href="https://remix.run">
+              {/* <a href="https://remix.run">
                 <img
                   src="https://user-images.githubusercontent.com/1500684/158298926-e45dafff-3544-4b69-96d6-d3bcc33fc76a.svg"
                   alt="Remix"
                   className="mx-auto mt-16 w-full max-w-[12rem] md:max-w-[16rem]"
                 />
-              </a>
+              </a> */}
             </div>
           </div>
         </div>

@@ -10,8 +10,9 @@ export default function Success() {
                     <img src="/success.svg" alt="" />
                 </div>
                 <div className="flex justify-center">
-                    <Link to="/register" className="text-blue-500 hover:text-blue-700">
-                        <ArrowLeftIcon className="w-5 h-5 inline" /> Back to registration form
+                    <Link to="/login" className="px-6 py-3 text-white bg-blue-500 hover:bg-blue-700 rounded">
+                        {/* <ArrowLeftIcon className="w-5 h-5 inline" /> */}
+                        Go to login page
                     </Link>
                 </div>
             </div>

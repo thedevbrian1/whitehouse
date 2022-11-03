@@ -11,6 +11,9 @@ import { badRequest, validateAmount, validatePhone } from "../../utils";
 export async function loader() {
     // const now = new Date().toTimeString();
     // console.log(now);
+    // const url = await fetch('https://brianmwangi.co.ke/whitehouse');
+    // // const urlResponse = await url.json();
+    // console.log({ url });
     return null;
 }
 export async function action({ request }) {
@@ -18,10 +21,14 @@ export async function action({ request }) {
     const userEmail = user.email;
     const tenant = await getTenantByEmail(userEmail);
     const tenantId = tenant.id;
+
     const formData = await request.formData();
     const phone = formData.get('phone');
+    const amount = formData.get('amount');
+
     const fieldErrors = {
-        phone: validatePhone(phone)
+        phone: validatePhone(phone),
+        amount: validateAmount(amount)
     }
 
     // Return errors if any
@@ -30,6 +37,7 @@ export async function action({ request }) {
     }
 
     console.log({ phone });
+
     let modifiedPhone = null;
     if (phone.length === 10) {
         modifiedPhone = phone.replace(0, "254");
@@ -40,7 +48,8 @@ export async function action({ request }) {
     }
 
     const date = new Date();
-    const dateString = new Intl.DateTimeFormat('ko-KR').format(date);
+    // const dateString = new Intl.DateTimeFormat('ko-KR').format(date);
+    const dateString = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2) + ('0' + date.getDate()).slice(-2);
     console.log({ dateString });
     const now = date.toLocaleTimeString([], { hour12: false });
     console.log({ now });
@@ -48,7 +57,7 @@ export async function action({ request }) {
     console.log({ timeStamp });
     // return null;
 
-    const passwordString = timeStamp + '174379' + 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
+    const passwordString = '174379' + 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919' + timeStamp;
     console.log({ passwordString });
 
     // const encodedPassword = Buffer.from(passwordString).toString('base64');
@@ -61,7 +70,7 @@ export async function action({ request }) {
         method: "post",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer v9WbVjuSRBGp8muHZltzAQjqX71B`
+            Authorization: `Bearer oDwcLlmGZs910vglHbE0u52AibjG`
         },
         body: JSON.stringify({
             "BusinessShortCode": 174379,
@@ -69,26 +78,34 @@ export async function action({ request }) {
             "Timestamp": timeStamp,
             "TransactionType": "CustomerPayBillOnline",
             "Amount": 1,
-            "PartyA": 254710162152,
+            "PartyA": modifiedPhone,
             "PartyB": 174379,
-            "PhoneNumber": 254710162152,
-            "CallBackURL": "https://mydomain.com/path",
+            "PhoneNumber": modifiedPhone,
+            "CallBackURL": "https://brianmwangi.co.ke/whitehouse",
             "AccountReference": "WhiteHouse",
             "TransactionDesc": "Payment of X"
         })
     });
-    console.log({ res: await res.json() });
+    // console.log({ res: await res.json() });
     const safResponse = await res.json();
+    console.log({ safResponse });
 
     if (safResponse.responseCode === 400) {
         throw new Response('Cannot initiate payment', {
             status: 400
         });
     }
+    // if (safResponse.ResponseCode === 0) {
+    //     // const url = await fetch('https://brianmwangi.co.ke/whitehouse');
+    //     // const urlResponse = await url.json();
+    //     // console.log({ urlResponse });
+
+    // }
+
     // const res = await createTenantPayment(tenantId, amount);
     // console.log({ res });
     const session = await getSession(request);
-    session.flash("success", true);
+    // session.flash("success", true);
 
     return redirect('/user', {
         headers: {
@@ -101,29 +118,43 @@ export default function Payment() {
     const actionData = useActionData();
     const transition = useTransition();
 
-    const phoneRef = useRef();
+    const phoneRef = useRef(null);
+    const amountRef = useRef(null);
 
     useEffect(() => {
         phoneRef.current?.focus();
     }, [actionData]);
 
     return (
-        <div className="max-w-md mx-auto space-y-10 mt-32">
+        <div className="max-w-md mx-auto space-y-10 py-12 lg:py-32">
             <Form method="post" className="">
-                <div>
-                    <label htmlFor="amount">Enter phone number</label>
-                    <Input
-                        ref={phoneRef}
-                        type="text"
-                        name="phone"
-                        id="phone"
-                        placeholder="0710162152"
-                        fieldError={actionData?.fieldErrors.phone}
-                    />
+                <fieldset>
+                    <div>
+                        <label htmlFor="amount">Enter phone number</label>
+                        <Input
+                            ref={phoneRef}
+                            type="text"
+                            name="phone"
+                            id="phone"
+                            placeholder="0710162152"
+                            fieldError={actionData?.fieldErrors.phone}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="amount">Enter amount</label>
+                        <Input
+                            ref={amountRef}
+                            type="number"
+                            name="amount"
+                            id="amount"
+                            placeholder="200"
+                            fieldError={actionData?.fieldErrors.amount}
+                        />
+                    </div>
                     <button type="submit" className="bg-blue-600 mt-3 px-6 py-2 text-white text-center w-full rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Processing...' : 'Pay'}
                     </button>
-                </div>
+                </fieldset>
             </Form>
 
             <div className="space-y-4">

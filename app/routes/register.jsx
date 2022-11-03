@@ -86,9 +86,9 @@ export async function action({ request }) {
         });
     }
 
-    const moveInDate = new Date(date).toISOString();
+    // const moveInDate = new Date(date).toISOString();
 
-    const tenant = await createTenant(name, phone, email, Number(nationalId), moveInDate, vehicleRegistration);
+    const tenant = await createTenant(name, phone, email, Number(nationalId), date, vehicleRegistration);
 
     const tenantId = tenant.id;
 
