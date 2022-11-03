@@ -1,6 +1,7 @@
 import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/outline";
 import { Link, Form, useLoaderData, useTransition, useSubmit, useActionData, useCatch } from "@remix-run/react";
 import { useRef } from "react";
+import Heading from "../../../components/Heading";
 // import { prisma } from "~/db.server";
 import { createHouse, clearDatabase, getHouses, getSelectedHouses } from "../../../models/house.server";
 import { getTenants } from "../../../models/tenant.server";
