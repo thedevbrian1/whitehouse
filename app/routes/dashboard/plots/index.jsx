@@ -135,7 +135,7 @@ export default function PlotsIndex() {
     //     }
     // }, [transition.submission]);
     return (
-        <div className={`w-full border border-red-500 lg:max-w-5xl mx-auto pr-10 lg:pr-0 ${transition.state === 'loading' ? 'opacity-50' : ''}`}>
+        <div className={`w-full lg:max-w-5xl mx-auto pr-10 lg:pr-0 ${transition.state === 'loading' ? 'opacity-50' : ''}`}>
             {/* <Select plots={plots} /> */}
             <Heading title='Tenants' />
             <div className="flex justify-end pr-4 mt-5">

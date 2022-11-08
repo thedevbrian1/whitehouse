@@ -51,7 +51,7 @@ export default function Index() {
                     <h1 className="font-bold text-3xl lg:text-6xl"> White House Court</h1>
                     <h2 className="font-semibold text-xl lg:text-3xl text-center">Kindly login to continue</h2>
                     <div className="flex justify-center">
-                      <div className="space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0 mt-4">
+                      <div className="border border-red-500 w-4/5 sm:w-auto space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0 mt-4">
                         <Link
                           to="/register"
                           className="flex items-center justify-center rounded-md border border-blue-700 bg-white px-4 py-3 text-base font-medium text-blue-700 shadow-sm hover:bg-blue-50 sm:px-8"
