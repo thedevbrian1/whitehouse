@@ -4,6 +4,7 @@ import { getHouse } from "../../../models/house.server";
 import TableHeader from "../../../components/TableHeader";
 import TableRow from "../../../components/TableRow";
 import { getTenant } from "../../../models/tenant.server";
+import Heading from "../../../components/Heading";
 
 export async function loader({ params }) {
     const tenantId = params.id;
@@ -70,12 +71,13 @@ export default function House() {
     ];
 
     return (
-        <div>
+        <div className="w-full space-y-4 lg:max-w-5xl mx-auto pr-10 lg:pr-0">
             <Link to=".." className="text-black hover:underline hover:text-blue-500">
                 <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
             </Link>
-            <h1 className="font-bold text-2xl mt-3">House {`${data.house.plotNumber} / ${data.house.houseNumber}`}</h1>
-            <div className="flex gap-5 mt-3">
+            {/* <h1 className="font-bold text-2xl mt-3">House {`${data.house.plotNumber} / ${data.house.houseNumber}`}</h1> */}
+            <Heading title={`House ${data.house.plotNumber} / ${data.house.houseNumber}`} />
+            <div className="flex flex-col lg:flex-row gap-5 mt-3">
                 <div className="basis-1/2 border border-slate-200 px-3 py-2 rounded-lg">
                     {/* Details and payment history */}
                     <div className="text-gray-900">
@@ -83,11 +85,11 @@ export default function House() {
                         <TenantDetail name="Phone" value={data.mobile} />
                         <TenantDetail name="Arrears" value={`Ksh ${data.arrears}`} />
                     </div>
-                    <div className="mt-4">
-                        <div className="flex justify-between">
+                    <div className="mt-4 py-1">
+                        <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between">
                             <h2 className="font-bold text-gray-900 text-lg">Payment history</h2>
                             <Form method="post" onChange={handleYearChange}>
-                                <label htmlFor="year">Year:</label>
+                                <label htmlFor="year">Select year:</label>
                                 <select
                                     name="year"
                                     id="year"
@@ -100,7 +102,7 @@ export default function House() {
                             </Form>
                         </div>
                     </div>
-                    <div className="grid grid-cols-4 gap-4 mt-4">
+                    <div className="grid grid-cols-3 lg:grid-cols-4  gap-4 mt-4">
                         {actionData
                             ? actionData?.map((month, index) => (
                                 <div key={index} className={`border border-slate-100 grid place-items-center h-12 ${month[1] === 'paid' ? 'bg-green-500 text-white' : month[1] === 'not paid' ? 'bg-red-500 text-white' : 'bg-gray-200'}`}>
@@ -109,7 +111,7 @@ export default function House() {
                             ))
                             :
                             months.map((month, index) => (
-                                <div key={index} className={`border border-slate-100 grid place-items-center h-12 ${month[1] >= 200
+                                <div key={index} className={`border border-slate-100 grid place-items-center text-xs md:text-sm lg:text-base h-12 px-1 ${month[1] >= 200
                                     ? 'bg-green-500 text-white'
                                     : (month[1] > 0 && month[1] < 200)
                                         ? 'bg-orange-200'
@@ -124,18 +126,20 @@ export default function House() {
                 <div className="basis-1/2 border border-slate-200 px-3 py-2 rounded-lg">
                     {/* Transaction history */}
                     <h2 className="font-bold text-gray-900 text-lg">Transaction history</h2>
-                    <table className="w-full mt-4">
-                        <thead>
-                            <TableHeader tableHeadings={['Number', 'Type', 'Amount', 'Date']} />
-                        </thead>
-                        <tbody>
-                            {
-                                transactionDetails.map((transaction, index) => (
-                                    <TableRow tableData={transaction} key={index} />
-                                ))
-                            }
-                        </tbody>
-                    </table>
+                    <div className="max-w-xs md:max-w-xl lg:max-w-none overflow-x-auto lg:overflow-x-hidden">
+                        <table className="w-full mt-4">
+                            <thead>
+                                <TableHeader tableHeadings={['Number', 'Type', 'Amount', 'Date']} />
+                            </thead>
+                            <tbody>
+                                {
+                                    transactionDetails.map((transaction, index) => (
+                                        <TableRow tableData={transaction} key={index} />
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

@@ -2,14 +2,15 @@ import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/outline";
 import { Link, Form, useLoaderData, useTransition, useSubmit, useActionData, useCatch } from "@remix-run/react";
 import { useRef } from "react";
 import Heading from "../../../components/Heading";
+import TableHeader from "../../../components/TableHeader";
 // import { prisma } from "~/db.server";
 import { createHouse, clearDatabase, getHouses, getSelectedHouses } from "../../../models/house.server";
-import { getTenants } from "../../../models/tenant.server";
+// import { getTenants } from "../../../models/tenant.server";
 
 export async function loader() {
 
     const houses = await getHouses();
-    const tenants = await getTenants();
+    // const tenants = await getTenants();
     // console.log({ tenants });
     // console.log({ houses });
 
@@ -80,14 +81,20 @@ export default function PlotsIndex() {
 
 
     let plots = [];
-    for (let i = 0; i < 66; i++) {
+    for (let i = 0; i < 100; i++) {
         plots.push(i + 1);
     }
 
     // console.log('Plots: ', plots);
 
     const plotOneHouses = data.filter(house => house.plotNumber === 1);
-
+    console.log({ plotOneHouses });
+    // const mobilePlotOneHouses = plotOneHouses.map(house => {
+    //     return {
+    //         id: house.id,
+    //         houseNumber: house
+    //     }
+    // })
     let finessedPlots = [];
 
     // TODO: Remove the redundant plots
@@ -119,23 +126,25 @@ export default function PlotsIndex() {
     }
 
     const today = new Date().toLocaleDateString();
+
+    const desktopTableHeadings = ['House number', 'Tenant name', 'Phone', 'Move in date', 'Total arrears', 'Last paid'];
+    const mobileTableHeadings = ['H/No.', 'Name', 'Arrears', 'Last paid'];
     // useEffect(() => {
     //     if (!transition.submission) {
     //         formRef.current?.reset();
     //     }
     // }, [transition.submission]);
     return (
-        <div className={`max-w-5xl mx-auto ${transition.state === 'loading' ? 'opacity-50' : ''}`}>
+        <div className={`w-full border border-red-500 lg:max-w-5xl mx-auto pr-10 lg:pr-0 ${transition.state === 'loading' ? 'opacity-50' : ''}`}>
             {/* <Select plots={plots} /> */}
             <Heading title='Tenants' />
-            <div className="flex justify-end">
-                <Link to="new-entry" className=" rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
-                    <PlusIcon className="w-5 h-5 inline" /> Add Tenant
+            <div className="flex justify-end pr-4 mt-5">
+                <Link to="new-entry" className=" rounded bg-blue-500 w-4/5 md:w-1/2 lg:w-auto mx-auto lg:mx-0 justify-center py-2 px-2 lg:px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2 text-sm lg:text-base">
+                    <PlusIcon className="w-4 lg:w-5 h-4 lg:h-5 inline" /> Add Tenant
                 </Link>
             </div>
 
-            <div className="mt-4 space-y-5">
-
+            <div className="mt-5 space-y-3">
                 {
                     plotOneHouses.length === 0 && !actionData
                         ? <div className="flex flex-col items-center">
@@ -165,49 +174,47 @@ export default function PlotsIndex() {
                                         }
                                     </select>
                                 </Form>
-                                <h1 className="text-lg font-semibold">Plot {actionData ? actionData[0].plotNumber : 1} </h1>
-                                <table className="mt-2 border border-slate-400 border-collapse w-full table-auto">
-                                    <thead>
-                                        <tr className="bg-slate-100">
-                                            <th className="border border-slate-300 py-1">
-                                                House number
-                                            </th>
-                                            <th className="border border-slate-300">
-                                                Tenant name
-                                            </th>
-                                            <th className="border border-slate-300">
-                                                Phone number
-                                            </th>
-                                            <th className="border border-slate-300">
-                                                Move in date
-                                            </th>
-                                            <th className="border border-slate-300">
-                                                Total arrears
-                                            </th>
-                                            <th className="border border-slate-300">
-                                                Last paid
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {actionData
-                                            ? (actionData?.map((house) => (
-                                                <TableRow house={house} key={house.id} />
-                                            )))
-                                            : plotOneHouses.map(house => (
-                                                <TableRow house={house} key={house.id} />
-                                            ))
-                                        }
-                                        {/* {fetcher.data
-                            ? (fetcher.data?.map((house) => (
-                                <TableRow house={house} key={house.id} />
-                            )))
-                            : data.map(house => (
-                                <TableRow house={house} key={house.id} />
-                            ))
-                        } */}
-                                    </tbody>
-                                </table>
+                                <div>
+                                    <h1 className="text-lg font-semibold">Plot {actionData ? actionData[0].plotNumber : 1} </h1>
+                                    <div className="max-w-xs md:max-w-3xl lg:max-w-none overflow-x-auto">
+                                        <table className=" mt-2 border border-slate-400 border-collapse w-full table-auto">
+                                            <thead>
+                                                <TableHeader tableHeadings={desktopTableHeadings} />
+                                            </thead>
+                                            {/* <thead className="lg:hidden">
+                                        <TableHeader tableHeadings={mobileTableHeadings} />
+                                    </thead> */}
+                                            <tbody>
+                                                {actionData
+                                                    ? (actionData?.map((house) => (
+                                                        <TableRow house={house} key={house.id} />
+                                                    )))
+                                                    : plotOneHouses.map(house => (
+                                                        <TableRow house={house} key={house.id} />
+                                                    ))
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {/* <div className="lg:hidden max-w-xs overflow-x-auto">
+                                        <table className=" mt-2 border border-slate-400 border-collapse table-auto ">
+                                            <thead>
+                                                <TableHeader tableHeadings={mobileTableHeadings} />
+                                            </thead>
+
+                                            <tbody>
+                                                {actionData
+                                                    ? (actionData?.map((house) => (
+                                                        <TableRow house={house} key={house.id} />
+                                                    )))
+                                                    : plotOneHouses.map(house => (
+                                                        <TableRow house={house} key={house.id} />
+                                                    ))
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div> */}
+                                </div>
                             </>
                         )
                 }
@@ -219,11 +226,11 @@ export default function PlotsIndex() {
 
 function TableRow({ house }) {
     return (
-        <tr>
-            <td className="border border-slate-300 text-center py-2">
+        <tr className="text-sm lg:text-base">
+            <td className="border border-slate-300 text-center py-2 px-6">
                 {house.houseNumber}
             </td>
-            <td className="border border-slate-300 text-center ">
+            <td className="border border-slate-300 text-center px-6 ">
                 <Link
                     to={house.tenantId}
                     className="hover:underline hover:text-blue-500"
@@ -231,16 +238,16 @@ function TableRow({ house }) {
                     {house.tenant.name}
                 </Link>
             </td>
-            <td className="border border-slate-300 text-center">
+            <td className="border border-slate-300 text-center px-6">
                 {house.tenant.mobile}
             </td>
-            <td className="border border-slate-300 text-center">
+            <td className="border border-slate-300 text-center px-6">
                 {new Date(house.tenant.moveInDate).toLocaleDateString()}
             </td>
-            <td className="border border-slate-300 text-center">
+            <td className="border border-slate-300 text-center px-6">
                 {house.tenant.arrears}
             </td>
-            <td className="border border-slate-300 text-center">
+            <td className="border border-slate-300 text-center px-6">
                 30/7/2022
             </td>
         </tr>
@@ -275,24 +282,26 @@ function TableRow({ house }) {
 export function CatchBoundary() {
     const caught = useCatch();
     return (
-        <div>
-            <p className="font-bold text-xl">Error!</p>
-            <p>Status {caught.status}</p>
-            <pre>
-                <code className="font-semibold">
-                    {caught.data}
-                </code>
-            </pre>
-            <div className="flex gap-5">
-                <Link to="/dashboard/plots" className="text-blue-500 underline">
-                    <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
-                </Link>
-                <Link to="new-entry" className="text-blue-500 underline">
-                    Create new tenant
-                </Link>
+        <div className="w-full h-screen grid lg:place-items-center">
+            <div className="px-2 pt-10 lg:pt-0">
+                <p className="font-bold text-xl">Error!</p>
+                <p>Status {caught.status}</p>
+                <pre>
+                    <code className="font-semibold">
+                        {caught.data}
+                    </code>
+                </pre>
+                <div className="flex gap-5">
+                    <Link to="/dashboard/plots" className="text-blue-500 underline">
+                        <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
+                    </Link>
+                    <Link to="new-entry" className="text-blue-500 underline">
+                        Create new tenant
+                    </Link>
+                </div>
             </div>
         </div>
-    )
+    );
 
 }
 
@@ -301,5 +310,5 @@ export function ErrorBoundary() {
         <div>
             Oops!! No tenants found
         </div>
-    )
+    );
 }

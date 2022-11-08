@@ -28,7 +28,7 @@ export default function DashboardIndex() {
         },
     ];
     return (
-        <div className="flex flex-wrap gap-5">
+        <div className="grid md:grid-cols-2 gap-5 border border-red-500 lg:w-3/4">
             {details.map((detail, index) => (
                 <DashboardCard key={index} title={detail.title} amount={detail.amount} />
             ))}

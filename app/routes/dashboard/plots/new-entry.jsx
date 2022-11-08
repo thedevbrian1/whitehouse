@@ -6,6 +6,8 @@ import { badRequest, validateDate, validateEmail, validateHouseNumber, validateN
 import { createTenant, getTenants } from "../../../models/tenant.server";
 import { createHouse } from "../../../models/house.server";
 import { redirect } from "@remix-run/server-runtime";
+import Input from "../../../components/Input";
+import { createUser } from "../../../models/user.server";
 
 
 export async function loader() {
@@ -23,6 +25,8 @@ export async function action({ request }) {
     const houseNo = formData.get('houseNo');
     const date = formData.get('date');
     const vehicleRegistration = formData.get('vehicleRegistration');
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
 
     const fields = {
         name,
@@ -51,6 +55,15 @@ export async function action({ request }) {
         return badRequest({ fields, fieldErrors });
     }
 
+    if (password !== confirmPassword) {
+        console.log({ match: password === confirmPassword });
+        return badRequest({
+            fields, fieldErrors: {
+                confirmPassword: 'Password does not match',
+            }
+        });
+    }
+
     const moveInDate = new Date(date);
 
     const tenant = await createTenant(name, phone, email, Number(nationalId), moveInDate, vehicleRegistration);
@@ -59,6 +72,8 @@ export async function action({ request }) {
 
     const res = await createHouse(Number(plotNo), houseNo, tenantId);
     // console.log({ res });
+
+    const user = await createUser(email, password);
 
     return redirect('/dashboard/plots');
 }
@@ -75,6 +90,8 @@ export default function NewTenantEntry() {
     const houseNoRef = useRef(null);
     const dateRef = useRef(null);
     const vehicleRegRef = useRef(null);
+    const passwordRef = useRef(null);
+    const confirmPasswordRef = useRef(null);
 
     useEffect(() => {
         nameRef.current?.focus();
@@ -105,69 +122,70 @@ export default function NewTenantEntry() {
             <Heading title='Add tenant' />
             <p className="text-light-black"><em>(Fields marked with * are compulsory)</em></p>
             <Form method="post">
-                <fieldset className="grid lg:grid-cols-2 gap-1 lg:gap-x-5">
-                    <div>
-                        <label htmlFor="name" className="text-black">
-                            Full name *
-                        </label>
-                        <input
-                            ref={nameRef}
-                            type="text"
-                            name="name"
-                            id="name"
-                            // defaultValue={actionData?.fields.name}
-                            className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.name
-                                ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                    {actionData.fieldErrors.name}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
+                <fieldset >
+                    <div className="grid lg:grid-cols-2 gap-1 lg:gap-x-5">
+                        <div>
+                            <label htmlFor="name" className="text-black">
+                                Full name *
+                            </label>
+                            <input
+                                ref={nameRef}
+                                type="text"
+                                name="name"
+                                id="name"
+                                // defaultValue={actionData?.fields.name}
+                                className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
+                            />
+                            {
+                                actionData?.fieldErrors.name
+                                    ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
+                                        {actionData.fieldErrors.name}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
 
-                    </div>
-                    <div>
-                        <label htmlFor="phone" className="text-black">
-                            Phone *
-                        </label>
-                        <input
-                            ref={phoneRef}
-                            type="text"
-                            name="phone"
-                            id="phone"
-                            // defaultValue={actionData?.fields.phone}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.phone
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.phone}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-                    </div>
-                    <div>
-                        <label htmlFor="nationalId" className="text-black">
-                            National Id *
-                        </label>
-                        <input
-                            ref={nationalIdRef}
-                            type="number"
-                            name="nationalId"
-                            id="nationalId"
-                            defaultValue={actionData?.fields.nationalId}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.nationalId ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.nationalId
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.nationalId}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-                    </div>
-                    <div>
+                        </div>
+                        <div>
+                            <label htmlFor="phone" className="text-black">
+                                Phone *
+                            </label>
+                            <input
+                                ref={phoneRef}
+                                type="text"
+                                name="phone"
+                                id="phone"
+                                // defaultValue={actionData?.fields.phone}
+                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
+                            />
+                            {
+                                actionData?.fieldErrors.phone
+                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
+                                        {actionData.fieldErrors.phone}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
+                        </div>
+                        <div>
+                            <label htmlFor="nationalId" className="text-black">
+                                National Id *
+                            </label>
+                            <input
+                                ref={nationalIdRef}
+                                type="number"
+                                name="nationalId"
+                                id="nationalId"
+                                defaultValue={actionData?.fields.nationalId}
+                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.nationalId ? 'border-red-700' : 'border-gray-400'}`}
+                            />
+                            {
+                                actionData?.fieldErrors.nationalId
+                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
+                                        {actionData.fieldErrors.nationalId}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
+                        </div>
+                        {/* <div>
                         <label htmlFor="email" className="text-black">
                             Email *
                         </label>
@@ -186,86 +204,132 @@ export default function NewTenantEntry() {
                                 </span>)
                                 : <>&nbsp;</>
                         }
+                    </div> */}
+                        <div>
+                            <label htmlFor="plotNo" className="text-black">
+                                Plot number *
+                            </label>
+                            <input
+                                ref={plotNoRef}
+                                type="number"
+                                name="plotNo"
+                                id="plotNo"
+                                defaultValue={actionData?.fields.salary}
+                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.plotNo ? 'border-red-700' : 'border-gray-400'}`}
+                            />
+                            {
+                                actionData?.fieldErrors.plotNo
+                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
+                                        {actionData.fieldErrors.plotNo}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
+                        </div>
+                        <div>
+                            <label htmlFor="houseNo" className="text-black">
+                                House number *
+                            </label>
+                            <input
+                                ref={houseNoRef}
+                                type="text"
+                                name="houseNo"
+                                id="houseNo"
+                                defaultValue={actionData?.fields.houseNo}
+                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.houseNo ? 'border-red-700' : 'border-gray-400'}`}
+                            />
+                            {
+                                actionData?.fieldErrors.houseNo
+                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
+                                        {actionData.fieldErrors.houseNo}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
+                        </div>
+                        <div>
+                            <label htmlFor="date" className="text-black">
+                                Move in date
+                            </label>
+                            <input
+                                ref={dateRef}
+                                type="date"
+                                name="date"
+                                id="date"
+                                defaultValue={actionData?.fields.moveInDate}
+                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.moveInDate ? 'border-red-700' : 'border-gray-400'}`}
+                            />
+                            {
+                                actionData?.fieldErrors.moveInDate
+                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
+                                        {actionData.fieldErrors.moveInDate}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
+                        </div>
+                        <div>
+                            <label htmlFor="vehicleRegistration" className="text-black">
+                                Vehicle registration
+                            </label>
+                            <input
+                                ref={vehicleRegRef}
+                                type="text"
+                                name="vehicleRegistration"
+                                id="vehicleRegistration"
+                                defaultValue={actionData?.fields.vehicleRegistration}
+                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.vehicleRegistration ? 'border-red-700' : 'border-gray-400'}`}
+                            />
+                            {
+                                actionData?.fieldErrors.vehicleRegistration
+                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
+                                        {actionData.fieldErrors.vehicleRegistration}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
+                        </div>
+
                     </div>
-                    <div>
-                        <label htmlFor="plotNo" className="text-black">
-                            Plot number *
-                        </label>
-                        <input
-                            ref={plotNoRef}
-                            type="number"
-                            name="plotNo"
-                            id="plotNo"
-                            defaultValue={actionData?.fields.salary}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.plotNo ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.plotNo
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.plotNo}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-                    </div>
-                    <div>
-                        <label htmlFor="houseNo" className="text-black">
-                            House number *
-                        </label>
-                        <input
-                            ref={houseNoRef}
-                            type="text"
-                            name="houseNo"
-                            id="houseNo"
-                            defaultValue={actionData?.fields.houseNo}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.houseNo ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.houseNo
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.houseNo}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-                    </div>
-                    <div>
-                        <label htmlFor="date" className="text-black">
-                            Move in date
-                        </label>
-                        <input
-                            ref={dateRef}
-                            type="date"
-                            name="date"
-                            id="date"
-                            defaultValue={actionData?.fields.moveInDate}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.moveInDate ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.moveInDate
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.moveInDate}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-                    </div>
-                    <div>
-                        <label htmlFor="vehicleRegistration" className="text-black">
-                            Vehicle registration
-                        </label>
-                        <input
-                            ref={vehicleRegRef}
-                            type="text"
-                            name="vehicleRegistration"
-                            id="vehicleRegistration"
-                            defaultValue={actionData?.fields.vehicleRegistration}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.vehicleRegistration ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.vehicleRegistration
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.vehicleRegistration}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
+                    <h3 className="font-semibold text-lg">Account information</h3>
+                    <em>This info will be used to log in to the White House app</em>
+                    <div className="grid lg:grid-cols-2 gap-1 lg:gap-4 mt-2">
+                        <div>
+                            <label htmlFor="email" className="text-black">
+                                Email
+                            </label>
+                            <Input
+                                ref={emailRef}
+                                type="email"
+                                name="email"
+                                id="email"
+                                placeholder=""
+                                fieldError={actionData?.fieldErrors.email}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="text-black">
+                                Password *
+                            </label>
+                            <Input
+                                ref={passwordRef}
+                                type="password"
+                                name="password"
+                                id="password"
+                                placeholder=""
+                                fieldError={actionData?.fieldErrors.password}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="confirmPassword" className="text-black">
+                                Confirm password *
+                            </label>
+                            <Input
+                                ref={confirmPasswordRef}
+                                type="password"
+                                name="confirmPassword"
+                                id="confirmPassword"
+                                placeholder=""
+                                fieldError={actionData?.fieldErrors.confirmPassword}
+                            />
+
+                        </div>
                     </div>
                     <button type="submit" className="lg:col-span-2 bg-blue-600 px-6 py-2 text-white text-center w-full lg:w-1/2 justify-self-center rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Adding...' : 'Add'}

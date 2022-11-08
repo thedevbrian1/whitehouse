@@ -15,7 +15,7 @@ export default function Index() {
   return (
     <main className="relative min-h-screen bg-white sm:flex sm:items-center sm:justify-center">
       <div className="relative w-screen sm:pb-16 sm:pt-8">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl h-screen lg:h-auto sm:px-6 lg:px-8 py-4 lg:py-0">
           {user
             ? (
               <div className="w-full flex justify-end pr-8">
@@ -31,8 +31,8 @@ export default function Index() {
             )
             : null}
 
-          <div className="relative border bg-[#0b011e] bg-[url('/building.jpg')] bg-center bg-no-repeat bg-cover bg-blend-overlay bg-opacity-50 border-gray-100 sm:overflow-hidden sm:rounded-2xl">
-            <div className="relative px-4 pt-16 pb-8 sm:px-6 sm:pt-24 sm:pb-14 lg:px-8 lg:pb-20 lg:pt-32">
+          <div className="relative h-full lg:h-auto mt-2 border bg-[#0b011e] bg-[url('/building.jpg')] bg-center bg-no-repeat bg-cover bg-blend-overlay bg-opacity-50 border-gray-100 sm:overflow-hidden sm:rounded-2xl">
+            <div className="relative w-full h-full grid place-items-center px-4 pt-16 pb-8 sm:px-6 sm:pt-24 sm:pb-14 lg:px-8 lg:pb-20 lg:pt-32">
               <div className="mx-auto mt-10 max-w-sm sm:flex sm:max-w-none sm:justify-center">
                 {user ? (
                   <div>

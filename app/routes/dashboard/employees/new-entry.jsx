@@ -95,7 +95,7 @@ export default function NewEntry() {
             </Link>
             <Heading title='Add Employee' />
             <p className="text-light-black">Enter employee details below</p>
-            <Form method="post" className="w-4/5 lg:max-w-5xl">
+            <Form method="post" className="w-4/5 sm:w-3/4 lg:max-w-5xl">
                 <fieldset className="grid lg:grid-cols-2 gap-4">
                     <div>
                         <label htmlFor="name" className="text-light-black">

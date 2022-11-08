@@ -128,7 +128,7 @@ export default function UserIndex() {
                     </div>
 
                     <div className="flex justify-center">
-                        <Link to="payment" className=" rounded bg-blue-500 w-full lg:w-auto py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex justify-center items-center gap-2">
+                        <Link to="payment" className=" rounded bg-blue-500 w-full md:w-1/2 lg:w-auto py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex justify-center items-center gap-2">
                             {/* <PlusIcon className="w-5 h-5 inline" />  */}
                             Make payment
                         </Link>
@@ -151,7 +151,7 @@ export default function UserIndex() {
                             </Form>
                         </div>
                     </div>
-                    <div className="grid grid-cols-3 lg:grid-cols-3 gap-4 mt-4">
+                    <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                         {actionData
                             ? actionData?.map((month, index) => (
                                 <div key={index} className={`border border-slate-100 grid place-items-center h-12 ${month[1] !== null ? 'bg-green-500 text-white' : month[1] === 'not paid' ? 'bg-red-500 text-white' : 'bg-gray-200'}`}>

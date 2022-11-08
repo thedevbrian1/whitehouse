@@ -51,10 +51,10 @@ export default function EmployeesIndex() {
     //     setShowDialog(false);
     // }
     return (
-        <div className="space-y-5 max-w-5xl mx-auto">
+        <div className="space-y-4 lg:max-w-5xl mx-auto pr-10 lg:pr-0">
             <Heading title='Employees' />
             <div className="flex justify-end">
-                <Link to="new-entry" className=" rounded bg-blue-500  py-2 px-4 text-sm lg:text-base text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
+                <Link to="new-entry" className=" rounded bg-blue-500  w-4/5 md:w-1/2 lg:w-auto mx-auto lg:mx-0 justify-center py-2 px-2 lg:px-4 text-sm lg:text-base text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2">
                     <PlusIcon className="w-5 h-5 inline" /> Add employee
                 </Link>
             </div>
@@ -68,18 +68,22 @@ export default function EmployeesIndex() {
                         <span className="text-center font-semibold">No employees yet</span>
                     </div>
                     : (
-                        <table className="mt-2 border border-slate-400 border-collapse w-full table-auto">
-                            <thead>
-                                <TableHeader tableHeadings={tableHeadings} />
-                            </thead>
-                            <tbody>
-                                {
-                                    tableData.map((data, index) => (
-                                        <TableRow tableData={data} key={index} />
-                                    ))
-                                }
-                            </tbody>
-                        </table>
+                        <div className="max-w-xs md:max-w-3xl lg:max-w-none overflow-x-auto">
+
+
+                            <table className="mt-2 border border-slate-400 border-collapse w-full table-auto">
+                                <thead>
+                                    <TableHeader tableHeadings={tableHeadings} />
+                                </thead>
+                                <tbody>
+                                    {
+                                        tableData.map((data, index) => (
+                                            <TableRow tableData={data} key={index} />
+                                        ))
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     )
             }
 

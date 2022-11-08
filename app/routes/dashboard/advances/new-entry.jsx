@@ -42,7 +42,7 @@ export default function Advance() {
                 <ArrowLeftIcon className="w-5 h-5 inline" /> Back to advances
             </Link>
             <Heading title='Advance' />
-            <div className="grid grid-cols-2 gap-x-5 max-w-5xl pr-20">
+            <div className="border border-red-500 grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
                 <div>
                     <h2 className=" text-light-black text-md font-semibold">Select an employee to issue an advance</h2>
                     <InstantSearch searchClient={searchClient} indexName="employees">
