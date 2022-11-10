@@ -1,20 +1,33 @@
-import { Form, Link, useActionData, useCatch, useTransition } from "@remix-run/react"
-import { redirect } from "@remix-run/server-runtime";
+import { Form, Link, useActionData, useCatch, useLoaderData, useTransition } from "@remix-run/react"
+import { json, redirect } from "@remix-run/server-runtime";
 import { useEffect } from "react";
 import { useRef } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import toastStyles from "react-toastify/dist/ReactToastify.css";
 import Input from "../../components/Input";
 import { getTenantByEmail } from "../../models/tenant.server";
 import { createTenantPayment } from "../../models/year.server";
 import { getSession, getUser, sessionStorage } from "../../session.server";
 import { badRequest, validateAmount, validatePhone } from "../../utils";
 
-export async function loader() {
-    // const now = new Date().toTimeString();
-    // console.log(now);
-    // const url = await fetch('https://brianmwangi.co.ke/whitehouse');
-    // // const urlResponse = await url.json();
-    // console.log({ url });
-    return null;
+export function links() {
+    return [
+        {
+            rel: "stylesheet",
+            href: toastStyles
+        }
+    ];
+}
+
+export async function loader({ request }) {
+    const session = await getSession(request);
+    const safResponse = session.get('safResponse');
+    console.log({ session: safResponse });
+    return json({ safResponse }, {
+        headers: {
+            "Set-Cookie": await sessionStorage.commitSession(session)
+        }
+    });
 }
 export async function action({ request }) {
     const user = await getUser(request);
@@ -70,7 +83,7 @@ export async function action({ request }) {
         method: "post",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer oDwcLlmGZs910vglHbE0u52AibjG`
+            Authorization: `Bearer YuWqqqkw9FAgfdE9Zjp5UW9J96cn`
         },
         body: JSON.stringify({
             "BusinessShortCode": 174379,
@@ -90,24 +103,36 @@ export async function action({ request }) {
     const safResponse = await res.json();
     console.log({ safResponse });
 
-    if (safResponse.responseCode === 400) {
-        throw new Response('Cannot initiate payment', {
-            status: 400
+    // if (safResponse.responseCode === 400) {
+    //     throw new Response('Cannot initiate payment', {
+    //         status: 400
+    //     });
+    // }
+    const session = await getSession(request);
+
+    if (safResponse.errorCode?.includes('404')) {
+        throw new Response(`${safResponse.errorMessage}`, {
+            status: 404
+        });
+    } else if (safResponse.errorCode?.includes('500')) {
+        throw new Response(`${safResponse.errorMessage}`, {
+            status: 500
         });
     }
-    // if (safResponse.ResponseCode === 0) {
-    //     // const url = await fetch('https://brianmwangi.co.ke/whitehouse');
-    //     // const urlResponse = await url.json();
-    //     // console.log({ urlResponse });
+    session.flash("safResponse", safResponse.CustomerMessage);
+    if (safResponse.ResponseCode === 0) {
 
-    // }
+        const url = await fetch('https://whitehouse-7d4f.fly.dev/saf');
+        const urlResponse = await url.json();
+        console.log({ urlResponse });
+
+    }
 
     // const res = await createTenantPayment(tenantId, amount);
     // console.log({ res });
-    const session = await getSession(request);
     // session.flash("success", true);
 
-    return redirect('/user', {
+    return redirect('/user/payment', {
         headers: {
             "Set-Cookie": await sessionStorage.commitSession(session)
         }
@@ -115,22 +140,38 @@ export async function action({ request }) {
 }
 
 export default function Payment() {
+    const data = useLoaderData();
     const actionData = useActionData();
     const transition = useTransition();
 
     const phoneRef = useRef(null);
     const amountRef = useRef(null);
+    const toastId = useRef(null);
+
+    function info() {
+        toastId.current = toast.info(`${data.safResponse}`, {
+            position: toast.POSITION.TOP_RIGHT
+        });
+    }
 
     useEffect(() => {
         phoneRef.current?.focus();
     }, [actionData]);
 
+    useEffect(() => {
+        if (data.safResponse) {
+            info()
+        }
+        return () => {
+            toast.dismiss(toastId.current);
+        }
+    }, [data]);
     return (
         <div className="max-w-md mx-auto space-y-10 py-12 lg:py-32">
             <Form method="post" className="">
                 <fieldset>
                     <div>
-                        <label htmlFor="amount">Enter phone number</label>
+                        <label htmlFor="amount">Enter MPESA phone number</label>
                         <Input
                             ref={phoneRef}
                             type="text"
@@ -163,6 +204,7 @@ export default function Payment() {
                     Excess payments will be used to clear arrears.The earliest arrears will be cleared first.
                 </p>
             </div>
+            <ToastContainer />
         </div>
     );
 }
