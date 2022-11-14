@@ -1,4 +1,6 @@
 import DashboardCard from "../../components/DashboardCard";
+import { getTransactions } from "~/models/transaction.server";
+import { useLoaderData } from "@remix-run/react";
 
 // TODO: Display correct amount from the database
 // TODO: Display vacant houses from the database
@@ -8,7 +10,15 @@ export function meta() {
         title: 'Dashboard | Estate control'
     };
 }
+
+export async function loader() {
+    const transactions = await getTransactions();
+    return transactions;
+}
+
 export default function DashboardIndex() {
+    const data = useLoaderData();
+
     const details = [
         {
             title: 'Annual total',
@@ -27,8 +37,10 @@ export default function DashboardIndex() {
             amount: '50',
         },
     ];
+    const totalAmount = data.reduce((prev, current) => prev.amount + current.amount);
+
     return (
-        <div className="grid md:grid-cols-2 gap-5 border border-red-500 lg:w-3/4">
+        <div className="grid md:grid-cols-2 gap-5 lg:w-3/4">
             {details.map((detail, index) => (
                 <DashboardCard key={index} title={detail.title} amount={detail.amount} />
             ))}

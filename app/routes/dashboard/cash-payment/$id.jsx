@@ -35,8 +35,8 @@ export async function action({ request, params }) {
     }
     // Check if tenant exists
     // Record amount in the database
-
-    const res = await createTenantPayment(tenantId, amount);
+    let status = 'paid';
+    const res = await createTenantPayment(tenantId, status);
 
     // console.log({ res });
 

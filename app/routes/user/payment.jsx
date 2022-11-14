@@ -9,6 +9,7 @@ import { getTenantByEmail } from "../../models/tenant.server";
 import { createTenantPayment } from "../../models/year.server";
 import { getSession, getUser, sessionStorage } from "../../session.server";
 import { badRequest, validateAmount, validatePhone } from "../../utils";
+import { useEventSource } from "~/hooks/useEventSource";
 
 export function links() {
     return [
@@ -22,7 +23,7 @@ export function links() {
 export async function loader({ request }) {
     const session = await getSession(request);
     const safResponse = session.get('safResponse');
-    console.log({ session: safResponse });
+    // console.log({ session: safResponse });
     return json({ safResponse }, {
         headers: {
             "Set-Cookie": await sessionStorage.commitSession(session)
@@ -49,7 +50,7 @@ export async function action({ request }) {
         return badRequest({ fieldErrors });
     }
 
-    console.log({ phone });
+    // console.log({ phone });
 
     let modifiedPhone = null;
     if (phone.length === 10) {
@@ -63,15 +64,15 @@ export async function action({ request }) {
     const date = new Date();
     // const dateString = new Intl.DateTimeFormat('ko-KR').format(date);
     const dateString = date.getFullYear() + ('0' + (date.getMonth() + 1)).slice(-2) + ('0' + date.getDate()).slice(-2);
-    console.log({ dateString });
+    // console.log({ dateString });
     const now = date.toLocaleTimeString([], { hour12: false });
-    console.log({ now });
+    // console.log({ now });
     const timeStamp = String(dateString + now).replace(/\D+/g, '');
-    console.log({ timeStamp });
+    // console.log({ timeStamp });
     // return null;
 
     const passwordString = '174379' + 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919' + timeStamp;
-    console.log({ passwordString });
+    // console.log({ passwordString });
 
     // const encodedPassword = Buffer.from(passwordString).toString('base64');
     // console.log({ encodedPassword });
@@ -83,7 +84,7 @@ export async function action({ request }) {
         method: "post",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer YuWqqqkw9FAgfdE9Zjp5UW9J96cn`
+            Authorization: `Bearer XlimxxYej14YCTdttfSOJIQLQ9rG`
         },
         body: JSON.stringify({
             "BusinessShortCode": 174379,
@@ -94,7 +95,7 @@ export async function action({ request }) {
             "PartyA": modifiedPhone,
             "PartyB": 174379,
             "PhoneNumber": modifiedPhone,
-            "CallBackURL": "https://brianmwangi.co.ke/whitehouse",
+            "CallBackURL": "https://smooth-bottles-change-41-220-235-42.loca.lt/saf",
             "AccountReference": "WhiteHouse",
             "TransactionDesc": "Payment of X"
         })
@@ -120,17 +121,19 @@ export async function action({ request }) {
         });
     }
     session.flash("safResponse", safResponse.CustomerMessage);
-    if (safResponse.ResponseCode === 0) {
+    // if (safResponse.ResponseCode === 0) {
 
-        const url = await fetch('https://whitehouse-7d4f.fly.dev/saf');
-        const urlResponse = await url.json();
-        console.log({ urlResponse });
+    //     const url = await fetch('https://tasty-geese-begin-196-216-93-83.loca.lt/saf');
+    //     const urlResponse = await url.json();
+    //     console.log({ urlResponse });
 
-    }
+    // }
 
     // const res = await createTenantPayment(tenantId, amount);
     // console.log({ res });
     // session.flash("success", true);
+
+    logPaymentDetails(userEmail, amount, 'MPESA');
 
     return redirect('/user/payment', {
         headers: {
@@ -149,7 +152,7 @@ export default function Payment() {
     const toastId = useRef(null);
 
     function info() {
-        toastId.current = toast.info(`${data.safResponse}`, {
+        toastId.current = toast.info('Check your phone to complete the request', {
             position: toast.POSITION.TOP_RIGHT
         });
     }
@@ -160,12 +163,36 @@ export default function Payment() {
 
     useEffect(() => {
         if (data.safResponse) {
-            info()
+            info();
         }
         return () => {
             toast.dismiss(toastId.current);
         }
     }, [data]);
+
+    // let eventSourceData = useEventSource('/saf');
+    // console.log({ eventSourceData });
+
+    // let eventUrl = '/saf'
+    // useEffect(() => {
+    //     let eventSourceData = new EventSource(eventUrl);
+    //     eventSourceData.addEventListener('message', (event) => {
+    //         console.log(event.data);
+    //     });
+    //     return () => {
+    //         eventSourceData.close();
+    //     }
+    // }, [eventUrl]);
+
+
+    // useEffect(() => {
+    //     const eventSource = new EventSource('https://funny-insects-smoke-196-216-92-235.loca.lt/saf');
+
+    //     eventSource.addEventListener('message', () => {
+    //         const data = JSON.parse(e.data);
+    //         console.log(data.id, data.msg);
+    //     }, false);
+    // }, [eventSource]);
     return (
         <div className="max-w-md mx-auto space-y-10 py-12 lg:py-32">
             <Form method="post" className="">
@@ -234,5 +261,18 @@ export function ErrorBoundary({ error }) {
                 Try again
             </Link>
         </div>
-    )
+    );
+}
+
+function logPaymentDetails(email, amount, transactionType) {
+    const fs = require('fs');
+    let content = null;
+
+    let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+    content = `User ${email} made ${transactionType} payment of Ksh ${amount} on ${date}.  \n`;
+    fs.appendFile('./transactionLogs.txt', content, err => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }

@@ -1,6 +1,7 @@
 import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/outline";
 import { Link, Form, useLoaderData, useTransition, useSubmit, useActionData, useCatch } from "@remix-run/react";
 import { useRef } from "react";
+import { getTenants } from "~/models/tenant.server";
 import Heading from "../../../components/Heading";
 import TableHeader from "../../../components/TableHeader";
 // import { prisma } from "~/db.server";
@@ -9,12 +10,10 @@ import { createHouse, clearDatabase, getHouses, getSelectedHouses } from "../../
 
 export async function loader() {
 
-    const houses = await getHouses();
-    // const tenants = await getTenants();
-    // console.log({ tenants });
-    // console.log({ houses });
+    // const houses = await getHouses();
+    const tenants = await getTenants();
 
-    return houses;
+    return tenants;
 }
 
 export async function action({ request }) {
@@ -42,7 +41,7 @@ export async function action({ request }) {
         // console.log('Selected Plot: ', plot);
 
         const houses = await getSelectedHouses(plot);
-        console.log({ selected: houses.length });
+        // console.log({ selected: houses.length });
         if (houses.length === 0) {
             throw new Response('No registered tenants for this plot!', {
                 status: 404
@@ -66,6 +65,7 @@ export function meta() {
 
 export default function PlotsIndex() {
     const data = useLoaderData();
+    // console.log({ data });
     const actionData = useActionData();
 
     // TODO: Add search functionality for tenants
@@ -87,8 +87,10 @@ export default function PlotsIndex() {
 
     // console.log('Plots: ', plots);
 
-    const plotOneHouses = data.filter(house => house.plotNumber === 1);
-    console.log({ plotOneHouses });
+    const plotOneTenants = data.filter(tenant => tenant.house.plotNumber === 1);
+
+    // console.log({ plotOneHouses });
+
     // const mobilePlotOneHouses = plotOneHouses.map(house => {
     //     return {
     //         id: house.id,
@@ -139,14 +141,14 @@ export default function PlotsIndex() {
             {/* <Select plots={plots} /> */}
             <Heading title='Tenants' />
             <div className="flex justify-end pr-4 mt-5">
-                <Link to="new-entry" className=" rounded bg-blue-500 w-4/5 md:w-1/2 lg:w-auto mx-auto lg:mx-0 justify-center py-2 px-2 lg:px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2 text-sm lg:text-base">
+                <Link to="new-entry" className=" rounded bg-blue-500 w-4/5 sm:w-1/2 lg:w-auto mx-auto lg:mx-0 justify-center py-2 px-2 lg:px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex items-center gap-2 text-sm lg:text-base">
                     <PlusIcon className="w-4 lg:w-5 h-4 lg:h-5 inline" /> Add Tenant
                 </Link>
             </div>
 
             <div className="mt-5 space-y-3">
                 {
-                    plotOneHouses.length === 0 && !actionData
+                    plotOneTenants.length === 0 && !actionData
                         ? <div className="flex flex-col items-center">
                             <div className="w-40 h-40">
                                 <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
@@ -175,45 +177,24 @@ export default function PlotsIndex() {
                                     </select>
                                 </Form>
                                 <div>
-                                    <h1 className="text-lg font-semibold">Plot {actionData ? actionData[0].plotNumber : 1} </h1>
-                                    <div className="max-w-xs md:max-w-3xl lg:max-w-none overflow-x-auto">
+                                    <h1 className="text-lg font-semibold">Plot {actionData ? actionData[0].tenant.plotNumber : 1} </h1>
+                                    <div className="max-w-xs sm:max-w-2xl md:max-w-3xl lg:max-w-none overflow-x-auto">
                                         <table className=" mt-2 border border-slate-400 border-collapse w-full table-auto">
                                             <thead>
                                                 <TableHeader tableHeadings={desktopTableHeadings} />
                                             </thead>
-                                            {/* <thead className="lg:hidden">
-                                        <TableHeader tableHeadings={mobileTableHeadings} />
-                                    </thead> */}
                                             <tbody>
                                                 {actionData
-                                                    ? (actionData?.map((house) => (
-                                                        <TableRow house={house} key={house.id} />
+                                                    ? (actionData?.map((tenant) => (
+                                                        <TableRow tenant={tenant} key={tenant.id} />
                                                     )))
-                                                    : plotOneHouses.map(house => (
-                                                        <TableRow house={house} key={house.id} />
+                                                    : plotOneTenants.map(tenant => (
+                                                        <TableRow tenant={tenant} key={tenant.id} />
                                                     ))
                                                 }
                                             </tbody>
                                         </table>
                                     </div>
-                                    {/* <div className="lg:hidden max-w-xs overflow-x-auto">
-                                        <table className=" mt-2 border border-slate-400 border-collapse table-auto ">
-                                            <thead>
-                                                <TableHeader tableHeadings={mobileTableHeadings} />
-                                            </thead>
-
-                                            <tbody>
-                                                {actionData
-                                                    ? (actionData?.map((house) => (
-                                                        <TableRow house={house} key={house.id} />
-                                                    )))
-                                                    : plotOneHouses.map(house => (
-                                                        <TableRow house={house} key={house.id} />
-                                                    ))
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div> */}
                                 </div>
                             </>
                         )
@@ -224,31 +205,35 @@ export default function PlotsIndex() {
     )
 }
 
-function TableRow({ house }) {
+function TableRow({ tenant }) {
     return (
         <tr className="text-sm lg:text-base">
             <td className="border border-slate-300 text-center py-2 px-6">
-                {house.houseNumber}
+                {tenant.house.houseNumber}
             </td>
             <td className="border border-slate-300 text-center px-6 ">
                 <Link
-                    to={house.tenantId}
+                    to={tenant.id}
                     className="hover:underline hover:text-blue-500"
                 >
-                    {house.tenant.name}
+                    {tenant.name}
                 </Link>
             </td>
             <td className="border border-slate-300 text-center px-6">
-                {house.tenant.mobile}
+                {tenant.mobile}
             </td>
             <td className="border border-slate-300 text-center px-6">
-                {new Date(house.tenant.moveInDate).toLocaleDateString()}
+                {new Date(tenant.moveInDate).toLocaleDateString()}
             </td>
             <td className="border border-slate-300 text-center px-6">
-                {house.tenant.arrears}
+                {tenant.arrears}
             </td>
             <td className="border border-slate-300 text-center px-6">
-                30/7/2022
+
+                {tenant.transactions.length === 0 ? 'N/A' :
+                    new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString()
+                    // 'Available'
+                }
             </td>
         </tr>
     );

@@ -54,7 +54,7 @@ export function meta({ data }) {
 export default function House() {
     const actionData = useActionData();
     const data = useLoaderData();
-
+    // console.log({ data });
     const months = Object.entries(data.years[0]).slice(2, 14);
     const years = data.years.map(year => {
         return { year: year.year, id: year.id }
@@ -65,10 +65,12 @@ export default function House() {
         submit(event.currentTarget, { replace: true })
     }
 
-    const transactionDetails = [
-        ['1', 'MPESA', '100', '1/1/2022'],
-        ['2', 'MPESA', '300', '28/8/2022']
-    ];
+    const transactions = data.transactions.map((transaction) => {
+        return Object.values(transaction).slice(1, 4);
+    });
+    // console.log({ transactions });
+    transactions.forEach((transaction, index) => transaction.splice(0, 0, index + 1));
+    transactions.forEach((transaction) => transaction.splice(3, 1, new Date(transaction[3]).toDateString()));
 
     return (
         <div className="w-full space-y-4 lg:max-w-5xl mx-auto pr-10 lg:pr-0">
@@ -126,18 +128,24 @@ export default function House() {
                 <div className="basis-1/2 border border-slate-200 px-3 py-2 rounded-lg">
                     {/* Transaction history */}
                     <h2 className="font-bold text-gray-900 text-lg">Transaction history</h2>
-                    <div className="max-w-xs md:max-w-xl lg:max-w-none overflow-x-auto lg:overflow-x-hidden">
+                    <div className="max-w-xs sm:max-w-2xl lg:max-w-none overflow-x-auto lg:overflow-x-hidden">
                         <table className="w-full mt-4">
-                            <thead>
-                                <TableHeader tableHeadings={['Number', 'Type', 'Amount', 'Date']} />
-                            </thead>
-                            <tbody>
-                                {
-                                    transactionDetails.map((transaction, index) => (
-                                        <TableRow tableData={transaction} key={index} />
-                                    ))
-                                }
-                            </tbody>
+                            {
+                                transactions.length === 0 ? 'No transactions yet' :
+                                    (<>
+                                        <thead>
+                                            <TableHeader tableHeadings={['Number', 'Type', 'Amount', 'Date']} />
+                                        </thead>
+                                        <tbody>
+                                            {
+
+                                                transactions.map((transaction, index) => (
+                                                    <TableRow tableData={transaction} key={index} />
+                                                ))
+                                            }
+                                        </tbody>
+                                    </>)
+                            }
                         </table>
                     </div>
                 </div>

@@ -47,16 +47,17 @@ model Post {
 }
 
 model Tenant {
-  id                  String  @id @default(cuid())
+  id                  String        @id @default(cuid())
   name                String
-  mobile              String  @unique
-  email               String? @unique
+  mobile              String        @unique
+  email               String?       @unique
   nationalId          Int
   house               House?
   vehicleRegistration String?
   years               Year[]
   arrears             Int?
   moveInDate          String?
+  transactions        Transaction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -131,5 +132,16 @@ model Salary {
   employeeId String?
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  type      String
+  amount    Int
+  createdAt DateTime @default(now())
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+  tenantId  String?
+
   updatedAt DateTime @updatedAt
 }

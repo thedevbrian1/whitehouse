@@ -49,7 +49,7 @@ export async function action({ request, params }) {
     const plotNo = params.plot.trim();
     const houseNo = params.house.trim();
 
-    console.log('Year from action: ', selectedYear);
+    // console.log('Year from action: ', selectedYear);
     // Get specific year details from db
     const house = await getHouse(plotNo, houseNo);
 
@@ -57,9 +57,9 @@ export async function action({ request, params }) {
     // console.log('Years from action: ', years);
     // Compare year from the action with year from the database
     const matchedYear = years.find(year => year.year === Number(selectedYear));
-    console.log('Matched year: ', matchedYear);
+    // console.log('Matched year: ', matchedYear);
     const months = Object.entries(matchedYear).slice(2, 14);
-    console.log('Months from action: ', months);
+    // console.log('Months from action: ', months);
     return months;
 }
 
@@ -72,7 +72,7 @@ export default function UserIndex() {
 
     // console.log('House: ', data);
     const months = Object.entries(data.tenant.years[0]).slice(2, 14);
-    console.log({ months });
+    // console.log({ months });
     const years = data.tenant.years.map(year => {
         let yearObj = {};
         yearObj.year = year.year,
@@ -81,15 +81,22 @@ export default function UserIndex() {
     });
     // console.log({ years });
 
+    const transactions = data.tenant.transactions.map((transaction) => {
+        return Object.values(transaction).slice(1, 4);
+    });
+    transactions.forEach((transaction, index) => transaction.splice(0, 0, index + 1));
+    transactions.forEach((transaction) => transaction.splice(3, 1, new Date(transaction[3]).toDateString()));
+    console.log({ transactions });
+
     const submit = useSubmit();
     function handleYearChange(event) {
         submit(event.currentTarget, { replace: true })
     }
 
-    const transactionDetails = [
-        ['1', 'MPESA', '100', '1/1/2022'],
-        ['2', 'MPESA', '300', '28/8/2022']
-    ];
+    // const transactionDetails = [
+    //     ['1', 'MPESA', '100', '1/1/2022'],
+    //     ['2', 'MPESA', '300', '28/8/2022']
+    // ];
     function success() {
         toastId.current = toast.success('Payment successful!', {
             position: toast.POSITION.BOTTOM_RIGHT
@@ -128,7 +135,7 @@ export default function UserIndex() {
                     </div>
 
                     <div className="flex justify-center">
-                        <Link to="payment" className=" rounded bg-blue-500 w-full md:w-1/2 lg:w-auto py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex justify-center items-center gap-2">
+                        <Link to="payment" className=" rounded bg-blue-500 w-full sm:w-1/2 lg:w-auto py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 inline-flex justify-center items-center gap-2">
                             {/* <PlusIcon className="w-5 h-5 inline" />  */}
                             Make payment
                         </Link>
@@ -181,33 +188,42 @@ export default function UserIndex() {
                 <div className="lg:basis-1/2 border border-slate-200 px-4 py-3 rounded-lg">
                     {/* Transaction history */}
                     <h2 className="font-bold text-gray-900 text-lg">Transaction history</h2>
-                    <table className="w-full mt-4">
-                        <thead>
-                            <TableHeader tableHeadings={['Number', 'Type', 'Amount', 'Date']} />
-                        </thead>
-                        <tbody>
+                    <div className="max-w-xs md:max-w-none overflow-x-auto">
+                        <table className="w-full mt-4">
                             {
-                                transactionDetails.map((transaction, index) => (
-                                    <TableRow tableData={transaction} key={index} />
-                                ))
+                                transactions.length === 0 ? 'No transactions yet' : (
+                                    <>
+                                        <thead>
+                                            <TableHeader tableHeadings={['Number', 'Type', 'Amount', 'Date']} />
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                transactions.map((transaction, index) => (
+                                                    <TableRow tableData={transaction} key={index} />
+                                                ))
+                                            }
+                                        </tbody>
+                                    </>
+                                )
                             }
-                        </tbody>
-                    </table>
+
+                        </table>
+                    </div>
                 </div>
             </div>
             <div className="text-light-black px-4 py-3">
                 <h2 className="font-semibold text-gray-900">Key</h2>
                 <div className="flex gap-5 flex-wrap mt-2">
                     <div className="flex items-center gap-3">
-                        <div className="bg-green-500 w-20 h-8"></div>
+                        <div className="bg-green-500 w-14 lg:w-20 h-6 lg:h-8"></div>
                         <span>Month is fully paid</span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="bg-orange-200 w-20 h-8 gap-3"></div>
+                        <div className="bg-orange-200 w-14 lg:w-20 h-6 lg:h-8 gap-3"></div>
                         <span>Month is partially paid</span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="bg-red-500 w-20 h-8"></div>
+                        <div className="bg-red-500 w-14 lg:w-20 h-6 lg:h-8"></div>
                         <span>Month is not paid</span>
                     </div>
                 </div>

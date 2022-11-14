@@ -75,7 +75,7 @@ export async function action({ request }) {
     if (advances.length > 0) {
         totalAdvance = advances.reduce((prev, current) => prev + current);
     }
-    console.log({ totalAdvance });
+    // console.log({ totalAdvance });
 
     if (amount > (employeeSalary - totalAdvance)) {
         throw new Response('Allowed amount exceeded!', {
@@ -206,7 +206,7 @@ export function CatchBoundary() {
     const caught = useCatch();
     return (
         <div>
-            <h1 className="font-bold text-3xl">Error!</h1>
+            <h1 className="font-bold text-lg lg:text-xl">Error!</h1>
             <p>Status: {caught.status}</p>
             <pre>
                 <code>{caught.data}</code>
@@ -221,7 +221,7 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }) {
     return (
         <div>
-            <h1 className="font-bold text-3xl">Error!</h1>
+            <h1 className="font-bold text-lg lg:text-xl">Error!</h1>
             <pre>{error.message}</pre>
         </div>
     )

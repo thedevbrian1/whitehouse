@@ -101,7 +101,7 @@ export function validatePhone(phone) {
 }
 
 export function validateNationalId(nationalId) {
-  if (typeof nationalId !== "string" || nationalId.length < 4) {
+  if (typeof nationalId !== "string" || nationalId.length < 4 || nationalId.length > 8) {
     return 'National id is invalid';
   }
 }

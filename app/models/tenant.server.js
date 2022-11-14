@@ -33,6 +33,7 @@ export async function getTenants() {
         include: {
             house: true,
             years: true,
+            transactions: true,
         }
     });
 }
@@ -45,6 +46,7 @@ export async function getTenant(tenantId) {
         include: {
             house: true,
             years: true,
+            transactions: true,
         }
     });
 }
@@ -57,6 +59,7 @@ export async function getTenantByMobile(mobile) {
         include: {
             house: true,
             years: true,
+            transactions: true
         }
     });
 }
@@ -69,6 +72,7 @@ export async function getTenantByEmail(email) {
         include: {
             house: true,
             years: true,
+            transactions: true
         }
     })
 }

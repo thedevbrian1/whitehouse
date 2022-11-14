@@ -89,7 +89,7 @@ export async function action({ request }) {
     if (advances.length > 0) {
         totalAdvance = advances.reduce((prev, current) => prev + current);
     }
-    console.log({ totalAdvance });
+    // console.log({ totalAdvance });
 
     if (amount + totalAdvance > 0.3 * employeeSalary) {
         throw new Response('Allowed amount exceeded!', {
@@ -223,13 +223,13 @@ export function CatchBoundary() {
     const caught = useCatch();
     return (
         <div>
-            <h1>Error!</h1>
+            <h1 className="font-bold text-lg">Error!</h1>
             <pre>
                 <code>
                     Status {caught.status}
                 </code>
             </pre>
-            <p>{caught.data}</p>
+            <p className="font-semibold">{caught.data}</p>
             <Link to="/dashboard/advances/new-entry" className="text-blue-500 underline">
                 Try again
             </Link>

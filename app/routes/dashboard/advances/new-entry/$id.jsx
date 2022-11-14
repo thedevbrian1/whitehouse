@@ -83,7 +83,7 @@ export default function AdvancePersonalDetails() {
 
     const formRef = useRef(null);
 
-    console.log({ data });
+    // console.log({ data });
     // function success() {
     //     return toast.success('Success!', {
     //         position: toast.POSITION.BOTTOM_RIGHT

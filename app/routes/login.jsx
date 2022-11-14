@@ -20,6 +20,19 @@ export async function loader({ request }) {
 }
 
 export async function action({ request }) {
+  const fs = require('fs');
+  let content = null;
+  let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+
+  // try {
+  //   if (!fs.existsSync('./logs')) {
+  //     fs.mkdir();
+  //   }
+
+  // } catch (error) {
+  //   console.error(error);
+  // }
+
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
@@ -62,6 +75,8 @@ export async function action({ request }) {
   } else {
     redirectTo = safeRedirect(formData.get("redirectTo"), "/user")
   }
+
+  logLoginDetails(email);
 
   return createUserSession({
     request,
@@ -199,4 +214,18 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+function logLoginDetails(email) {
+  const fs = require('fs');
+  let content = null;
+  const isAdmin = email === process.env.USER_EMAIL;
+
+  let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+  content = `${isAdmin ? 'Admin' : 'User ' + email} logged in successfully on ${date}.  \n`;
+  fs.appendFile('./infologs.txt', content, err => {
+    if (err) {
+      console.error(err);
+    }
+  });
 }

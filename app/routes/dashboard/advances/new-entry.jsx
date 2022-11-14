@@ -42,7 +42,7 @@ export default function Advance() {
                 <ArrowLeftIcon className="w-5 h-5 inline" /> Back to advances
             </Link>
             <Heading title='Advance' />
-            <div className="border border-red-500 grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
+            <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
                 <div>
                     <h2 className=" text-light-black text-md font-semibold">Select an employee to issue an advance</h2>
                     <InstantSearch searchClient={searchClient} indexName="employees">
@@ -65,11 +65,11 @@ export default function Advance() {
 function Hit({ hit }) {
     // console.log({ hit })
     return (
-        <Link to={`${hit.id}`}>
+        <Link to={`${hit.employeeId}`}>
             <p className="text-light-black">
                 <Highlight attribute="name" hit={hit} />
                 <br />
-                {hit.mobile}
+                {hit.phone}
             </p>
         </Link>
     )

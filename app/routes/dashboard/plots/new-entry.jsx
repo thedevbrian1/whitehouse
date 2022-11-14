@@ -8,11 +8,15 @@ import { createHouse } from "../../../models/house.server";
 import { redirect } from "@remix-run/server-runtime";
 import Input from "../../../components/Input";
 import { createUser } from "../../../models/user.server";
+import algoliasearch from "algoliasearch";
+
+const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
+const index = searchClient.initIndex('tenants');
 
 
 export async function loader() {
     const tenants = await getTenants();
-    console.log({ tenants });
+    // console.log({ tenants });
     return null;
 }
 export async function action({ request }) {
@@ -75,7 +79,13 @@ export async function action({ request }) {
 
     const user = await createUser(email, password);
 
+    const algoliaTenantRecord = { name, phone, tenantId, email, houseNo, plotNo };
+    const re = await index.saveObject(algoliaTenantRecord, { autoGenerateObjectIDIfNotExist: true });
+    // console.log({ re });
+
+
     return redirect('/dashboard/plots');
+    // TODO: Redirect to 
 }
 
 export default function NewTenantEntry() {
@@ -174,6 +184,7 @@ export default function NewTenantEntry() {
                                 type="number"
                                 name="nationalId"
                                 id="nationalId"
+                                maxLength={8}
                                 defaultValue={actionData?.fields.nationalId}
                                 className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.nationalId ? 'border-red-700' : 'border-gray-400'}`}
                             />
@@ -214,6 +225,8 @@ export default function NewTenantEntry() {
                                 type="number"
                                 name="plotNo"
                                 id="plotNo"
+                                min={1}
+                                max={67}
                                 defaultValue={actionData?.fields.salary}
                                 className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.plotNo ? 'border-red-700' : 'border-gray-400'}`}
                             />
@@ -337,5 +350,18 @@ export default function NewTenantEntry() {
                 </fieldset>
             </Form>
         </div>
-    )
+    );
 }
+
+// function logDetails(email, amount, transactionType) {
+//     const fs = require('fs');
+//     let content = null;
+
+//     let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+//     content = `User ${email} made ${transactionType} payment of Ksh ${amount} on ${date}.  \n`;
+//     fs.appendFile('./transactionLogs.txt', content, err => {
+//         if (err) {
+//             console.error(err);
+//         }
+//     });
+// }

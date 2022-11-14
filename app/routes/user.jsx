@@ -1,5 +1,6 @@
 import { CashIcon, HomeIcon } from "@heroicons/react/outline";
 import { Form, Link, NavLink, Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { useEffect, useState } from "react";
 import { getTenantByEmail } from "../models/tenant.server";
 import { requireUser } from "../session.server";
 
@@ -26,6 +27,23 @@ export async function loader({ request }) {
 
 export default function UserPage() {
     const data = useLoaderData();
+    const [time, setTime] = useState('');
+
+    function getFirstName() {
+        const shortName = data.split(' ');
+        return shortName[0];
+    }
+
+    function getDateAndTime() {
+        return new Date().toDateString() + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + new Date().toLocaleTimeString();
+    }
+
+    useEffect(() => {
+        let interval = setInterval(() => setTime(getDateAndTime()), 1000);
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
     return (
         <div className="h-full divide-solid divide-y">
 
@@ -41,9 +59,9 @@ export default function UserPage() {
                     </div>
                     <span className="hidden lg:inline font-semibold">White House</span>
                 </div>
-                <div className="lg:px-6 relative z-10 ml-14 lg:ml-72 flex justify-end items-center w-full  gap-x-4 lg:gap-x-12 ">
-                    <span>{new Date().toLocaleDateString()}</span>
-                    <span>Hi {data}</span>
+                <div className="px-6 relative z-10 ml-14 lg:ml-72 flex justify-end items-center w-full  gap-x-4 lg:gap-x-12 ">
+                    <span>{time}</span>
+                    <span>Hi {getFirstName()}</span>
                     <Form action="/logout" method="post">
                         <button
                             type="submit"
@@ -53,9 +71,6 @@ export default function UserPage() {
                         </button>
                     </Form>
                 </div>
-                {/* <div className="border border-slate-200 w-72 h-44 absolute right-3 top-14">
-
-                </div> */}
             </header>
             <main className="flex h-full">
                 <div className="h-full fixed top-0 left-0 w-14 lg:w-72 bg-[#F8F8F8] pt-20 pl-2 lg:pl-4">
@@ -83,7 +98,7 @@ export default function UserPage() {
                         </li>
                     </ul>
                 </div>
-                <div className="flex-1 ml-14 lg:ml-72 px-6 pt-4">
+                <div className="w-full flex-1 ml-14 lg:ml-72 px-6 pt-4">
                     <Outlet />
                 </div>
             </main>

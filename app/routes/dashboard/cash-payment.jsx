@@ -95,7 +95,7 @@ export default function CashPayment() {
 function Hit({ hit }) {
     // console.log({ hit })
     return (
-        <Link to={`${hit.id}`}>
+        <Link to={`${hit.tenantId}`}>
             {/* <p className="text-light-black">
                 <Highlight attribute="name" hit={hit} />
                 <br />
@@ -105,7 +105,7 @@ function Hit({ hit }) {
                 <p>
                     <Highlight attribute="name" hit={hit} />
                 </p>
-                <p>Plot {hit.house.plotNumber} / House {hit.house.houseNumber}</p>
+                <p>Plot {hit.plotNo} / House {hit.houseNo}</p>
             </div>
         </Link>
     )
@@ -124,4 +124,16 @@ export function CatchBoundary() {
             <p>{caught.data}</p>
         </div>
     );
+}
+
+// TODO: Insert error to logfile
+export function ErrorBoundary({ error }) {
+    return (
+        <div>
+            <h1 className="font-bold text-lg">Error</h1>
+            <p>{error.message}</p>
+            {/* <p>The stack trace is:</p>
+            <pre>{error.stack}</pre> */}
+        </div>
+    )
 }

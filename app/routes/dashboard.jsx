@@ -3,6 +3,7 @@ import { ChartBarIcon, HomeIcon, UsersIcon, NewspaperIcon, TicketIcon } from "@h
 // import { redirect } from "@remix-run/node";
 import { requireAdminUser } from "../session.server";
 import { getTenantByEmail } from "../models/tenant.server";
+import { useEffect, useState } from "react";
 
 export function meta() {
     return {
@@ -27,10 +28,27 @@ export default function Dashboard() {
     const data = useLoaderData();
     const transition = useTransition();
 
+    const [time, setTime] = useState('');
+
+    function getDateAndTime() {
+        return new Date().toDateString() + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + new Date().toLocaleTimeString();
+    }
+
+    function getFirstName() {
+        const shortName = data.split(' ');
+        return shortName[0];
+    }
+
+    useEffect(() => {
+        let interval = setInterval(() => setTime(getDateAndTime()), 1000);
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
     return (
         <div className="h-full divide-solid divide-y">
 
-            <header className="flex py-[14px]">
+            <header className="flex py-[14px] items-center">
                 <div className="w-14 lg:w-72 bg-[#F8F8F8] fixed z-10 items-center flex justify-between px-5">
                     <div className="w-5 h-5">
                         <img
@@ -42,8 +60,8 @@ export default function Dashboard() {
                     <span className="hidden lg:inline font-semibold">White House</span>
                 </div>
                 <div className="px-6 relative z-10 ml-14 lg:ml-72 flex items-center justify-end  w-full gap-x-4 lg:gap-x-12 text-sm lg:text-base">
-                    <span>{new Date().toLocaleDateString()}</span>
-                    <span>Hi {data}</span>
+                    <span className="hidden lg:flex">{time}</span>
+                    <span>Hi {getFirstName()}</span>
                     <Form action="/logout" method="post">
                         <button
                             type="submit"

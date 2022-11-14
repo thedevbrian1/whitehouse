@@ -7,6 +7,7 @@ import { getTenants } from "../../../models/tenant.server";
 import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../utils";
+import { createCashTransaction } from "../../../models/transaction.server";
 
 export function links() {
     return [
@@ -20,7 +21,7 @@ export function links() {
 export async function loader({ request }) {
     const session = await getSession(request);
     const successStatus = session.get('success');
-    console.log({ Month: new Date().toLocaleString('default', { month: 'long' }) });
+    // console.log({ Month: new Date().toLocaleString('default', { month: 'long' }).toLowerCase() });
     return json({ successStatus }, {
         headers: {
             "Set-Cookie": await sessionStorage.commitSession(session)
@@ -65,11 +66,37 @@ export async function action({ request }) {
         });
     }
     const tenantId = matchedTenant.id;
-    const res = await createTenantPayment(tenantId, amount);
-    console.log({ res });
+    let status = null;
+    //get amount
+    //check if month is paid
+    //if not paid, subtract 200 from amount
+    //update month to paid
+    //update arrears. Subtract remaining amount from arrears
+    //if arrears > 0 divide amount by 200 to get the no of months
+    //update the monthly status of the no of calculated unpaid months
+
+
+
+
+    //
+    // check if there are arrears
+    // if (amount >= 200) {
+    //     status = 'paid'
+    // } else if (amount > 0 && amount < 200) {
+    //     status = 'partial'
+    // } else if (amount === 0) {
+    //     status = 'not paid'
+    // }
+
+    const res = await createTenantPayment(tenantId, status);
+    const transaction = await createCashTransaction(Number(amount), 'Cash', tenantId);
+    // console.log({ transaction });
+    // console.log({ res });
 
     const session = await getSession(request);
     session.flash("success", true);
+
+    logPaymentDetails(matchedTenant.email, amount, 'Cash');
 
     return redirect('/dashboard/cash-payment', {
         headers: {
@@ -207,5 +234,18 @@ export function ErrorBoundary({ error }) {
             <p>The stack trace is:</p>
             <pre>{error.stack}</pre>
         </div>
-    )
+    );
+}
+
+function logPaymentDetails(email, amount, transactionType) {
+    const fs = require('fs');
+    let content = null;
+
+    let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+    content = `User ${email} made ${transactionType} payment of Ksh ${amount} on ${date}.  \n`;
+    fs.appendFile('./transactionLogs.txt', content, err => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }

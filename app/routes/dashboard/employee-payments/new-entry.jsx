@@ -77,11 +77,11 @@ export default function PayInFull() {
 function Hit({ hit }) {
     // console.log({ hit })
     return (
-        <Link to={`${hit.id}`}>
+        <Link to={`${hit.employeeId}`}>
             <p className="text-light-black">
                 <Highlight attribute="name" hit={hit} />
                 <br />
-                {hit.mobile}
+                {hit.phone}
             </p>
         </Link>
     )
