@@ -66,7 +66,7 @@ export function validateLoginEmail(email) {
 }
 
 export function validateEmail(email) {
-  if (typeof email !== "string" || email.length < 3 || !email.includes("@")) {
+  if (typeof email !== "string" || !email || email.length < 3 || !email.includes("@")) {
     return 'Email is invalid';
   }
 }
@@ -133,6 +133,12 @@ export function validateVehicleRegistration(registration) {
 export function validateAmount(salary) {
   if (typeof salary !== "string" || !salary) {
     return 'Amount is invalid';
+  }
+}
+
+export function validateCheckbox(value) {
+  if (typeof value !== "string") {
+    return 'Invalid value';
   }
 }
 

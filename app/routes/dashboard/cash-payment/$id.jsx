@@ -9,7 +9,7 @@ import { badRequest, validateName, validatePhone, validateAmount } from "../../.
 export async function loader({ params }) {
     const tenantId = params.id;
     const tenant = await getTenant(tenantId);
-    console.log({ tenant });
+    // console.log({ tenant });
     return tenant;
 }
 

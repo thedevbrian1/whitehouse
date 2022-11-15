@@ -37,7 +37,7 @@ export default function DashboardIndex() {
             amount: '50',
         },
     ];
-    const totalAmount = data.reduce((prev, current) => prev.amount + current.amount);
+    // const totalAmount = data.reduce((prev, current) => prev.amount + current.amount);
 
     return (
         <div className="grid md:grid-cols-2 gap-5 lg:w-3/4">

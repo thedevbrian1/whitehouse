@@ -65,6 +65,9 @@ export async function requireAdminUser(request) {
   if (user.email !== process.env.USER_EMAIL) {
     throw await logout(request);
   }
+  // else if (user.email !== process.env.SUPER_ADMIN_EMAIL) {
+  //   throw await logout(request);
+  // }
   return user;
 }
 

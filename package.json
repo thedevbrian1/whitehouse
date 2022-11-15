@@ -39,6 +39,7 @@
     "algoliasearch": "^4.14.2",
     "bcryptjs": "^2.4.3",
     "eslint-plugin-cypress": "^2.12.1",
+    "framer-motion": "^7.6.6",
     "gsap": "^3.11.3",
     "instantsearch.css": "^7.4.5",
     "isbot": "^3.5.0",

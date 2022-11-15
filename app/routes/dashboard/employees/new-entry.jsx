@@ -10,6 +10,7 @@ import Heading from "../../../components/Heading";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { badRequest, validateEmail, validateName, validateNationalId, validatePhone, validateAmount } from "../../../utils";
 import { createEmployee } from "../../../models/employee.server";
+import Label from "~/components/Label";
 
 const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
 const index = searchClient.initIndex('employees');
@@ -117,9 +118,10 @@ export default function NewEntry() {
             <Form method="post" className="w-4/5 sm:w-3/4 lg:max-w-5xl">
                 <fieldset className="grid lg:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="name" className="text-light-black">
+                        {/* <label htmlFor="name" className="text-light-black">
                             Name
-                        </label>
+                        </label> */}
+                        <Label htmlFor='name' text='Name' />
                         <input
                             ref={nameRef}
                             type="text"
@@ -138,9 +140,10 @@ export default function NewEntry() {
 
                     </div>
                     <div>
-                        <label htmlFor="phone" className="text-light-black">
+                        {/* <label htmlFor="phone" className="text-light-black">
                             Phone
-                        </label>
+                        </label> */}
+                        <Label htmlFor='phone' text='Phone' />
                         <input
                             ref={phoneRef}
                             type="text"
@@ -158,9 +161,10 @@ export default function NewEntry() {
                         }
                     </div>
                     <div>
-                        <label htmlFor="nationalId" className="text-light-black">
+                        {/* <label htmlFor="nationalId" className="text-light-black">
                             National Id
-                        </label>
+                        </label> */}
+                        <Label htmlFor='nationalId' text='National id' />
                         <input
                             ref={nationalIdRef}
                             type="number"
@@ -178,9 +182,10 @@ export default function NewEntry() {
                         }
                     </div>
                     <div>
-                        <label htmlFor="email" className="text-light-black">
+                        {/* <label htmlFor="email" className="text-light-black">
                             Email
-                        </label>
+                        </label> */}
+                        <Label htmlFor='email' text='Email' />
                         <input
                             ref={emailRef}
                             type="email"
@@ -198,9 +203,10 @@ export default function NewEntry() {
                         }
                     </div>
                     <div>
-                        <label htmlFor="salary" className="text-light-black">
+                        {/* <label htmlFor="salary" className="text-light-black">
                             Salary
-                        </label>
+                        </label> */}
+                        <Label htmlFor='salary' text='Salary' />
                         <input
                             ref={salaryRef}
                             type="text"

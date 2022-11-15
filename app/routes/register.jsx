@@ -8,6 +8,8 @@ import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { createUser } from "../models/user.server";
 // import { useState } from "react";
 import Input from "../components/Input";
+import Label from "~/components/Label";
+import { getSession } from "~/session.server";
 
 // TODO: Add toasts for user feedback
 // TODO: Make sure passwords don't match
@@ -19,7 +21,8 @@ export function meta() {
     };
 }
 
-export async function loader() {
+export async function loader({ request }) {
+    const session = await getSession(request);
 
     return null;
 }
@@ -36,16 +39,8 @@ export async function action({ request }) {
     const houseNo = formData.get('houseNo');
     const date = formData.get('date');
     const vehicleRegistration = formData.get('vehicleRegistration');
+    // const termsAndConditions = formData.get('termsAndConditions');
 
-    // const safariomRegex = /^(?:254|\+254|0)?([71](?:(?:0[0-8])|(?:[12][0-9])|(?:9[0-9])|(?:4[0-3])|(?:4[68]))[0-9]{6})$/;
-
-    // const airtelRegex = /^(?:254|\+254|0)?(7(?:(?:3[0-9])|(?:5[0-6])|(?:8[0-2])|(?:8[6-9]))[0-9]{6})$/;
-
-    // const telkomRegex = /^(?:254|\+254|0)?(77[0-9][0-9]{6})$/;
-
-    // const res = phone.match(telkomRegex);
-
-    // console.log({ res });
 
     const fields = {
         name,
@@ -116,6 +111,10 @@ export default function Register() {
     const passwordRef = useRef(null);
     const confirmPasswordRef = useRef(null);
 
+    function handleBlur() {
+
+    }
+
     useEffect(() => {
         nameRef.current?.focus();
 
@@ -153,9 +152,10 @@ export default function Register() {
                     <h3 className="font-semibold text-lg">Personal information</h3>
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-4 mt-2">
                         <div>
-                            <label htmlFor="name" className="text-black">
+                            {/* <label htmlFor="name" className="text-black">
                                 Full name *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='name' text='Full name *' />
                             <Input
                                 ref={nameRef}
                                 type="text"
@@ -163,12 +163,14 @@ export default function Register() {
                                 id="name"
                                 placeholder=""
                                 fieldError={actionData?.fieldErrors.name}
+                                onBlur={handleBlur}
                             />
                         </div>
                         <div>
-                            <label htmlFor="phone" className="text-black">
+                            {/* <label htmlFor="phone" className="text-black">
                                 Phone *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='phone' text='Phone *' />
                             <Input
                                 ref={phoneRef}
                                 type="text"
@@ -179,9 +181,10 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="nationalId" className="text-black">
+                            {/* <label htmlFor="nationalId" className="text-black">
                                 National Id *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='nationalId' text='National id *' />
                             <Input
                                 ref={nationalIdRef}
                                 type="number"
@@ -192,9 +195,10 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="plotNo" className="text-black">
+                            {/* <label htmlFor="plotNo" className="text-black">
                                 Plot number *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='plotNo' text='Plot number *' />
                             <Input
                                 ref={plotNoRef}
                                 type="number"
@@ -205,9 +209,10 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="houseNo" className="text-black">
+                            {/* <label htmlFor="houseNo" className="text-black">
                                 House number *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='houseNo' text='House number *' />
                             <Input
                                 ref={houseNoRef}
                                 type="text"
@@ -218,9 +223,10 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="date" className="text-black">
+                            {/* <label htmlFor="date" className="text-black">
                                 Move in date
-                            </label>
+                            </label> */}
+                            <Label htmlFor='date' text='Move in date' />
                             <Input
                                 ref={dateRef}
                                 type="date"
@@ -231,9 +237,10 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="vehicleRegistration" className="text-black">
+                            {/* <label htmlFor="vehicleRegistration" className="text-black">
                                 Vehicle registration
-                            </label>
+                            </label> */}
+                            <Label htmlFor='vehicleRegistration' text='Vehicle registration' />
                             <Input
                                 ref={vehicleRegRef}
                                 type="text"
@@ -248,9 +255,10 @@ export default function Register() {
                     <em>This info will be used to log in to the White House app</em>
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-4 mt-2">
                         <div>
-                            <label htmlFor="email" className="text-black">
+                            {/* <label htmlFor="email" className="text-black">
                                 Email *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='email' text='Email *' />
                             <Input
                                 ref={emailRef}
                                 type="email"
@@ -261,9 +269,10 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="password" className="text-black">
+                            {/* <label htmlFor="password" className="text-black">
                                 Password *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='password' text='password *' />
                             <Input
                                 ref={passwordRef}
                                 type="password"
@@ -274,9 +283,10 @@ export default function Register() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="confirmPassword" className="text-black">
+                            {/* <label htmlFor="confirmPassword" className="text-black">
                                 Confirm password *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='confirmPassword' text='Confirm password *' />
                             <Input
                                 ref={confirmPasswordRef}
                                 type="password"
@@ -287,6 +297,15 @@ export default function Register() {
                             />
 
                         </div>
+                    </div>
+                    <div className="space-x-2">
+                        <input
+                            required
+                            type="checkbox"
+                            name="termsAndConditions"
+                            id="termsAndConditions"
+                        />
+                        <label className="text-gray-600">I have read and agree to the &nbsp;<Link to="/terms-and-conditions" className="text-blue-600 underline hover:text-blue-500">Terms and conditions</Link></label>
                     </div>
                     <button type="submit" className="lg:mt-1 lg:col-span-2 bg-blue-600 px-6 py-2 text-white text-center w-full lg:w-1/2 justify-self-center rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Registering...' : 'Register'}

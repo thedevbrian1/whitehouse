@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
 import Input from "../../components/Input";
+import Label from "../../components/Label";
 import { getTenantByEmail } from "../../models/tenant.server";
 import { createTenantPayment } from "../../models/year.server";
 import { getSession, getUser, sessionStorage } from "../../session.server";
@@ -84,7 +85,7 @@ export async function action({ request }) {
         method: "post",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer XlimxxYej14YCTdttfSOJIQLQ9rG`
+            Authorization: `Bearer BO4dVwJ7FfAZTC3jKw0eA7Cn7gl5`
         },
         body: JSON.stringify({
             "BusinessShortCode": 174379,
@@ -95,9 +96,9 @@ export async function action({ request }) {
             "PartyA": modifiedPhone,
             "PartyB": 174379,
             "PhoneNumber": modifiedPhone,
-            "CallBackURL": "https://smooth-bottles-change-41-220-235-42.loca.lt/saf",
+            "CallBackURL": "https://whitehouse-7d4f.fly.dev/saf",
             "AccountReference": "WhiteHouse",
-            "TransactionDesc": "Payment of X"
+            "TransactionDesc": "Security Payment"
         })
     });
     // console.log({ res: await res.json() });
@@ -150,6 +151,7 @@ export default function Payment() {
     const phoneRef = useRef(null);
     const amountRef = useRef(null);
     const toastId = useRef(null);
+    const formRef = useRef(null);
 
     function info() {
         toastId.current = toast.info('Check your phone to complete the request', {
@@ -169,6 +171,12 @@ export default function Payment() {
             toast.dismiss(toastId.current);
         }
     }, [data]);
+
+    useEffect(() => {
+        if (transition.submission) {
+            formRef?.current.reset();
+        }
+    }, [transition.submission]);
 
     // let eventSourceData = useEventSource('/saf');
     // console.log({ eventSourceData });
@@ -195,10 +203,11 @@ export default function Payment() {
     // }, [eventSource]);
     return (
         <div className="max-w-md mx-auto space-y-10 py-12 lg:py-32">
-            <Form method="post" className="">
+            <Form method="post" ref={formRef}>
                 <fieldset>
                     <div>
-                        <label htmlFor="amount">Enter MPESA phone number</label>
+                        {/* <label htmlFor="phone" className="uppercase text-gray-500 pb-2">Enter MPESA phone number</label> */}
+                        <Label htmlFor='phone' text='Enter MPESA phone number' />
                         <Input
                             ref={phoneRef}
                             type="text"
@@ -209,7 +218,8 @@ export default function Payment() {
                         />
                     </div>
                     <div>
-                        <label htmlFor="amount">Enter amount</label>
+                        {/* <label htmlFor="amount" className="uppercase text-gray-600 pb-2">Enter amount</label> */}
+                        <Label htmlFor='amount' text='Enter amount' />
                         <Input
                             ref={amountRef}
                             type="number"

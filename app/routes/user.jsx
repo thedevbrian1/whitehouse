@@ -60,7 +60,7 @@ export default function UserPage() {
                     <span className="hidden lg:inline font-semibold">White House</span>
                 </div>
                 <div className="px-6 relative z-10 ml-14 lg:ml-72 flex justify-end items-center w-full  gap-x-4 lg:gap-x-12 ">
-                    <span>{time}</span>
+                    <span className="hidden lg:flex">{time}</span>
                     <span>Hi {getFirstName()}</span>
                     <Form action="/logout" method="post">
                         <button

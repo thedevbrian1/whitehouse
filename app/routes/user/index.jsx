@@ -86,7 +86,7 @@ export default function UserIndex() {
     });
     transactions.forEach((transaction, index) => transaction.splice(0, 0, index + 1));
     transactions.forEach((transaction) => transaction.splice(3, 1, new Date(transaction[3]).toDateString()));
-    console.log({ transactions });
+    // console.log({ transactions });
 
     const submit = useSubmit();
     function handleYearChange(event) {

@@ -3,6 +3,7 @@ import { json, redirect } from "@remix-run/server-runtime";
 import { useEffect, useRef, useTransition } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
+import Label from "~/components/Label";
 import { createAdvance, getAdvancesById } from "../../../../models/advance.server";
 import { getEmployees } from "../../../../models/employee.server";
 import { getSession, sessionStorage } from "../../../../session.server";
@@ -151,6 +152,7 @@ export default function AdvanceIndex() {
                         <label htmlFor="name" className="text-light-black">
                             Name
                         </label>
+                        {/* <Label htmlFor='name' text='Name' /> */}
                         <input
                             // ref={nameRef}
                             type="text"
@@ -172,6 +174,7 @@ export default function AdvanceIndex() {
                         <label htmlFor="phone" className="text-light-black">
                             Phone
                         </label>
+                        {/* <Label htmlFor='phone' text='Phone' /> */}
                         <input
                             // ref={phoneRef}
                             type="text"
@@ -193,6 +196,7 @@ export default function AdvanceIndex() {
                         <label htmlFor="amount" className="text-light-black">
                             Amount
                         </label>
+                        {/* <Label htmlFor='amount' text='Amount' /> */}
                         <input
                             // ref={salaryRef}
                             type="text"

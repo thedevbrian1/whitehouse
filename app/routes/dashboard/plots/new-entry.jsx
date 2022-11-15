@@ -9,6 +9,7 @@ import { redirect } from "@remix-run/server-runtime";
 import Input from "../../../components/Input";
 import { createUser } from "../../../models/user.server";
 import algoliasearch from "algoliasearch";
+import Label from "~/components/Label";
 
 const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
 const index = searchClient.initIndex('tenants');
@@ -135,9 +136,10 @@ export default function NewTenantEntry() {
                 <fieldset >
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-x-5">
                         <div>
-                            <label htmlFor="name" className="text-black">
+                            {/* <label htmlFor="name" className="text-black">
                                 Full name *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='name' text='Full name *' />
                             <input
                                 ref={nameRef}
                                 type="text"
@@ -156,9 +158,10 @@ export default function NewTenantEntry() {
 
                         </div>
                         <div>
-                            <label htmlFor="phone" className="text-black">
+                            {/* <label htmlFor="phone" className="text-black">
                                 Phone *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='phone' text='Phone *' />
                             <input
                                 ref={phoneRef}
                                 type="text"
@@ -176,9 +179,10 @@ export default function NewTenantEntry() {
                             }
                         </div>
                         <div>
-                            <label htmlFor="nationalId" className="text-black">
+                            {/* <label htmlFor="nationalId" className="text-black">
                                 National Id *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='nationalId' text='National id *' />
                             <input
                                 ref={nationalIdRef}
                                 type="number"
@@ -217,9 +221,10 @@ export default function NewTenantEntry() {
                         }
                     </div> */}
                         <div>
-                            <label htmlFor="plotNo" className="text-black">
+                            {/* <label htmlFor="plotNo" className="text-black">
                                 Plot number *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='plotNo' text='Plot number *' />
                             <input
                                 ref={plotNoRef}
                                 type="number"
@@ -239,9 +244,10 @@ export default function NewTenantEntry() {
                             }
                         </div>
                         <div>
-                            <label htmlFor="houseNo" className="text-black">
+                            {/* <label htmlFor="houseNo" className="text-black">
                                 House number *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='houseNo' text='House number *' />
                             <input
                                 ref={houseNoRef}
                                 type="text"
@@ -259,9 +265,10 @@ export default function NewTenantEntry() {
                             }
                         </div>
                         <div>
-                            <label htmlFor="date" className="text-black">
+                            {/* <label htmlFor="date" className="text-black">
                                 Move in date
-                            </label>
+                            </label> */}
+                            <Label htmlFor='date' text='Move in date' />
                             <input
                                 ref={dateRef}
                                 type="date"
@@ -279,9 +286,10 @@ export default function NewTenantEntry() {
                             }
                         </div>
                         <div>
-                            <label htmlFor="vehicleRegistration" className="text-black">
+                            {/* <label htmlFor="vehicleRegistration" className="text-black">
                                 Vehicle registration
-                            </label>
+                            </label> */}
+                            <Label htmlFor='vehicleRegistration' text='Vehicle registration' />
                             <input
                                 ref={vehicleRegRef}
                                 type="text"
@@ -304,9 +312,10 @@ export default function NewTenantEntry() {
                     <em>This info will be used to log in to the White House app</em>
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-4 mt-2">
                         <div>
-                            <label htmlFor="email" className="text-black">
-                                Email
-                            </label>
+                            {/* <label htmlFor="email" className="text-black">
+                                Email *
+                            </label> */}
+                            <Label htmlFor='email' text='Email *' />
                             <Input
                                 ref={emailRef}
                                 type="email"
@@ -317,9 +326,10 @@ export default function NewTenantEntry() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="password" className="text-black">
+                            {/* <label htmlFor="password" className="text-black">
                                 Password *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='password' text='Password *' />
                             <Input
                                 ref={passwordRef}
                                 type="password"
@@ -330,9 +340,10 @@ export default function NewTenantEntry() {
                             />
                         </div>
                         <div>
-                            <label htmlFor="confirmPassword" className="text-black">
+                            {/* <label htmlFor="confirmPassword" className="text-black">
                                 Confirm password *
-                            </label>
+                            </label> */}
+                            <Label htmlFor='confirmPassword' text='Confirm password *' />
                             <Input
                                 ref={confirmPasswordRef}
                                 type="password"
