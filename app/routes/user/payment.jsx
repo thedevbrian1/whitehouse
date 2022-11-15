@@ -85,7 +85,7 @@ export async function action({ request }) {
         method: "post",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer BO4dVwJ7FfAZTC3jKw0eA7Cn7gl5`
+            Authorization: `Bearer GrGxErwTkWGfop6QiYjog3btfKcp`
         },
         body: JSON.stringify({
             "BusinessShortCode": 174379,

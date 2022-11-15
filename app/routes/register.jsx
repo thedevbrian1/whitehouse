@@ -143,7 +143,14 @@ export default function Register() {
 
     return (
         <main className="w-4/5 lg:max-w-4xl mx-auto py-10 space-y-2">
-            <h1 className="font-bold text-2xl lg:text-4xl lg:text-center">White House Court</h1>
+            <div className="flex flex-col items-center space-y-2">
+                <div className="w-14 h-14">
+                    <img src="/W.svg" alt="W" className="w-full h-full" />
+                </div>
+                <h1 className="font-bold text-3xl lg:text-4xl text-center">White House Court</h1>
+
+            </div>
+            {/* <h1 className="font-bold text-2xl lg:text-4xl lg:text-center">White House Court</h1> */}
             <h2 className="font-semibold text-xl lg:text-2xl lg:text-center">Tenant registration form</h2>
             <p className="text-light-black lg:text-center">Fill in the details below to register as a tenant of White House court</p>
             <p className="text-light-black lg:text-center"><em>(Fields marked with * are compulsory)</em></p>
@@ -307,7 +314,7 @@ export default function Register() {
                         />
                         <label className="text-gray-600">I have read and agree to the &nbsp;<Link to="/terms-and-conditions" className="text-blue-600 underline hover:text-blue-500">Terms and conditions</Link></label>
                     </div>
-                    <button type="submit" className="lg:mt-1 lg:col-span-2 bg-blue-600 px-6 py-2 text-white text-center w-full lg:w-1/2 justify-self-center rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" className="mt-2 lg:col-span-2 bg-blue-600 px-6 py-2 text-white text-center w-full lg:w-1/2 justify-self-center rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Registering...' : 'Register'}
                     </button>
                 </fieldset>

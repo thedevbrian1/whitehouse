@@ -48,7 +48,7 @@ export default function UserPage() {
         <div className="h-full divide-solid divide-y">
 
             <header className="flex py-[14px]">
-                <div className="w-14 lg:w-72 bg-[#F8F8F8] fixed z-10 flex justify-between px-5">
+                <div className="w-14 lg:w-72 bg-[#F8F8F8] fixed z-10 flex justify-between px-3 lg:px-5">
                     {/* <span>Logo</span> */}
                     <div className="w-5 h-5">
                         <img
