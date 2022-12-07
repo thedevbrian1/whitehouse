@@ -92,6 +92,8 @@ export async function action({ request }) {
 
     const user = await createUser(email, password);
     // console.log({ res });
+    
+    logRegistrationDetails(name, email, phone, plotNo, houseNo);
 
     return redirect('/success');
 }
@@ -366,4 +368,18 @@ export function ErrorBoundary({ error }) {
             <pre>{error.stack}</pre>
         </div>
     )
+}
+
+function logRegistrationDetails(name, email, phone, plot, house) {
+    const fs = require('fs');
+    let content = null;
+
+    let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+    // content = `User ${email} made ${transactionType} payment of Ksh ${amount} transaction ID ${MPESACode} on ${date}.  \n`;
+    content = `New tanant ${name} of email ${email} and phone number ${phone} registered to ${plot}/${house} on  ${date}.  \n`;
+    fs.appendFile('./infologs.txt', content, err => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }
