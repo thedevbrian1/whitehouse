@@ -1,47 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id    String @id @default(cuid())
-  email String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  password Password?
-  notes    Note[]
+  id        String    @id @default(cuid())
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  notes     Note[]
+  password  Password?
 }
 
 model Password {
-  hash String
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hash   String
   userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
+  id        String   @id @default(cuid())
+  title     String
+  body      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Post {
-  slug     String @id
-  title    String
-  markdown String
-
+  slug      String   @id
+  title     String
+  markdown  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -52,33 +46,29 @@ model Tenant {
   mobile              String        @unique
   email               String?       @unique
   nationalId          Int
-  house               House?
   vehicleRegistration String?
-  years               Year[]
   arrears             Int?
   moveInDate          String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  house               House?
   transactions        Transaction[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  years               Year?
 }
 
 model House {
   id          String   @id @default(cuid())
   houseNumber String
   plotNumber  Int
-  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
   tenantId    String   @unique
   occupied    Boolean?
-  // arrears     Int?
-  // years       Year[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
 }
 
 model Year {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   year      Int
   january   String?
   february  String?
@@ -92,13 +82,10 @@ model Year {
   october   String?
   november  String?
   december  String?
-  // house     House   @relation(fields: [yearId], references: [id])
-  // yearId    String
-  tenant    Tenant  @relation(fields: [tenantId], references: [id])
-  tenantId  String  @unique
-
+  tenantId  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
 }
 
 model Employee {
@@ -108,31 +95,28 @@ model Employee {
   email      String?   @unique
   nationalId Int
   salary     Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   advance    Advance[]
   paid       Salary[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Advance {
   id         String    @id @default(cuid())
   amount     Int
-  Employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
 }
 
 model Salary {
   id         String    @id @default(cuid())
   amount     Int
-  Employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
 }
 
 model Transaction {
@@ -140,8 +124,7 @@ model Transaction {
   type      String
   amount    Int
   createdAt DateTime @default(now())
-  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
   tenantId  String?
-
   updatedAt DateTime @updatedAt
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
 }

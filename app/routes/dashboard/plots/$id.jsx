@@ -9,7 +9,7 @@ import Heading from "../../../components/Heading";
 export async function loader({ params }) {
     const tenantId = params.id;
     const tenant = await getTenant(tenantId);
-    // console.log({ tenant });
+    console.log({ tenant });
     if (!tenant) {
         throw new Response('Tenant details not found!', {
             status: 404
@@ -55,10 +55,12 @@ export default function House() {
     const actionData = useActionData();
     const data = useLoaderData();
     // console.log({ data });
-    const months = Object.entries(data.years[0]).slice(2, 14);
-    const years = data.years.map(year => {
-        return { year: year.year, id: year.id }
-    });
+    const months = Object.entries(data.years).slice(2, 14);
+
+    // COMMENTED OUT FOR NOW
+    // const years = data.years.map(year => {
+    //     return { year: year.year, id: year.id }
+    // });
 
     const submit = useSubmit();
     function handleYearChange(event) {
@@ -97,9 +99,10 @@ export default function House() {
                                     id="year"
                                     className="w-20 h-7 px-2 ml-3 bg-[#f8f8ff] border border-[#c0c0c0] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 >
-                                    {years.map(year => (
+                                    {/* {years.map(year => (
                                         <option value={year.year} key={year.id}>{year.year}</option>
-                                    ))}
+                                    ))} */}
+                                    <option value="2022">2022</option>
                                 </select>
                             </Form>
                         </div>

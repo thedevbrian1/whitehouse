@@ -4,6 +4,7 @@ export async function createHouse(plotNo, houseNo, tenantId) {
     // Check if house exists
     const houses = await getHouses();
     const match = houses.find(house => house.houseNumber === houseNo && house.plotNumber === plotNo);
+    // console.log(match);
 
     if (match) {
         throw new Response("House exists!", {
@@ -53,11 +54,12 @@ export async function getHouse(plotNo, houseNo) {
         where: {
             houseNumber: houseNo,
             plotNumber: Number(plotNo),
-        }
-        // include: {
-        //     tenant: true,
-        //     years: true
-        // },
+        },
+        //CHANGED HERE
+        include: {
+            tenant: true,
+            years: true
+        },
     });
 }
 
