@@ -226,6 +226,7 @@ export default function Payment() {
     return (
         <div className="max-w-md mx-auto space-y-6 py-8 lg:py-24">
             {/* <p>Payment details will go here</p> */}
+            <h2 className="font-semibold text-gray-900 text-lg">How To Pay using M-PESA</h2>
             <div className="space-y-2">
                 <p className="px-3 text-gray-500">1. Select Lipa na M-PESA in your M-PESA menu.</p>
                 <p className="px-3 text-gray-500">2. Select the <span className="font-weight:700">Pay Bill</span> option.</p>
@@ -240,7 +241,7 @@ export default function Payment() {
             </div>
             <Form method="post" ref={formRef}>
                 <fieldset>
-                    <Label htmlFor='MPESACode' className="font-weight-bold" text='Enter the transaction ID' />
+                    <Label htmlFor='MPESACode' className="font-weight-bold" text='Enter the MPESA Transaction Code' />
                     <Input
                         ref={phoneRef}
                         type="text"
@@ -263,7 +264,7 @@ export default function Payment() {
                     </div>
                     <div> */}
                         {/* <label htmlFor="amount" className="uppercase text-gray-600 pb-2">Enter amount</label> */}
-                        <div className="pt-3"><Label htmlFor='amount' className="pt-3" text='Enter Paid' />
+                        <div className="pt-3"><Label htmlFor='amount' className="pt-3" text='Confirm the Amount Paid' />
                         <Input
                             ref={amountRef}
                             type="number"
