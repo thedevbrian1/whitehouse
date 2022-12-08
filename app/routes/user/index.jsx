@@ -150,7 +150,7 @@ export default function UserIndex() {
 
                     <div className="mt-4 px-2 py-1">
                         <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between">
-                            <h2 className="font-bold text-gray-900 text-lg">Payment history</h2>
+                            <h2 className="font-semibold text-gray-900 text-lg">Payment history</h2>
                             <Form method="post" onChange={handleYearChange}>
                                 <label htmlFor="year">Select year:</label>
                                 <select
@@ -195,7 +195,7 @@ export default function UserIndex() {
                 </div>
                 <div className="lg:basis-1/2 border border-slate-200 px-4 py-3 rounded-lg">
                     {/* Transaction history */}
-                    <h2 className="font-bold text-gray-900 text-lg">Transaction history</h2>
+                    <h2 className="font-semibold text-gray-900 text-lg">Transaction history</h2>
                     <div className="max-w-xs md:max-w-none overflow-x-auto">
                         <table className="w-full mt-4">
                             {
