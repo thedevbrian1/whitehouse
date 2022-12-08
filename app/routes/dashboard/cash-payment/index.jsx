@@ -97,6 +97,7 @@ export async function action({ request }) {
     session.flash("success", true);
 
     logPaymentDetails(matchedTenant.email, amount, 'Cash');
+    console.log(matchedTenant.email);
 
     return redirect('/dashboard/cash-payment', {
         headers: {

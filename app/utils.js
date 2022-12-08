@@ -85,6 +85,12 @@ export function validateName(name) {
   }
 }
 
+export function validateMPESACode(code){
+  if (typeof code !== "string"|| code.length < 10){
+    return 'The M-PESA code provided is invalid';
+  }
+}
+
 export function validatePhone(phone) {
   // if (typeof phone !== "string" || phone.length < 10) {
   //   return 'Phone number is invalid';

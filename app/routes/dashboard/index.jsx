@@ -26,15 +26,15 @@ export default function DashboardIndex() {
         },
         {
             title: 'Monthly total',
-            amount: 'Ksh 50,000',
+            amount: 'Ksh 29,800',
         },
         {
-            title: 'Total vacant houses',
-            amount: '20',
+            title: 'Number of Tenants',
+            amount: '400',
         },
         {
             title: 'Total employees',
-            amount: '50',
+            amount: '6',
         },
     ];
     // const totalAmount = data.reduce((prev, current) => prev.amount + current.amount);
