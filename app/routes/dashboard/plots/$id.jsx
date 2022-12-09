@@ -9,7 +9,7 @@ import Heading from "../../../components/Heading";
 export async function loader({ params }) {
     const tenantId = params.id;
     const tenant = await getTenant(tenantId);
-    console.log({ tenant });
+    // console.log({ tenant });
     if (!tenant) {
         throw new Response('Tenant details not found!', {
             status: 404

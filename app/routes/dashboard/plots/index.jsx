@@ -9,6 +9,7 @@ import { createHouse, clearDatabase, getHouses, getSelectedHouses } from "../../
 
 // import { getTenants } from "../../../models/tenant.server";
 import { getSelectedTenants } from "~/models/tenant.server";
+
 export async function loader() {
 
     const houses = await getHouses();
@@ -31,9 +32,9 @@ export async function action({ request }) {
         const carRegistration = formData.get('carRegistration');
 
         const moveInDate = new Date(date);
-        console.log({ moveInDate });
+        // console.log({ moveInDate });
         const house = await createHouse(plotNo, houseNo, name, phone, email, moveInDate, carRegistration);
-        console.log({ house });
+        // console.log({ house });
         return null;
     }
 
@@ -43,7 +44,7 @@ export async function action({ request }) {
 
         // const houses = await getSelectedHouses(plot);
         const tenants = await getSelectedTenants(plot);
-        console.log({ tenants });
+        // console.log({ tenants });
         if (tenants.length === 0) {
             throw new Response('No registered tenants for this plot!', {
                 status: 404
@@ -69,7 +70,7 @@ export default function PlotsIndex() {
     const data = useLoaderData();
     // console.log({ data });
     const actionData = useActionData();
-    console.log({ actionData });
+    // console.log({ actionData });
     // TODO: Add search functionality for tenants
 
     let plots = [];
@@ -153,16 +154,11 @@ export default function PlotsIndex() {
                                             </thead>
                                             <tbody>
                                                 {actionData
-<<<<<<< HEAD
                                                     ? (actionData?.map(tenant => (
                                                         <TableRow tenant={tenant} key={tenant.id} />
-=======
-                                                    ? (actionData?.map((house) => (
-                                                        <TableRow house={house} key={house.id} />
->>>>>>> ca1ee7b8bb2a65fafd32cedc6cc0e85896d4594e
                                                     )))
                                                     // : plotOneTenants.map(tenant => (
-                                                        : plotOneHouses.map(house => (
+                                                    : plotOneHouses.map(house => (
                                                         <TableRow house={house} key={house.id} />
                                                     ))
                                                 }
@@ -203,17 +199,12 @@ function TableRow({ house }) {
             <td className="border border-slate-300 text-center">
                 {house.tenant.arrears}
             </td>
-<<<<<<< HEAD
             <td className="border border-slate-300 text-center px-6">
                 {tenant.transactions &&
                     (tenant.transactions ? 'N/A' :
                         new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString())
                     // 'Available'
                 }
-=======
-            <td className="border border-slate-300 text-center">
-                30/7/2022
->>>>>>> ca1ee7b8bb2a65fafd32cedc6cc0e85896d4594e
             </td>
         </tr>
     );
