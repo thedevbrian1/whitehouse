@@ -12,11 +12,11 @@ import { getSelectedTenants } from "~/models/tenant.server";
 
 export async function loader() {
 
-    const houses = await getHouses();
+    // const houses = await getHouses();
     const tenants = await getTenants();
 
-    // return tenants;
-    return houses;
+    return tenants;
+    // return houses;
 }
 export async function action({ request }) {
 
@@ -74,14 +74,14 @@ export default function PlotsIndex() {
     // TODO: Add search functionality for tenants
 
     let plots = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 67; i++) {
         plots.push(i + 1);
     }
 
     // console.log('Plots: ', plots);
 
-    // const plotOneTenants = data.filter(tenant => tenant.house.plotNumber === 1);
-    const plotOneHouses = data.filter(house => house.plotNumber === 1);
+    const plotOneTenants = data.filter(tenant => tenant.house.plotNumber === 1);
+    // const plotOneHouses = data.filter(house => house.plotNumber === 1);
 
     // console.log({ plotOneHouses });
 
@@ -116,8 +116,8 @@ export default function PlotsIndex() {
 
             <div className="mt-5 space-y-3">
                 {
-                    // plotOneTenants.length === 0 && !actionData
-                    plotOneHouses.length === 0 && !actionData
+                    plotOneTenants.length === 0 && !actionData
+                        // plotOneHouses.length === 0 && !actionData
                         ? <div className="flex flex-col items-center">
                             <div className="w-40 h-40">
                                 <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
@@ -157,9 +157,10 @@ export default function PlotsIndex() {
                                                     ? (actionData?.map(tenant => (
                                                         <TableRow tenant={tenant} key={tenant.id} />
                                                     )))
-                                                    // : plotOneTenants.map(tenant => (
-                                                    : plotOneHouses.map(house => (
-                                                        <TableRow house={house} key={house.id} />
+                                                    : plotOneTenants.map(tenant => (
+                                                        // : plotOneHouses.map(house => (
+                                                        // <TableRow house={house} key={house.id} />
+                                                        <TableRow tenant={tenant} key={tenant.id} />
                                                     ))
                                                 }
                                             </tbody>
@@ -175,74 +176,74 @@ export default function PlotsIndex() {
     );
 }
 
-function TableRow({ house }) {
-    console.log({ house });
-    return (
-        <tr>
-            <td className="border border-slate-300 text-center py-2">
-                {house.houseNumber}
-            </td>
-            <td className="border border-slate-300 text-center ">
-                <Link
-                    to={house.tenantId}
-                    className="hover:underline hover:text-blue-500"
-                >
-                    {house.tenant.name}
-                </Link>
-            </td>
-            <td className="border border-slate-300 text-center">
-                {house.tenant.mobile}
-            </td>
-            <td className="border border-slate-300 text-center">
-                {new Date(house.tenant.moveInDate).toLocaleDateString()}
-            </td>
-            <td className="border border-slate-300 text-center">
-                {house.tenant.arrears}
-            </td>
-            <td className="border border-slate-300 text-center px-6">
-                {tenant.transactions &&
-                    (tenant.transactions ? 'N/A' :
-                        new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString())
-                    // 'Available'
-                }
-            </td>
-        </tr>
-    );
-}
-
-// function TableRow({ tenant }) {
+// function TableRow({ house }) {
+//     console.log({ house });
 //     return (
-//         <tr className="text-sm lg:text-base">
-//             <td className="border border-slate-300 text-center py-2 px-6">
-//                 {tenant.house.houseNumber}
+//         <tr>
+//             <td className="border border-slate-300 text-center py-2">
+//                 {house.houseNumber}
 //             </td>
-//             <td className="border border-slate-300 text-center px-6 ">
+//             <td className="border border-slate-300 text-center ">
 //                 <Link
-//                     to={tenant.id}
+//                     to={house.tenantId}
 //                     className="hover:underline hover:text-blue-500"
 //                 >
-//                     {tenant.name}
+//                     {house.tenant.name}
 //                 </Link>
 //             </td>
-//             <td className="border border-slate-300 text-center px-6">
-//                 {tenant.mobile}
+//             <td className="border border-slate-300 text-center">
+//                 {house.tenant.mobile}
+//             </td>
+//             <td className="border border-slate-300 text-center">
+//                 {new Date(house.tenant.moveInDate).toLocaleDateString()}
+//             </td>
+//             <td className="border border-slate-300 text-center">
+//                 {house.tenant.arrears}
 //             </td>
 //             <td className="border border-slate-300 text-center px-6">
-//                 {new Date(tenant.moveInDate).toLocaleDateString()}
-//             </td>
-//             <td className="border border-slate-300 text-center px-6">
-//                 {tenant.arrears}
-//             </td>
-//             <td className="border border-slate-300 text-center px-6">
-
-//                 {tenant.transactions.length === 0 ? 'N/A' :
-//                     new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString()
+//                 {tenant.transactions &&
+//                     (tenant.transactions ? 'N/A' :
+//                         new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString())
 //                     // 'Available'
 //                 }
 //             </td>
 //         </tr>
 //     );
 // }
+
+function TableRow({ tenant }) {
+    return (
+        <tr className="text-sm lg:text-base">
+            <td className="border border-slate-300 text-center py-2 px-6">
+                {tenant.house.houseNumber}
+            </td>
+            <td className="border border-slate-300 text-center px-6 ">
+                <Link
+                    to={tenant.id}
+                    className="hover:underline hover:text-blue-500"
+                >
+                    {tenant.name}
+                </Link>
+            </td>
+            <td className="border border-slate-300 text-center px-6">
+                {tenant.mobile}
+            </td>
+            <td className="border border-slate-300 text-center px-6">
+                {new Date(tenant.moveInDate).toLocaleDateString()}
+            </td>
+            <td className="border border-slate-300 text-center px-6">
+                {tenant.arrears}
+            </td>
+            <td className="border border-slate-300 text-center px-6">
+
+                {tenant.transactions.length === 0 ? 'N/A' :
+                    new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString()
+                    // 'Available'
+                }
+            </td>
+        </tr>
+    );
+}
 
 // function Select({ plots }) {
 //     const fetcher = useFetcher();

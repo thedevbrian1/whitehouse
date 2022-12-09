@@ -85,7 +85,8 @@ export async function getSelectedTenants(plot) {
             }
         },
         include: {
-            house: true
+            house: true,
+            transactions: true
         }
     });
 }
