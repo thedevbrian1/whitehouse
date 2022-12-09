@@ -8,6 +8,7 @@ import { createAdvance, getAdvancesById } from "../../../../models/advance.serve
 import { getEmployees } from "../../../../models/employee.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../../utils";
+import { getCurrentTotalAdvance } from "./$id";
 
 export function links() {
     return [
@@ -81,18 +82,10 @@ export async function action({ request }) {
     }
     const employeeId = matchedEmployee.id;
     const employeeSalary = matchedEmployee.salary;
-    const employeeAdvances = await getAdvancesById(employeeId);
-    // const totalAdvance = employeeAdvances.reduce((previousValue, currentValue) => previousValue.amount + currentValue.amount);
-    const advances = employeeAdvances.map((advance) => {
-        return advance.amount
-    });
-    let totalAdvance = 0;
-    if (advances.length > 0) {
-        totalAdvance = advances.reduce((prev, current) => prev + current);
-    }
-    // console.log({ totalAdvance });
 
-    if (amount + totalAdvance > 0.3 * employeeSalary) {
+    const totalAdvance = getCurrentTotalAdvance(matchedEmployee);
+
+    if ((Number(amount) + totalAdvance) > (0.3 * employeeSalary)) {
         throw new Response('Allowed amount exceeded!', {
             status: 400
         });

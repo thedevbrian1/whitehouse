@@ -7,7 +7,7 @@ import TableHeader from "../../../components/TableHeader";
 // import { prisma } from "~/db.server";
 import { createHouse, clearDatabase, getHouses, getSelectedHouses } from "../../../models/house.server";
 // import { getTenants } from "../../../models/tenant.server";
-
+import { getSelectedTenants } from "~/models/tenant.server";
 export async function loader() {
 
     // const houses = await getHouses();
@@ -40,15 +40,16 @@ export async function action({ request }) {
         const plot = formData.get('plot');
         // console.log('Selected Plot: ', plot);
 
-        const houses = await getSelectedHouses(plot);
-        // console.log({ selected: houses.length });
-        if (houses.length === 0) {
+        // const houses = await getSelectedHouses(plot);
+        const tenants = await getSelectedTenants(plot);
+        console.log({ tenants });
+        if (tenants.length === 0) {
             throw new Response('No registered tenants for this plot!', {
                 status: 404
             });
         }
         // console.log('Matched houses: ', houses);
-        return houses;
+        return tenants;
     }
     if (action === 'clearDatabase') {
         const deletedRecords = await clearDatabase();
@@ -67,18 +68,8 @@ export default function PlotsIndex() {
     const data = useLoaderData();
     // console.log({ data });
     const actionData = useActionData();
-
+    console.log({ actionData });
     // TODO: Add search functionality for tenants
-
-    // const plots = data
-    //     .map((house) => {
-    //         let plotObj = {};
-    //         plotObj.plot = house.plotNumber;
-    //         plotObj.id = house.id;
-    //         return plotObj;
-    //     })
-    //     .sort((a, b) => a.plot - b.plot);
-
 
     let plots = [];
     for (let i = 0; i < 100; i++) {
@@ -90,32 +81,6 @@ export default function PlotsIndex() {
     const plotOneTenants = data.filter(tenant => tenant.house.plotNumber === 1);
 
     // console.log({ plotOneHouses });
-
-    // const mobilePlotOneHouses = plotOneHouses.map(house => {
-    //     return {
-    //         id: house.id,
-    //         houseNumber: house
-    //     }
-    // })
-    let finessedPlots = [];
-
-    // TODO: Remove the redundant plots
-    // for (let i = 0; i < plots.length; i++) {
-    //     if (plots[i].plot === plots[i + 1].plot) {
-    //         // plots.splice(i + 1, 1);
-    //         console.log('Duplicate plot')
-    //     }
-    //     // finessedPlots.push(plots[i]);
-    //     console.log('Plots in loop: ', plots[i].plot);
-    // }
-    // plots.forEach((plot, index) => {
-    //     if (plot.plot === plots[index + 1].plot) {
-    //         console.log('Duplicate at ', index + 1);
-    //     }
-    //     // console.log('Plot: ', plot.plot);
-    // })
-
-    // console.log({ finessedPlots });
 
     const transition = useTransition();
     // const fetcher = useFetcher();
@@ -177,7 +142,7 @@ export default function PlotsIndex() {
                                     </select>
                                 </Form>
                                 <div>
-                                    <h1 className="text-lg font-semibold">Plot {actionData ? actionData[0].tenant.plotNumber : 1} </h1>
+                                    <h1 className="text-lg font-semibold">Plot {actionData ? actionData[0].house.plotNumber : 1} </h1>
                                     <div className="max-w-xs sm:max-w-2xl md:max-w-3xl lg:max-w-none overflow-x-auto">
                                         <table className=" mt-2 border border-slate-400 border-collapse w-full table-auto">
                                             <thead>
@@ -185,7 +150,7 @@ export default function PlotsIndex() {
                                             </thead>
                                             <tbody>
                                                 {actionData
-                                                    ? (actionData?.map((tenant) => (
+                                                    ? (actionData?.map(tenant => (
                                                         <TableRow tenant={tenant} key={tenant.id} />
                                                     )))
                                                     : plotOneTenants.map(tenant => (
@@ -202,7 +167,7 @@ export default function PlotsIndex() {
 
             </div>
         </div>
-    )
+    );
 }
 
 function TableRow({ tenant }) {
@@ -229,9 +194,9 @@ function TableRow({ tenant }) {
                 {tenant.arrears}
             </td>
             <td className="border border-slate-300 text-center px-6">
-
-                {tenant.transactions.length === 0 ? 'N/A' :
-                    new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString()
+                {tenant.transactions &&
+                    (tenant.transactions ? 'N/A' :
+                        new Date(tenant.transactions[tenant.transactions.length - 1].createdAt).toDateString())
                     // 'Available'
                 }
             </td>

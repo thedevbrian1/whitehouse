@@ -2,7 +2,7 @@ import { useActionData } from "@remix-run/react";
 import { forwardRef, useRef, useState, useEffect } from "react";
 
 // TODO: Focus management
-const Input = forwardRef(({ type, name, id, placeholder, fieldError, onBlur }, ref) => {
+const Input = forwardRef(({ type, name, id, placeholder, fieldError, onBlur, defaultValue }, ref) => {
     // const actionData = useActionData();
     const [isClientError, setIsClientError] = useState(true);
     const errorState = isClientError && fieldError;
@@ -28,7 +28,7 @@ const Input = forwardRef(({ type, name, id, placeholder, fieldError, onBlur }, r
                 id={id}
                 placeholder={placeholder}
                 onChange={handleChange}
-                onBlur={onBlur}
+                onBlur={(event => onBlur(event))}
                 className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${errorState ? 'border-red-700' : 'border-gray-400'}`}
             />
             {

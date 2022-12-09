@@ -187,7 +187,7 @@ export default function UserIndex() {
                 </div>
                 <div className="lg:basis-1/2 border border-slate-200 px-4 py-3 rounded-lg">
                     {/* Transaction history */}
-                    <h2 className="font-bold text-gray-900 text-lg">Transaction history</h2>
+                    <h2 className="font-semibold text-gray-900 text-lg">Transaction history</h2>
                     <div className="max-w-xs md:max-w-none overflow-x-auto">
                         <table className="w-full mt-4">
                             {

@@ -13,7 +13,12 @@ export async function createEmployee(name, phone, email, nationalId, salary) {
 }
 
 export async function getEmployees() {
-    return prisma.employee.findMany();
+    return prisma.employee.findMany({
+        include: {
+            advance: true,
+            paid: true
+        }
+    });
 }
 
 export async function getEmployee(id) {

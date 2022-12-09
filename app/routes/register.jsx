@@ -1,6 +1,6 @@
-import { Form, Link, useActionData, useCatch, useTransition } from "@remix-run/react";
+import { Form, Link, useActionData, useCatch, useFetcher, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { createHouse } from "../models/house.server";
 import { createTenant } from "../models/tenant.server";
 import { badRequest, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePassword, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../utils";
@@ -99,6 +99,8 @@ export async function action({ request }) {
 export default function Register() {
     const actionData = useActionData();
     const transition = useTransition();
+    const fetcher = useFetcher();
+
 
     const nameRef = useRef(null);
     const phoneRef = useRef(null);
@@ -111,8 +113,11 @@ export default function Register() {
     const passwordRef = useRef(null);
     const confirmPasswordRef = useRef(null);
 
-    function handleBlur() {
-
+    function handleBlur(event) {
+        fetcher.submit(event.target.value, {
+            method: "post",
+            action: "/resources/user-details"
+        })
     }
 
     useEffect(() => {

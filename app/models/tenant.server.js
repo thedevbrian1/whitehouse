@@ -74,5 +74,18 @@ export async function getTenantByEmail(email) {
             years: true,
             transactions: true
         }
-    })
+    });
+}
+
+export async function getSelectedTenants(plot) {
+    return prisma.tenant.findMany({
+        where: {
+            house: {
+                plotNumber: Number(plot)
+            }
+        },
+        include: {
+            house: true
+        }
+    });
 }

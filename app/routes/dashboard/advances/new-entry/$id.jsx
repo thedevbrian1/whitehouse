@@ -45,18 +45,12 @@ export async function action({ request, params }) {
     // Get all advance values first
     const employee = await getEmployee(id);
     const employeeSalary = employee.salary;
-    const employeeAdvances = employee.advance.map((advance) => {
-        return advance.amount
-    });
+    const employeeAdvances = employee.advance;
 
-    let totalAdvance = 0;
-    if (employeeAdvances.length > 0) {
-        totalAdvance = employeeAdvances.reduce((prev, current) => prev + current);
-    }
-    // console.log({ totalAdvance });
+    const totalAdvance = getCurrentTotalAdvance(employee);
 
     // Check if the advance is within limit
-    if (amount + totalAdvance > 0.3 * employeeSalary) {
+    if (Number(amount) + totalAdvance > (0.3 * employeeSalary)) {
         throw new Response('Allowed amount exceeded!', {
             status: 400
         });
@@ -83,6 +77,11 @@ export default function AdvancePersonalDetails() {
 
     const formRef = useRef(null);
 
+    const maxAdvance = 0.3 * data.employee.salary;
+
+    const totalAdvance = getCurrentTotalAdvance(data.employee);
+
+    const allowedAdvance = maxAdvance - totalAdvance;
     // console.log({ data });
     // function success() {
     //     return toast.success('Success!', {
@@ -109,7 +108,7 @@ export default function AdvancePersonalDetails() {
             </div>
             <Form method="post" ref={formRef}>
                 <fieldset>
-                    <label htmlFor="amount">Enter amount: <i className="text-light-black">(Max limit Ksh 10000)</i></label>
+                    <label htmlFor="amount">Enter amount: <i className="text-light-black">(Max limit Ksh {allowedAdvance})</i></label>
                     <input
                         id="amount"
                         type="number"
@@ -133,17 +132,36 @@ export default function AdvancePersonalDetails() {
     );
 }
 
+export function getCurrentTotalAdvance(employee) {
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const currentAdvances = employee.advance.filter(advance => (new Date(advance.createdAt).getMonth() === currentMonth) && (new Date(advance.createdAt).getFullYear() === currentYear));
+
+    // console.log({ currentAdvances });
+
+    const advances = currentAdvances.map((advance) => {
+        return advance.amount
+    });
+
+    let totalAdvance = 0;
+    if (advances.length > 0) {
+        totalAdvance = advances.reduce((prev, current) => prev + current);
+    }
+    return totalAdvance;
+}
+
 export function CatchBoundary() {
     const caught = useCatch();
     return (
         <div>
-            <h1>Error!</h1>
+            <h1 className="font-bold text-lg">Error!</h1>
             <pre>
                 <code>
                     Status {caught.status}
                 </code>
             </pre>
-            <p>{caught.data}</p>
+            <p className="font-semibold">{caught.data}</p>
             <Link to="/dashboard/advances/new-entry" className="text-blue-500 underline">
                 Try again
             </Link>

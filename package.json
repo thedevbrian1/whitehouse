@@ -48,6 +48,7 @@
     "react-dom": "^18.2.0",
     "react-instantsearch-hooks-web": "^6.35.0",
     "react-toastify": "^9.0.8",
+    "spin-delay": "^1.2.0",
     "tiny-invariant": "^1.2.0"
   },
   "devDependencies": {

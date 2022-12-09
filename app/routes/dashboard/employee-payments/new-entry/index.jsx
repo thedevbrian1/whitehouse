@@ -8,6 +8,8 @@ import { getEmployees } from "../../../../models/employee.server";
 import { createSalaryPayment } from "../../../../models/salary.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../../utils";
+import { getCurrentTotalAdvance } from "../../advances/new-entry/$id";
+import { getTotalCurrentPaidAmount } from "./$id";
 
 export function links() {
     return [
@@ -58,6 +60,9 @@ export async function action({ request }) {
 
     const employees = await getEmployees();
     const matchedEmployee = employees.find(tenant => tenant.mobile === phone);
+
+    // console.log({ matchedEmployee });
+
     if (!matchedEmployee) {
         throw new Response('Employee does not exist!', {
             status: 400
@@ -65,20 +70,23 @@ export async function action({ request }) {
     }
     const employeeId = matchedEmployee.id;
     const employeeSalary = matchedEmployee.salary;
+    const employeePaidAmount = matchedEmployee.paid;
 
-    const employeeAdvances = await getAdvancesById(employeeId);
-    // const totalAdvance = employeeAdvances.reduce((previousValue, currentValue) => previousValue.amount + currentValue.amount);
-    const advances = employeeAdvances.map((advance) => {
-        return advance.amount
-    });
-    let totalAdvance = 0;
-    if (advances.length > 0) {
-        totalAdvance = advances.reduce((prev, current) => prev + current);
-    }
-    // console.log({ totalAdvance });
+    // console.log({ employeePaidAmount });
 
-    if (amount > (employeeSalary - totalAdvance)) {
+    const totalCurrentPaidAmount = getTotalCurrentPaidAmount(matchedEmployee);
+    const totalAdvance = getCurrentTotalAdvance(matchedEmployee);
+
+    const totalPaidAmount = totalCurrentPaidAmount + totalAdvance;
+
+    if (Number(amount) > (employeeSalary - totalAdvance)) {
         throw new Response('Allowed amount exceeded!', {
+            status: 400
+        });
+    }
+
+    if (totalPaidAmount >= employeeSalary) {
+        throw new Response('Employee has been fully paid!', {
             status: 400
         });
     }

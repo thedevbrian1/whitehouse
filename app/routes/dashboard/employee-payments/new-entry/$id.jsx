@@ -3,6 +3,7 @@ import { redirect } from "@remix-run/server-runtime";
 import { getEmployee } from "../../../../models/employee.server";
 import { createSalaryPayment } from "../../../../models/salary.server";
 import { getSession, sessionStorage } from "../../../../session.server";
+import { getCurrentTotalAdvance } from "../../advances/new-entry/$id";
 
 export async function loader({ params }) {
     const id = params.id;
@@ -18,21 +19,22 @@ export async function action({ request }) {
     const employee = await getEmployee(employeeId);
     const employeeSalary = employee.salary;
 
-    // Check if there is any advance given
-    const employeeAdvances = employee.advance.map((advance) => {
-        return advance.amount
-    });
-    // TODO: Use the current month's advances
-    let totalAdvance = 0;
-    if (employeeAdvances.length > 0) {
-        totalAdvance = employeeAdvances.reduce((prev, current) => prev + current);
-    }
+    const totalCurrentPaidAmount = getTotalCurrentPaidAmount(employee);
+
+    const totalAdvance = getCurrentTotalAdvance(employee);
+
+    const totalPaidAmount = totalCurrentPaidAmount + totalAdvance;
 
     // console.log({ totalAdvance });
 
     // If there is an advance, subtract it from the salary
     const newSalary = employeeSalary - totalAdvance;
 
+    if (totalPaidAmount >= employeeSalary) {
+        throw new Response('Employee has been fully paid!', {
+            status: 400
+        });
+    }
     // Record the remaining amount in the db
     const res = await createSalaryPayment(employeeId, Number(newSalary));
 
@@ -58,12 +60,17 @@ export default function PaymentPersonalDetails() {
     const employeeAdvances = data.advance.map((advance) => {
         return advance.amount
     });
-    let totalAdvance = 0;
-    if (employeeAdvances.length > 0) {
-        totalAdvance = employeeAdvances.reduce((prev, current) => prev + current);
-    }
+    // let totalAdvance = 0;
+    // if (employeeAdvances.length > 0) {
+    //     totalAdvance = employeeAdvances.reduce((prev, current) => prev + current);
+    // }
 
-    const amountToBePaid = employeeSalary - totalAdvance;
+    const totalCurrentPaidAmount = getTotalCurrentPaidAmount(data);
+    const totalAdvance = getCurrentTotalAdvance(data);
+
+    const totalPaidAmount = totalCurrentPaidAmount + totalAdvance;
+
+    const amountToBePaid = (employeeSalary - totalPaidAmount) > 0 ? (employeeSalary - totalPaidAmount) : 0;
 
     return (
         <div className="px-3 py-2 space-y-2">
@@ -98,6 +105,21 @@ export default function PaymentPersonalDetails() {
             </Form>
         </div>
     );
+}
+
+export function getTotalCurrentPaidAmount(employee) {
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const currentPaidAmount = employee.paid.filter(amount => (new Date(amount.createdAt).getMonth() === currentMonth && (new Date(amount.createdAt).getFullYear() === currentYear)));
+    const amounts = currentPaidAmount.map(amount => {
+        return amount.amount;
+    });
+    let totalCurrentPaidAmount = 0;
+    if (amounts.length > 0) {
+        totalCurrentPaidAmount = amounts.reduce((prev, current) => prev + current);
+        console.log({ totalCurrentPaidAmount });
+    }
+    return totalCurrentPaidAmount;
 }
 
 export function CatchBoundary() {

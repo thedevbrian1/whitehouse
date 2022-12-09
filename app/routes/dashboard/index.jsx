@@ -29,7 +29,7 @@ export default function DashboardIndex() {
             amount: 'Ksh 50,000',
         },
         {
-            title: 'Total vacant houses',
+            title: 'Total registered tenants',
             amount: '20',
         },
         {
