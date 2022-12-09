@@ -1,10 +1,11 @@
 import { Form, useActionData, useLoaderData, useLocation, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/server-runtime";
 import { useEffect, useRef } from "react";
-import { getTenant } from "../../../models/tenant.server";
+import { getTenant, getTenantByMobile } from "../../../models/tenant.server";
 import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
 import { badRequest, validateName, validatePhone, validateAmount } from "../../../utils";
+import { createCashTransaction } from "../../../models/transaction.server";
 
 export async function loader({ params }) {
     const tenantId = params.id;
@@ -37,11 +38,15 @@ export async function action({ request, params }) {
     // Record amount in the database
     let status = 'paid';
     const res = await createTenantPayment(tenantId, status);
+    const transaction = await createCashTransaction(Number(amount), 'Cash', tenantId);
+    const matchedTenant = await getTenantByMobile(phone);
 
-    // console.log({ res });
+    console.log({ matchedTenant });
 
     const session = await getSession(request);
     session.flash("success", true);
+
+    logPaymentDetails(matchedTenant.email, amount, 'Cash');
 
     return redirect('/dashboard/cash-payment', {
         headers: {
@@ -134,4 +139,17 @@ export default function CashPaymentSlug() {
             </Form>
         </div>
     )
+}
+
+function logPaymentDetails(email, amount, transactionType) {
+    const fs = require('fs');
+    let content = null;
+
+    let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+    content = `User ${email} made ${transactionType} payment of Ksh ${amount} on ${date}.  \n`;
+    fs.appendFile('./transactionLogs.txt', content, err => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }

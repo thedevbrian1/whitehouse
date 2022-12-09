@@ -53,14 +53,18 @@ export async function action({ request, params }) {
     // Get specific year details from db
     const house = await getHouse(plotNo, houseNo);
 
-    const years = house.years;
-    // console.log('Years from action: ', years);
+    //CHANGED HERE
+    const years = house.tenant.years;
+
+    console.log('Years from action: ', years);
     // Compare year from the action with year from the database
     const matchedYear = years.find(year => year.year === Number(selectedYear));
     // console.log('Matched year: ', matchedYear);
-    const months = Object.entries(matchedYear).slice(2, 14);
+
+    //COMMENTED OUT FOR NOW
+    // const months = Object.entries(matchedYear).slice(2, 14);
     // console.log('Months from action: ', months);
-    return months;
+    // return months;
 }
 
 export default function UserIndex() {
@@ -71,14 +75,17 @@ export default function UserIndex() {
     // const formRef = useRef(null);
 
     // console.log('House: ', data);
-    const months = Object.entries(data.tenant.years[0]).slice(2, 14);
-    // console.log({ months });
-    const years = data.tenant.years.map(year => {
-        let yearObj = {};
-        yearObj.year = year.year,
-            yearObj.id = year.id
-        return yearObj;
-    });
+    const months = Object.entries(data.tenant.years).slice(2, 14);
+    console.log({ months });
+    console.log(typeof(data.tenant.years))
+
+    // commented out fro now
+    // const years = data.tenant.years.map(year => {
+    //     let yearObj = {};
+    //         yearObj.year = year.year,
+    //         yearObj.id = year.id
+    //     return yearObj;
+    // });
     // console.log({ years });
 
     const transactions = data.tenant.transactions.map((transaction) => {
@@ -143,7 +150,7 @@ export default function UserIndex() {
 
                     <div className="mt-4 px-2 py-1">
                         <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between">
-                            <h2 className="font-bold text-gray-900 text-lg">Payment history</h2>
+                            <h2 className="font-semibold text-gray-900 text-lg">Payment history</h2>
                             <Form method="post" onChange={handleYearChange}>
                                 <label htmlFor="year">Select year:</label>
                                 <select
@@ -151,9 +158,10 @@ export default function UserIndex() {
                                     id="year"
                                     className="w-20 h-7 px-2 ml-3 bg-[#f8f8ff] border border-[#c0c0c0] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 >
-                                    {years.map(year => (
+                                    {/* {years.map(year => (
                                         <option value={year.year} key={year.id}>{year.year}</option>
-                                    ))}
+                                    ))} */}
+                                        <option value="2022">2022</option>
                                 </select>
                             </Form>
                         </div>

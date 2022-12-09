@@ -92,6 +92,8 @@ export async function action({ request }) {
 
     const user = await createUser(email, password);
     // console.log({ res });
+    
+    logRegistrationDetails(name, email, phone, plotNo, houseNo);
 
     return redirect('/success');
 }
@@ -217,8 +219,16 @@ export default function Register() {
                                 name="plotNo"
                                 id="plotNo"
                                 placeholder=""
-                                fieldError={actionData?.fieldErrors.plotNo}
+                                // fieldError={actionData?.fieldErrors.plotNo}
+                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.plotNo ? 'border-red-700' : 'border-gray-400'}`}
                             />
+                            {
+                                actionData?.fieldErrors.plotNo
+                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
+                                        {actionData.fieldErrors.plotNo}
+                                    </span>)
+                                    : <>&nbsp;</>
+                            }
                         </div>
                         <div>
                             {/* <label htmlFor="houseNo" className="text-black">
@@ -317,7 +327,7 @@ export default function Register() {
                             name="termsAndConditions"
                             id="termsAndConditions"
                         />
-                        <label className="text-gray-600">I have read and agree to the &nbsp;<Link to="/terms-and-conditions" className="text-blue-600 underline hover:text-blue-500">Terms and conditions</Link></label>
+                        <label className="text-gray-600">I have read and agree to the &nbsp;<Link to="/terms-and-conditions"target="blank" className="text-blue-600 underline hover:text-blue-500">Terms and conditions</Link></label>
                     </div>
                     <button type="submit" className="mt-2 lg:col-span-2 bg-blue-600 px-6 py-2 text-white text-center w-full lg:w-1/2 justify-self-center rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Registering...' : 'Register'}
@@ -363,4 +373,18 @@ export function ErrorBoundary({ error }) {
             <pre>{error.stack}</pre>
         </div>
     )
+}
+
+function logRegistrationDetails(name, email, phone, plot, house) {
+    const fs = require('fs');
+    let content = null;
+
+    let date = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
+    // content = `User ${email} made ${transactionType} payment of Ksh ${amount} transaction ID ${MPESACode} on ${date}.  \n`;
+    content = `New tanant ${name} of email ${email} and phone number ${phone} registered to ${plot}/${house} on  ${date}.  \n`;
+    fs.appendFile('./infologs.txt', content, err => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }
