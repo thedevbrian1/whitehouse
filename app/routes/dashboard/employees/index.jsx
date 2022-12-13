@@ -3,24 +3,46 @@ import { Link, useLoaderData } from "@remix-run/react";
 // import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
 // import { VisuallyHidden } from "@reach/visually-hidden";
 import dialogStyles from "@reach/dialog/styles.css";
-
+import { toast, ToastContainer } from "react-toastify";
+import toastStyles from "react-toastify/dist/ReactToastify.css";
 import TableHeader from "../../../components/TableHeader";
 import TableRow from "../../../components/TableRow";
 import Heading from "../../../components/Heading";
 import { getEmployees } from "../../../models/employee.server";
+import { getSession, sessionStorage } from "~/session.server";
+import { json } from "@remix-run/server-runtime";
+import { useEffect, useRef } from "react";
 
 export function links() {
     return [
         {
             rel: "stylesheet",
             href: dialogStyles
+        },
+        {
+            rel: "stylesheet",
+            href: toastStyles
         }
     ];
 }
 
-export async function loader() {
+export async function loader({ request }) {
     const employees = await getEmployees();
-    return employees;
+    const session = await getSession(request);
+    const successStatus = session.get('success');
+
+    if (successStatus) {
+        return json({ employees, success: true }, {
+            headers: {
+                "Set-Cookie": await sessionStorage.commitSession(session)
+            }
+        })
+    }
+    return json({ employees }, {
+        headers: {
+            "Set-Cookie": await sessionStorage.commitSession(session)
+        }
+    });
 }
 
 export async function action({ request }) {
@@ -32,13 +54,30 @@ export async function action({ request }) {
 
 export default function EmployeesIndex() {
     const data = useLoaderData();
+    const toastId = useRef(null);
 
     const tableHeadings = ['Employee ID', 'Name', 'Phone number', 'Email', , 'National Id', 'Salary'];
-    const tableData = data.map((employee) => {
+    const tableData = data.employees.map((employee) => {
         return Object.values(employee).slice(1, 6)
     });
 
     tableData.forEach((employee, index) => employee.splice(0, 0, index + 1));
+
+    function success() {
+        toastId.current = toast.success('Employee added successfully!', {
+            position: toast.POSITION.BOTTOM_RIGHT
+        });
+    }
+
+    useEffect(() => {
+        if (data.success === true) {
+            success();
+        }
+
+        return () => {
+            toast.dismiss(toastId.current)
+        }
+    }, [data.success]);
 
     // console.log({ Employees: tableData });
 
@@ -106,6 +145,7 @@ export default function EmployeesIndex() {
                 <button type="submit" form="delete">Delete</button>
 
             </Dialog> */}
+            <ToastContainer />
         </div>
     );
 }

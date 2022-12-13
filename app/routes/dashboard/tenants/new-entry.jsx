@@ -1,18 +1,19 @@
 import { Form, Link, useActionData, useTransition } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
+import { useEffect, useRef } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import Heading from "../../../components/Heading";
-import { useEffect, useRef } from "react";
 import { badRequest, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../../../utils";
+import { getSession, sessionStorage } from "../../../session.server";
 import { createTenant, getTenants } from "../../../models/tenant.server";
-import { createHouse } from "../../../models/house.server";
-import { redirect } from "@remix-run/server-runtime";
-import Input from "../../../components/Input";
 import { createUser } from "../../../models/user.server";
-import algoliasearch from "algoliasearch";
+import { createHouse } from "../../../models/house.server";
+import Input from "../../../components/Input";
+// import algoliasearch from "algoliasearch";
 import Label from "~/components/Label";
 
-const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
-const index = searchClient.initIndex('tenants');
+// const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
+// const index = searchClient.initIndex('tenants');
 
 
 export async function loader() {
@@ -80,12 +81,18 @@ export async function action({ request }) {
 
     const user = await createUser(email, password);
 
-    const algoliaTenantRecord = { name, phone, tenantId, email, houseNo, plotNo };
-    const re = await index.saveObject(algoliaTenantRecord, { autoGenerateObjectIDIfNotExist: true });
+    // const algoliaTenantRecord = { name, phone, tenantId, email, houseNo, plotNo };
+    // const re = await index.saveObject(algoliaTenantRecord, { autoGenerateObjectIDIfNotExist: true });
     // console.log({ re });
 
+    const session = await getSession(request);
+    session.flash('success', true);
 
-    return redirect('/dashboard/plots');
+    return redirect('/dashboard/tenants', {
+        headers: {
+            "Set-Cookie": await sessionStorage.commitSession(session)
+        }
+    });
     // TODO: Redirect to 
 }
 

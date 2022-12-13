@@ -88,7 +88,7 @@ export default function Dashboard() {
                         </li>
                         <li className="h-12">
                             <NavLink
-                                to="plots"
+                                to="tenants"
                                 prefetch="intent"
                                 className={({ isActive }) => isActive ? 'text-blue-600 bg-white  h-full pl-1 flex items-center' : 'h-full pl-1 flex items-center'}>
                                 <HomeIcon className="w-5 h-5 inline" /> <span className="ml-2 hidden lg:inline">Tenants</span>

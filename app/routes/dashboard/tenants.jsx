@@ -27,7 +27,7 @@ export function CatchBoundary() {
                 Create new tenant
             </Link>
         </div>
-    )
+    );
 
 }
 
@@ -36,5 +36,5 @@ export function ErrorBoundary() {
         <div>
             Oops!! There was an error
         </div>
-    )
+    );
 }

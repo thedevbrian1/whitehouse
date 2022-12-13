@@ -1,7 +1,7 @@
 import { Form, Link, useActionData, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { useRef, useEffect } from "react";
-import algoliasearch from "algoliasearch";
+// import algoliasearch from "algoliasearch";
 
 // import { useState } from "react";
 // import { Dialog } from "@reach/dialog";
@@ -11,9 +11,10 @@ import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { badRequest, validateEmail, validateName, validateNationalId, validatePhone, validateAmount } from "../../../utils";
 import { createEmployee } from "../../../models/employee.server";
 import Label from "~/components/Label";
+import { getSession, sessionStorage } from "~/session.server";
 
-const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
-const index = searchClient.initIndex('employees');
+// const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
+// const index = searchClient.initIndex('employees');
 
 export async function action({ request }) {
     // const formData = Object.fromEntries(await request.formData());
@@ -53,13 +54,19 @@ export async function action({ request }) {
     const employee = await createEmployee(name, phone, email, nationalId, salary);
     const employeeId = employee.id;
 
-    const algoliaTenantRecord = { name, phone, employeeId, email };
-    const re = await index.saveObject(algoliaTenantRecord, { autoGenerateObjectIDIfNotExist: true });
+    const session = await getSession(request);
+    session.flash('success', true);
+    // const algoliaTenantRecord = { name, phone, employeeId, email };
+    // const re = await index.saveObject(algoliaTenantRecord, { autoGenerateObjectIDIfNotExist: true });
 
-    console.log({ re });
-    console.log({ employee });
+    // console.log({ re });
+    // console.log({ employee });
 
-    return redirect('/dashboard/employees');
+    return redirect('/dashboard/employees', {
+        headers: {
+            "Set-Cookie": await sessionStorage.commitSession(session)
+        }
+    });
 }
 // TODO: Index algolia after creating employee
 // Log file
@@ -68,7 +75,7 @@ export async function action({ request }) {
 // Handle excess payments
 // Generate reports
 // List of shame
-// Terms and conditions (in the registration form)
+
 export default function NewEntry() {
     const actionData = useActionData();
     const transition = useTransition();
@@ -230,5 +237,5 @@ export default function NewEntry() {
             </Form>
 
         </div>
-    )
+    );
 }

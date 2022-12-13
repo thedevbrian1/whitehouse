@@ -1,23 +1,49 @@
-import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/outline";
 import { Link, Form, useLoaderData, useTransition, useSubmit, useActionData, useCatch } from "@remix-run/react";
-import { useRef } from "react";
+import { json } from "@remix-run/node";
+import { useEffect, useRef } from "react";
+import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/outline";
+import { toast, ToastContainer } from "react-toastify";
+import toastStyles from "react-toastify/dist/ReactToastify.css";
 import { getTenants } from "~/models/tenant.server";
 import Heading from "../../../components/Heading";
 import TableHeader from "../../../components/TableHeader";
 // import { prisma } from "~/db.server";
-import { createHouse, clearDatabase, getHouses, getSelectedHouses } from "../../../models/house.server";
+import { createHouse, clearDatabase } from "../../../models/house.server";
 
 // import { getTenants } from "../../../models/tenant.server";
 import { getSelectedTenants } from "~/models/tenant.server";
+import { getSession, sessionStorage } from "../../../session.server";
 
-export async function loader() {
-
-    // const houses = await getHouses();
-    const tenants = await getTenants();
-
-    return tenants;
-    // return houses;
+export function links() {
+    return [
+        {
+            rel: "stylesheet",
+            href: toastStyles
+        }
+    ];
 }
+
+export async function loader({ request }) {
+    const tenants = await getTenants();
+    const session = await getSession(request);
+    const successStatus = session.get('success');
+
+    if (successStatus) {
+        return json({ tenants, success: true }, {
+            headers: {
+                "Set-Cookie": await sessionStorage.commitSession(session)
+            }
+        });
+    }
+
+
+    return json({ tenants }, {
+        headers: {
+            "Set-Cookie": await sessionStorage.commitSession(session)
+        }
+    });
+}
+
 export async function action({ request }) {
 
     const formData = await request.formData();
@@ -70,6 +96,7 @@ export default function PlotsIndex() {
     const data = useLoaderData();
     // console.log({ data });
     const actionData = useActionData();
+    const toastId = useRef(null);
     // console.log({ actionData });
     // TODO: Add search functionality for tenants
 
@@ -80,7 +107,7 @@ export default function PlotsIndex() {
 
     // console.log('Plots: ', plots);
 
-    const plotOneTenants = data.filter(tenant => tenant.house.plotNumber === 1);
+    const plotOneTenants = data.tenants.filter(tenant => tenant.house.plotNumber === 1);
     // const plotOneHouses = data.filter(house => house.plotNumber === 1);
 
     // console.log({ plotOneHouses });
@@ -99,6 +126,21 @@ export default function PlotsIndex() {
 
     const desktopTableHeadings = ['House number', 'Tenant name', 'Phone', 'Move in date', 'Total arrears', 'Last paid'];
     const mobileTableHeadings = ['H/No.', 'Name', 'Arrears', 'Last paid'];
+
+    function success() {
+        toastId.current = toast.success('Tenant added successfully!', {
+            position: toast.POSITION.BOTTOM_RIGHT
+        });
+    }
+
+    useEffect(() => {
+        if (data.success === true) {
+            success();
+        }
+        return () => {
+            toast.dismiss(toastId.current)
+        }
+    }, [data.success]);
     // useEffect(() => {
     //     if (!transition.submission) {
     //         formRef.current?.reset();
@@ -172,6 +214,7 @@ export default function PlotsIndex() {
                 }
 
             </div>
+            <ToastContainer />
         </div>
     );
 }
