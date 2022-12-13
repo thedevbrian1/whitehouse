@@ -33,5 +33,19 @@ export async function getEmployee(id) {
     });
 }
 
+export async function searchEmployees(query) {
+    return prisma.employee.findMany({
+        select: {
+            name: true,
+            mobile: true,
+            id: true,
+        },
+        where: {
+            OR: [{ name: { contains: query } }, { mobile: { contains: query } }],
+        },
+        take: 8,
+    });
+}
+
 
 

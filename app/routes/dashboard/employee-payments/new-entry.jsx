@@ -3,6 +3,7 @@ import { Link, Outlet, useTransition } from "@remix-run/react";
 import algoliasearch from "algoliasearch";
 import algoliaStyles from "instantsearch.css/themes/satellite.css";
 import { Highlight, Hits, InstantSearch, SearchBox } from "react-instantsearch-hooks-web";
+import { EmployeeCombobox } from "~/routes/resources/employees";
 import Heading from "../../../components/Heading";
 import { getEmployees } from "../../../models/employee.server";
 
@@ -44,15 +45,16 @@ export default function PayInFull() {
             </Link>
             <Heading title='Pay in full' />
             <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
-                <div>
+                <div className="space-y-4">
                     <h2 className=" text-light-black text-md font-semibold">Select an employee to pay in full</h2>
-                    <InstantSearch searchClient={searchClient} indexName="employees">
+                    {/* <InstantSearch searchClient={searchClient} indexName="employees">
                         <SearchBox />
                         <div className="max-h-96 overflow-y-scroll">
 
                             <Hits hitComponent={Hit} />
                         </div>
-                    </InstantSearch>
+                    </InstantSearch> */}
+                    <EmployeeCombobox />
                 </div>
                 <div className="w-full border border-slate-200 px-3 py-3 rounded-lg">
                     {/* Employee details */}

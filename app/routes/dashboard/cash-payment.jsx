@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { Highlight, Hits, InstantSearch, SearchBox } from "react-instantsearch-hooks-web";
 import Heading from "../../components/Heading";
 import { getTenants } from "../../models/tenant.server";
+import { TenantCombobox } from "../resources/tenants";
 
 const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
 const index = searchClient.initIndex('tenants');
@@ -62,15 +63,16 @@ export default function CashPayment() {
             </Link> */}
             <Heading title='Tenant cash payment' />
             <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
-                <div>
+                <div className="space-y-4">
                     <h2 className=" text-light-black text-md mb-2">Select a tenant to record cash payment</h2>
-                    <InstantSearch searchClient={searchClient} indexName="tenants">
+                    {/* <InstantSearch searchClient={searchClient} indexName="tenants">
                         <SearchBox ref={searchRef} />
                         <div className="max-h-96 overflow-y-scroll">
 
                             <Hits hitComponent={Hit} />
                         </div>
-                    </InstantSearch>
+                    </InstantSearch> */}
+                    <TenantCombobox />
                 </div>
                 <div className="w-full border border-slate-200 px-3 py-3 rounded-lg">
                     {/* Employee details */}

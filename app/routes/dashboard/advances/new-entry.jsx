@@ -4,6 +4,7 @@ import algoliasearch from "algoliasearch";
 import { Highlight, Hits, InstantSearch, SearchBox } from "react-instantsearch-hooks-web";
 import algoliaStyles from "instantsearch.css/themes/satellite.css";
 import Heading from "../../../components/Heading";
+import { EmployeeCombobox } from "../../resources/employees";
 
 // This works
 const searchClient = algoliasearch('KG5XNDOMR2', '6f538d8d106d0b4e0d5be4d7bfd92f29');
@@ -16,7 +17,11 @@ export function links() {
         {
             rel: "stylesheet",
             href: algoliaStyles
-        }
+        },
+        // {
+        //     rel: "stylesheet",
+        //     href: comboboxStyles
+        // }
     ];
 }
 export async function loader() {
@@ -43,15 +48,16 @@ export default function Advance() {
             </Link>
             <Heading title='Advance' />
             <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
-                <div>
+                <div className="space-y-4">
                     <h2 className=" text-light-black text-md font-semibold">Select an employee to issue an advance</h2>
-                    <InstantSearch searchClient={searchClient} indexName="employees">
+                    {/* <InstantSearch searchClient={searchClient} indexName="employees">
                         <SearchBox />
                         <div className="max-h-96 overflow-y-scroll">
 
                             <Hits hitComponent={Hit} />
                         </div>
-                    </InstantSearch>
+                    </InstantSearch> */}
+                    <EmployeeCombobox />
                 </div>
                 <div className="w-full border border-slate-200 px-3 py-3 rounded-lg">
                     {/* Employee details */}
@@ -73,4 +79,21 @@ function Hit({ hit }) {
             </p>
         </Link>
     )
+}
+export function CatchBoundary() {
+    const caught = useCatch();
+    return (
+        <div>
+            <h1 className="font-bold text-lg">Error!</h1>
+            <pre>
+                <code>
+                    Status {caught.status}
+                </code>
+            </pre>
+            <p className="font-semibold">{caught.data}</p>
+            <Link to="/dashboard/advances/new-entry" className="text-blue-500 underline">
+                Try again
+            </Link>
+        </div>
+    );
 }

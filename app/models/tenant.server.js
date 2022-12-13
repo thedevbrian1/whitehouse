@@ -90,3 +90,22 @@ export async function getSelectedTenants(plot) {
         }
     });
 }
+
+export async function searchTenants(query) {
+    return prisma.tenant.findMany({
+        select: {
+            name: true,
+            id: true,
+            house: {
+                select: {
+                    houseNumber: true,
+                    plotNumber: true,
+                }
+            },
+        },
+        where: {
+            OR: [{ name: { contains: query } }, { mobile: { contains: query } }],
+        },
+        take: 8,
+    });
+}
