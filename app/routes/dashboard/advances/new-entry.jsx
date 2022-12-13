@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { Link, Outlet } from "@remix-run/react";
+import { Link, Outlet, useCatch } from "@remix-run/react";
 import algoliasearch from "algoliasearch";
 import { Highlight, Hits, InstantSearch, SearchBox } from "react-instantsearch-hooks-web";
 import algoliaStyles from "instantsearch.css/themes/satellite.css";
