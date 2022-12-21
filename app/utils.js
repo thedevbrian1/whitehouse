@@ -85,10 +85,14 @@ export function validateName(name) {
   }
 }
 
-export function validateMPESACode(code){
-  if (typeof code !== "string"|| code.length < 10){
+export function validateMPESACode(code) {
+  if (typeof code !== "string" || code.length < 10) {
     return 'The M-PESA code provided is invalid';
   }
+}
+
+export function trimPhone(phone) {
+  return phone.replace(/\s+/g, '');
 }
 
 export function validatePhone(phone) {
