@@ -3,7 +3,7 @@ import { redirect } from "@remix-run/node";
 import { useRef, useEffect, useState } from "react";
 import { createHouse } from "../models/house.server";
 import { createTenant } from "../models/tenant.server";
-import { badRequest, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePassword, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../utils";
+import { badRequest, trimPhone, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePassword, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../utils";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { createUser } from "../models/user.server";
 // import { useState } from "react";
@@ -41,6 +41,7 @@ export async function action({ request }) {
     const vehicleRegistration = formData.get('vehicleRegistration');
     // const termsAndConditions = formData.get('termsAndConditions');
 
+    const trimmedPhone = trimPhone(phone);
 
     const fields = {
         name,
@@ -55,7 +56,7 @@ export async function action({ request }) {
 
     const fieldErrors = {
         name: validateName(name),
-        phone: validatePhone(phone),
+        phone: validatePhone(trimmedPhone),
         email: validateEmail(email),
         password: validatePassword(password),
         confirmPassword: validatePassword(confirmPassword),
@@ -67,6 +68,10 @@ export async function action({ request }) {
     };
 
 
+    // console.log({ phone });
+
+    // console.log({ trimmedPhone });
+    // return null;
     // // Return errors if any
     if (Object.values(fieldErrors).some(Boolean)) {
         return badRequest({ fields, fieldErrors });
@@ -92,7 +97,7 @@ export async function action({ request }) {
 
     const user = await createUser(email, password);
     // console.log({ res });
-    
+
     logRegistrationDetails(name, email, phone, plotNo, houseNo);
 
     return redirect('/success');
@@ -327,7 +332,7 @@ export default function Register() {
                             name="termsAndConditions"
                             id="termsAndConditions"
                         />
-                        <label className="text-gray-600">I have read and agree to the &nbsp;<Link to="/terms-and-conditions"target="blank" className="text-blue-600 underline hover:text-blue-500">Terms and conditions</Link></label>
+                        <label className="text-gray-600">I have read and agree to the &nbsp;<Link to="/terms-and-conditions" target="blank" className="text-blue-600 underline hover:text-blue-500">Terms and conditions</Link></label>
                     </div>
                     <button type="submit" className="mt-2 lg:col-span-2 bg-blue-600 px-6 py-2 text-white text-center w-full lg:w-1/2 justify-self-center rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Registering...' : 'Register'}

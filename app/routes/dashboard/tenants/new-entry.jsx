@@ -3,7 +3,7 @@ import { redirect } from "@remix-run/node";
 import { useEffect, useRef } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import Heading from "../../../components/Heading";
-import { badRequest, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../../../utils";
+import { badRequest, trimPhone, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../../../utils";
 import { getSession, sessionStorage } from "../../../session.server";
 import { createTenant, getTenants } from "../../../models/tenant.server";
 import { createUser } from "../../../models/user.server";
@@ -34,6 +34,8 @@ export async function action({ request }) {
     const password = formData.get('password');
     const confirmPassword = formData.get('confirmPassword');
 
+    const trimmedPhone = trimPhone(phone);
+
     const fields = {
         name,
         phone,
@@ -47,7 +49,7 @@ export async function action({ request }) {
 
     const fieldErrors = {
         name: validateName(name),
-        phone: validatePhone(phone),
+        phone: validatePhone(trimmedPhone),
         email: validateEmail(email),
         nationalId: validateNationalId(nationalId),
         plotNo: validatePlotNumber(Number(plotNo)),
@@ -55,6 +57,7 @@ export async function action({ request }) {
         moveInDate: validateDate(date),
         vehicleRegistration: validateVehicleRegistration(vehicleRegistration)
     };
+
 
     // Return errors if any
     if (Object.values(fieldErrors).some(Boolean)) {
