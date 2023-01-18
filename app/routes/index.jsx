@@ -12,6 +12,7 @@ export function meta() {
 export default function Index() {
   const user = useOptionalUser();
 
+  // TODO: Display message if no user is found in DB
   return (
     <main className="relative min-h-screen bg-white sm:flex sm:items-center sm:justify-center">
       <div className="relative w-screen sm:pb-16 sm:pt-8">

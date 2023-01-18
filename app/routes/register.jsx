@@ -5,7 +5,7 @@ import { createHouse } from "../models/house.server";
 import { createTenant } from "../models/tenant.server";
 import { badRequest, trimPhone, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePassword, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../utils";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { createUser } from "../models/user.server";
+import { createUser, isEmailUsed } from "../models/user.server";
 // import { useState } from "react";
 import Input from "../components/Input";
 import Label from "~/components/Label";
@@ -87,6 +87,12 @@ export async function action({ request }) {
     }
 
     // const moveInDate = new Date(date).toISOString();
+    const usedEmail = await isEmailUsed(email);
+    if (usedEmail) {
+        throw new Response('Email has been used. Try another email', {
+            status: 400
+        });
+    }
 
     const tenant = await createTenant(name, phone, email, Number(nationalId), date, vehicleRegistration);
 

@@ -159,7 +159,10 @@ export function CatchBoundary() {
                 <pre>
                     <code>{caught.data}</code>
                 </pre>
-                <Link to="/login" className="text-blue-500 underline">Back to login</Link>
+                {/* <Link to="/login" className="text-blue-500 underline">Back to login</Link> */}
+                <Form method="post" action="/logout">
+                    <button className="text-blue-500 underline">Go back home</button>
+                </Form>
             </div>
         </div>
     );

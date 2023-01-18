@@ -54,3 +54,15 @@ export async function verifyLogin(email, password) {
 
   return userWithoutPassword;
 }
+
+export async function isEmailUsed(email) {
+  const userEmail = await prisma.user.findUnique({
+    where: {
+      email
+    }
+  });
+  if (!userEmail) {
+    return false;
+  }
+  return true;
+}

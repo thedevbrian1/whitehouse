@@ -6,7 +6,7 @@ import Heading from "../../../components/Heading";
 import { badRequest, trimPhone, validateDate, validateEmail, validateHouseNumber, validateName, validateNationalId, validatePhone, validatePlotNumber, validateVehicleRegistration } from "../../../utils";
 import { getSession, sessionStorage } from "../../../session.server";
 import { createTenant, getTenants } from "../../../models/tenant.server";
-import { createUser } from "../../../models/user.server";
+import { createUser, isEmailUsed } from "../../../models/user.server";
 import { createHouse } from "../../../models/house.server";
 import Input from "../../../components/Input";
 // import algoliasearch from "algoliasearch";
@@ -74,6 +74,13 @@ export async function action({ request }) {
     }
 
     const moveInDate = new Date(date);
+
+    const usedEmail = await isEmailUsed(email);
+    if (usedEmail) {
+        throw new Response('Email has been used. Try another email', {
+            status: 400
+        });
+    }
 
     const tenant = await createTenant(name, phone, email, Number(nationalId), moveInDate, vehicleRegistration);
 
