@@ -326,7 +326,7 @@ export function CatchBoundary() {
                     </code>
                 </pre>
                 <div className="flex gap-5">
-                    <Link to="/dashboard/plots" className="text-blue-500 underline">
+                    <Link to="/dashboard/tenants" className="text-blue-500 underline">
                         <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
                     </Link>
                     <Link to="new-entry" className="text-blue-500 underline">

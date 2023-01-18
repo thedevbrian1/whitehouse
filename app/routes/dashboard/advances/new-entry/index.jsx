@@ -28,7 +28,7 @@ export async function loader({ request }) {
             headers: {
                 "Set-Cookie": await sessionStorage.commitSession(session)
             }
-        })
+        });
     }
     return json('', {
         headers: {

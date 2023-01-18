@@ -16,13 +16,13 @@ export async function loader({ request }) {
     const userEmail = user.email;
     const tenant = await getTenantByEmail(userEmail);
     // console.log({ tenant });
-    // if (!tenant) {
-    //     throw new Response('User details not found!', {
-    //         status: 404
-    //     });
-    // }
+    if (!tenant) {
+        throw new Response('User details not found!', {
+            status: 404
+        });
+    }
     return tenant.name;
-    // return 'Briana'
+
 }
 
 export default function UserPage() {
