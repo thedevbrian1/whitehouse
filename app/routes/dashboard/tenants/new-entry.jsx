@@ -82,7 +82,16 @@ export async function action({ request }) {
         });
     }
 
-    const tenant = await createTenant(name, phone, email, Number(nationalId), moveInDate, vehicleRegistration);
+    let modifiedPhone = null;
+
+    if (trimmedPhone.length === 12) {
+        modifiedPhone = '0' + trimmedPhone.slice(3);
+        console.log({ modifiedPhone });
+    } else if (trimmedPhone.length === 10) {
+        modifiedPhone = trimmedPhone;
+    }
+
+    const tenant = await createTenant(name, modifiedPhone, email, Number(nationalId), moveInDate, vehicleRegistration);
 
     const tenantId = tenant.id;
 
