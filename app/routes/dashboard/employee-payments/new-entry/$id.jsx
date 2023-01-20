@@ -1,13 +1,13 @@
 import { Form, Link, useCatch, useLoaderData, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/server-runtime";
-import { getEmployee, getEmployeeById } from "../../../../models/employee.server";
+import { getEmployeeById } from "../../../../models/employee.server";
 import { createSalaryPayment } from "../../../../models/salary.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { getCurrentTotalAdvance } from "../../advances/new-entry/$id";
 
 export async function loader({ params }) {
     const id = params.id;
-    const employee = await getEmployee(id);
+    const employee = await getEmployeeById(id);
     return employee;
 }
 

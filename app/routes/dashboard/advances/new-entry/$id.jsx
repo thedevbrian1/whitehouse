@@ -2,7 +2,7 @@ import { Form, Link, useActionData, useCatch, useLoaderData, useTransition } fro
 import { json, redirect } from "@remix-run/server-runtime";
 import { useEffect, useRef } from "react";
 import { createAdvance } from "../../../../models/advance.server";
-import { getEmployee, getEmployeeById } from "../../../../models/employee.server";
+import { getEmployeeById } from "../../../../models/employee.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount } from "../../../../utils";
 
@@ -20,7 +20,7 @@ export async function loader({ request, params }) {
     // const successStatus = session.get('success');
     // console.log({ successStatus });
     const id = params.id;
-    const employee = await getEmployee(id);
+    const employee = await getEmployeeById(id);
     // console.log({ employee });
     return json({ employee }, {
         headers: {
