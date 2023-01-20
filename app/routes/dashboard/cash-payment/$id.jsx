@@ -41,7 +41,6 @@ export async function action({ request, params }) {
     const transaction = await createCashTransaction(Number(amount), 'Cash', tenantId);
     const matchedTenant = await getTenantByMobile(phone);
 
-    console.log({ matchedTenant });
 
     const session = await getSession(request);
     session.flash("success", true);
