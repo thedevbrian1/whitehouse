@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
 import { getAdvancesById } from "../../../../models/advance.server";
-import { getEmployees } from "../../../../models/employee.server";
+import { getEmployeeByMobile, getEmployees } from "../../../../models/employee.server";
 import { createSalaryPayment } from "../../../../models/salary.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../../utils";
@@ -58,8 +58,7 @@ export async function action({ request }) {
 
     // Record payment in the database
 
-    const employees = await getEmployees();
-    const matchedEmployee = employees.find(tenant => tenant.mobile === phone);
+    const matchedEmployee = await getEmployeeByMobile(phone);
 
     // console.log({ matchedEmployee });
 

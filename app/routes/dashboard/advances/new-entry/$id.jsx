@@ -2,7 +2,7 @@ import { Form, Link, useActionData, useCatch, useLoaderData, useTransition } fro
 import { json, redirect } from "@remix-run/server-runtime";
 import { useEffect, useRef } from "react";
 import { createAdvance } from "../../../../models/advance.server";
-import { getEmployee } from "../../../../models/employee.server";
+import { getEmployee, getEmployeeById } from "../../../../models/employee.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount } from "../../../../utils";
 
@@ -43,7 +43,7 @@ export async function action({ request, params }) {
     }
 
     // Get all advance values first
-    const employee = await getEmployee(id);
+    const employee = await getEmployeeById(id);
     const employeeSalary = employee.salary;
     const employeeAdvances = employee.advance;
 

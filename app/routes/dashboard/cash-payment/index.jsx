@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
-import { getTenants } from "../../../models/tenant.server";
+import { getTenantByMobile } from "../../../models/tenant.server";
 import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../utils";
@@ -30,9 +30,6 @@ export async function loader({ request }) {
 }
 
 export async function action({ request }) {
-    // throw new Response('Tenant does not exist!', {
-    //     status: 404
-    // });
     const formData = await request.formData();
     const name = formData.get('name');
     const phone = formData.get('phone');
@@ -58,8 +55,7 @@ export async function action({ request }) {
 
     // Record payment in the database
 
-    const tenants = await getTenants();
-    const matchedTenant = tenants.find(tenant => tenant.mobile === phone);
+    const matchedTenant = await getTenantByMobile(phone);
     if (!matchedTenant) {
         throw new Response('Tenant does not exist!', {
             status: 400

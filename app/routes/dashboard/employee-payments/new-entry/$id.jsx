@@ -1,6 +1,6 @@
 import { Form, Link, useCatch, useLoaderData, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/server-runtime";
-import { getEmployee } from "../../../../models/employee.server";
+import { getEmployee, getEmployeeById } from "../../../../models/employee.server";
 import { createSalaryPayment } from "../../../../models/salary.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { getCurrentTotalAdvance } from "../../advances/new-entry/$id";
@@ -16,7 +16,7 @@ export async function action({ request }) {
     const employeeId = formData.get('employeeId');
 
     // Get employee salary from db
-    const employee = await getEmployee(employeeId);
+    const employee = await getEmployeeById(employeeId);
     const employeeSalary = employee.salary;
 
     const totalCurrentPaidAmount = getTotalCurrentPaidAmount(employee);

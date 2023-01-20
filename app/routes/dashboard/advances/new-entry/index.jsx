@@ -4,8 +4,8 @@ import { useEffect, useRef, useTransition } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
 import Label from "~/components/Label";
-import { createAdvance, getAdvancesById } from "../../../../models/advance.server";
-import { getEmployees } from "../../../../models/employee.server";
+import { createAdvance } from "../../../../models/advance.server";
+import { getEmployeeByMobile } from "../../../../models/employee.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../../utils";
 import { getCurrentTotalAdvance } from "./$id";
@@ -75,8 +75,7 @@ export async function action({ request }) {
     // }
     // const tenantId = matchedTenant.id;
 
-    const employees = await getEmployees();
-    const matchedEmployee = employees.find(employee => employee.mobile === phone);
+    const matchedEmployee = await getEmployeeByMobile();
     if (!matchedEmployee) {
         throw new Response('Employee does not exist');
     }

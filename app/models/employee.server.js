@@ -21,10 +21,22 @@ export async function getEmployees() {
     });
 }
 
-export async function getEmployee(id) {
+export async function getEmployeeById(id) {
     return prisma.employee.findUnique({
         where: {
             id
+        },
+        include: {
+            advance: true,
+            paid: true,
+        }
+    });
+}
+
+export async function getEmployeeByMobile(phone) {
+    return prisma.employee.findFirst({
+        where: {
+            mobile: phone
         },
         include: {
             advance: true,
