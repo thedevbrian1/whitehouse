@@ -139,6 +139,7 @@ export default function AdvanceIndex() {
             {/* <button onClick={success}>Notify!</button> */}
             <h2 className="text-light-black font-semibold">Enter employee details below</h2>
             <Form method="post" className="" ref={formRef}>
+                {/* TODO: Clear form after successful transaction */}
                 <fieldset className="space-y-1">
                     <div>
                         <label htmlFor="name" className="text-light-black">
