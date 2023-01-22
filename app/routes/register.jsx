@@ -78,6 +78,8 @@ export async function action({ request }) {
         return badRequest({ fields, fieldErrors });
     }
 
+    return null;
+
     if (password !== confirmPassword) {
         // console.log({ match: password === confirmPassword });
         return badRequest({
@@ -241,16 +243,9 @@ export default function Register() {
                                 name="plotNo"
                                 id="plotNo"
                                 placeholder=""
-                                // fieldError={actionData?.fieldErrors.plotNo}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.plotNo ? 'border-red-700' : 'border-gray-400'}`}
+                                fieldError={actionData?.fieldErrors.plotNo}
                             />
-                            {
-                                actionData?.fieldErrors.plotNo
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.plotNo}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
+
                         </div>
                         <div>
                             {/* <label htmlFor="houseNo" className="text-black">
