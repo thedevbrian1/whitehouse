@@ -1,4 +1,4 @@
-import { Form, useActionData, useCatch, useLoaderData, useTransition } from "@remix-run/react";
+import { Form, Link, useActionData, useCatch, useLoaderData, useTransition } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,6 +8,7 @@ import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../utils";
 import { createCashTransaction } from "../../../models/transaction.server";
+import Input from "~/components/Input";
 
 export function links() {
     return [
@@ -61,6 +62,13 @@ export async function action({ request }) {
             status: 400
         });
     }
+
+    if (name !== matchedTenant.name) {
+        throw new Response('Name and phone do not match!', {
+            status: 400
+        });
+    }
+
     const tenantId = matchedTenant.id;
     let status = null;
     //get amount
@@ -139,63 +147,43 @@ export default function CashPaymentIndex() {
                         <label htmlFor="name" className="text-light-black">
                             Name
                         </label>
-                        <input
+                        <Input
                             // ref={nameRef}
                             type="text"
                             name="name"
                             id="name"
-                            defaultValue={actionData?.fields.name}
-                            className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='John Doe'
+                            fieldError={actionData?.fieldErrors.name}
                         />
-                        {
-                            actionData?.fieldErrors.name
-                                ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                    {actionData.fieldErrors.name}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
 
                     </div>
                     <div>
                         <label htmlFor="phone" className="text-light-black">
                             Phone
                         </label>
-                        <input
+                        <Input
                             // ref={phoneRef}
                             type="text"
                             name="phone"
                             id="phone"
-                            defaultValue={actionData?.fields.phone}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='0712 345 678'
+                            fieldError={actionData?.fieldErrors.phone}
                         />
-                        {
-                            actionData?.fieldErrors.phone
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.phone}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
+
                     </div>
 
                     <div>
                         <label htmlFor="amount" className="text-light-black">
                             Amount
                         </label>
-                        <input
+                        <Input
                             // ref={salaryRef}
                             type="text"
                             name="amount"
                             id="amount"
-                            defaultValue={actionData?.fields.amount}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.amount ? 'border-red-700' : 'border-gray-400'}`}
+                            fieldError={actionData?.fieldErrors.amount}
                         />
-                        {
-                            actionData?.fieldErrors.amount
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.amount}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
+
                     </div>
                     <button type="submit" className="bg-blue-600 px-6 py-2 text-white text-center w-full rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Processing...' : 'Pay'}
@@ -218,18 +206,19 @@ export function CatchBoundary() {
                     {caught.data}
                 </code>
             </pre>
-
+            <Link to="." className="text-blue-500 underline">
+                Try again
+            </Link>
         </div>
     );
 }
 
 export function ErrorBoundary({ error }) {
+    console.error(error);
     return (
         <div>
             <h1>Error!</h1>
             <p>{error.message}</p>
-            <p>The stack trace is:</p>
-            <pre>{error.stack}</pre>
         </div>
     );
 }

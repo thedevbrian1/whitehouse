@@ -3,6 +3,7 @@ import { json, redirect } from "@remix-run/server-runtime";
 import { useEffect, useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
+import Input from "~/components/Input";
 import { getAdvancesById } from "../../../../models/advance.server";
 import { getEmployeeByMobile, getEmployees } from "../../../../models/employee.server";
 import { createSalaryPayment } from "../../../../models/salary.server";
@@ -67,6 +68,12 @@ export async function action({ request }) {
             status: 400
         });
     }
+
+    if (name !== matchedEmployee.name) {
+        throw new Response('Name and phone do not match!', {
+            status: 400
+        });
+    }
     const employeeId = matchedEmployee.id;
     const employeeSalary = matchedEmployee.salary;
     const employeePaidAmount = matchedEmployee.paid;
@@ -85,7 +92,7 @@ export async function action({ request }) {
     }
 
     if (totalPaidAmount >= employeeSalary) {
-        throw new Response('Employee has been fully paid!', {
+        throw new Response(`${matchedEmployee.name} has been fully paid!`, {
             status: 400
         });
     }
@@ -120,7 +127,9 @@ export default function PayInFullIndex() {
     }
 
     useEffect(() => {
-        formRef.current?.reset();
+        if (!actionData?.fieldErrors) {
+            formRef.current?.reset();
+        }
     }, [transition.submission]);
 
     useEffect(() => {
@@ -141,63 +150,39 @@ export default function PayInFullIndex() {
                         <label htmlFor="name" className="text-light-black">
                             Name
                         </label>
-                        <input
+                        <Input
                             // ref={nameRef}
                             type="text"
                             name="name"
                             id="name"
-                            defaultValue={actionData?.fields.name}
-                            className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='John Doe'
+                            fieldError={actionData?.fieldErrors.name}
                         />
-                        {
-                            actionData?.fieldErrors.name
-                                ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                    {actionData.fieldErrors.name}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-
                     </div>
                     <div>
                         <label htmlFor="phone" className="text-light-black">
                             Phone
                         </label>
-                        <input
+                        <Input
                             // ref={phoneRef}
                             type="text"
                             name="phone"
                             id="phone"
-                            defaultValue={actionData?.fields.phone}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='0712 345 678' fieldError={actionData?.fieldErrors.phone}
                         />
-                        {
-                            actionData?.fieldErrors.phone
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.phone}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
                     </div>
 
                     <div>
                         <label htmlFor="amount" className="text-light-black">
                             Amount
                         </label>
-                        <input
+                        <Input
                             // ref={salaryRef}
                             type="text"
                             name="amount"
                             id="amount"
-                            defaultValue={actionData?.fields.amount}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.amount ? 'border-red-700' : 'border-gray-400'}`}
+                            fieldError={actionData?.fieldErrors.amount}
                         />
-                        {
-                            actionData?.fieldErrors.amount
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.amount}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
                     </div>
                     <button type="submit" className="bg-blue-600 px-6 py-2 text-white text-center w-full rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Processing...' : 'Pay'}

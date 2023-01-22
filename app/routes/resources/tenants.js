@@ -21,9 +21,11 @@ export async function loader({ request }) {
     await requireUser(request);
     const url = new URL(request.url);
     const query = url.searchParams.get('query');
-    console.log({ query });
+
     invariant(typeof query === 'string', 'query is required');
-    const tenants = await searchTenants(query);
+
+    let trimmedQuery = query.trim().split(' ').join('');
+    const tenants = await searchTenants(trimmedQuery);
     if (!tenants) {
         throw new Response('No employees found!', {
             status: 404

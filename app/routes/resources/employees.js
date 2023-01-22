@@ -22,9 +22,11 @@ export async function loader({ request }) {
     await requireUser(request);
     const url = new URL(request.url);
     const query = url.searchParams.get('query');
-    console.log({ query });
+
     invariant(typeof query === 'string', 'query is required');
-    const employees = await searchEmployees(query);
+
+    let trimmedQuery = query.trim().split(' ').join('');
+    const employees = await searchEmployees(trimmedQuery);
     if (!employees) {
         throw new Response('No employees found!', {
             status: 404
