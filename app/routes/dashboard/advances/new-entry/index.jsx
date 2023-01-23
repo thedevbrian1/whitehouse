@@ -138,8 +138,8 @@ export default function AdvanceIndex() {
     }, [data.success]);
 
     return (
-        <div>
-            <h2 className="text-light-black font-semibold">Enter employee details below</h2>
+        <div className="px-3 py-2 space-y-2">
+            <h2 className="text-light-black text-lg font-semibold">Enter employee details below</h2>
             <Form method="post" ref={formRef}>
                 <fieldset className="space-y-1">
                     <div>

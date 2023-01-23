@@ -96,7 +96,7 @@ export default function NewEntry() {
                 <ArrowLeftIcon className="w-5 h-5 inline" /> Back to employees
             </Link>
             <Heading title='Add Employee' />
-            <p className="text-light-black">Enter employee details below</p>
+            <h2 className=" text-light-black text-lg font-semibold">Enter employee details below</h2>
             <Form method="post" className="w-4/5 sm:w-3/4 lg:max-w-5xl">
                 <fieldset className="grid lg:grid-cols-2 gap-4">
                     <div>

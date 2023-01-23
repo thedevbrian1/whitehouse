@@ -18,7 +18,7 @@ export default function Advance() {
             <Heading title='Advance' />
             <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
                 <div className="space-y-4">
-                    <h2 className=" text-light-black text-md font-semibold">Select an employee to issue an advance</h2>
+                    <h2 className=" text-light-black text-lg font-semibold">Select an employee to issue an advance</h2>
                     <EmployeeCombobox />
                 </div>
                 <div className="w-full border border-slate-200 px-3 py-3 rounded-lg">

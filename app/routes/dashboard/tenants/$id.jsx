@@ -3,12 +3,12 @@ import { Form, Link, useActionData, useCatch, useLoaderData, useSubmit } from "@
 import { getHouse } from "../../../models/house.server";
 import TableHeader from "../../../components/TableHeader";
 import TableRow from "../../../components/TableRow";
-import { getTenant } from "../../../models/tenant.server";
+import { getTenantById } from "../../../models/tenant.server";
 import Heading from "../../../components/Heading";
 
 export async function loader({ params }) {
     const tenantId = params.id;
-    const tenant = await getTenant(tenantId);
+    const tenant = await getTenantById(tenantId);
     // console.log({ tenant });
     if (!tenant) {
         throw new Response('Tenant details not found!', {

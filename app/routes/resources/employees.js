@@ -1,6 +1,5 @@
 import { json } from "@remix-run/node";
-import { Form, Link, useFetcher } from "@remix-run/react";
-import { useId } from "react";
+import { Link, useFetcher } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { Combobox, ComboboxInput, ComboboxList, ComboboxOption, ComboboxPopover } from "@reach/combobox";
 import comboboxStyles from "@reach/combobox/styles.css";
@@ -37,9 +36,6 @@ export async function loader({ request }) {
 
 export function EmployeeCombobox() {
     const fetcher = useFetcher();
-    console.log({ data: fetcher.data });
-    const id = useId();
-    const employees = [];
 
     const busy = fetcher.state != 'idle';
     const showSpinner = useSpinDelay(busy, {
@@ -56,10 +52,6 @@ export function EmployeeCombobox() {
                         onChange={(event) => fetcher.submit(event.target.form)}
                         className="w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    {/* {fetcher.state === "submitting"
-                        ? 
-                        : null
-                    } */}
                     <Spinner showSpinner={showSpinner} />
                 </div>
                 {fetcher.data
@@ -99,21 +91,6 @@ export function EmployeeCombobox() {
         </fetcher.Form>
     )
 }
-
-// export default function Example() {
-//     const exFetcher = useFetcher();
-//     return (
-//         <Form method="get" action="/resources/employees">
-//             <input
-//                 name="query"
-//                 type="text"
-//                 className="border border-black"
-//                 onChange={(event) => exFetcher.submit(event.target.form)}
-//             />
-//             <button>Submit</button>
-//         </Form>
-//     )
-// }
 
 
 

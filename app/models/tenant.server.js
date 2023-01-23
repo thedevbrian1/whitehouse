@@ -38,7 +38,7 @@ export async function getTenants() {
     });
 }
 
-export async function getTenant(tenantId) {
+export async function getTenantById(tenantId) {
     return prisma.tenant.findUnique({
         where: {
             id: tenantId

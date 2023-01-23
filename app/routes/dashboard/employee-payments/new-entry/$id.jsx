@@ -74,7 +74,7 @@ export default function PaymentPersonalDetails() {
 
     return (
         <div className="px-3 py-2 space-y-2">
-            <h2 className="font-semibold">Employee details</h2>
+            <h2 className="font-semibold text-lg text-light-black">Employee details</h2>
             <div className="text-gray-800">
                 <p>Name: &nbsp; <span className="text-light-black">{data.name}</span></p>
                 <p>Phone: &nbsp; <span className="text-light-black">{data.mobile}</span></p>
@@ -83,20 +83,6 @@ export default function PaymentPersonalDetails() {
             <p className="font-semibold text-light-black">Amount to be paid: <span className="font-bold text-black">{amountToBePaid}</span></p>
             <Form method="post">
                 <fieldset>
-                    {/* <label htmlFor="amount">Enter amount <i>(Max limit Ksh 10000)</i></label>
-                    <input
-                        id="amount"
-                        type="number"
-                        name="amount"
-                        className="block w-full px-3 py-2 border border-gray-400 rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {
-                        actionData?.amount
-                            ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                {actionData.amount}
-                            </span>)
-                            : <>&nbsp;</>
-                    } */}
                     <input type="hidden" name="employeeId" value={data.id} />
                     <button className="bg-blue-600 px-6 py-2 text-white text-center w-full rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Processing...' : 'Pay'}

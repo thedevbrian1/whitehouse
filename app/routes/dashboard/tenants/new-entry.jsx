@@ -149,6 +149,8 @@ export default function NewTenantEntry() {
             </Link>
             <Heading title='Add tenant' />
             <p className="text-light-black"><em>(Fields marked with * are compulsory)</em></p>
+
+            <h2 className=" text-light-black text-lg font-semibold">Enter tenant details below</h2>
             <Form method="post">
                 <fieldset >
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-x-5">
@@ -235,8 +237,8 @@ export default function NewTenantEntry() {
                         </div>
 
                     </div>
-                    <h3 className="font-semibold text-lg">Account information</h3>
-                    <em>This info will be used to log in to the White House app</em>
+                    <h3 className="font-semibold text-lg text-light-black">Account information</h3>
+                    <em className="text-light-black">This info will be used to log in to the White House app</em>
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-4 mt-2">
                         <div>
                             <Label htmlFor='email' text='Email *' />

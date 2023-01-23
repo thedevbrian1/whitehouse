@@ -142,8 +142,8 @@ export default function PayInFullIndex() {
     }, [data]);
 
     return (
-        <div>
-            <h2 className="text-light-black font-semibold">Enter employee details below</h2>
+        <div className="px-3 py-2 space-y-2">
+            <h2 className="font-semibold text-lg text-light-black">Enter employee details below</h2>
             <Form method="post" className="" ref={formRef}>
                 <fieldset className="space-y-1">
                     <div>

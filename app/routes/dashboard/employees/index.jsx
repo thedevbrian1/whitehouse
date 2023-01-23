@@ -38,13 +38,6 @@ export async function loader({ request }) {
     });
 }
 
-export async function action({ request }) {
-    const formData = await request.formData();
-    const confirm = formData.get('confirm');
-    // console.log({ confirm });
-    return null;
-}
-
 export default function EmployeesIndex() {
     const data = useLoaderData();
     const toastId = useRef(null);
@@ -72,17 +65,6 @@ export default function EmployeesIndex() {
         }
     }, [data.success]);
 
-    // console.log({ Employees: tableData });
-
-    // const [showDialog, setShowDialog] = useState(false);
-
-    // function open() {
-    //     setShowDialog(true);
-    // }
-
-    // function close() {
-    //     setShowDialog(false);
-    // }
     return (
         <div className="space-y-4 lg:max-w-5xl mx-auto pr-10 lg:pr-0">
             <Heading title='Employees' />
