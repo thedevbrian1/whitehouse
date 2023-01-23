@@ -78,7 +78,6 @@ export async function action({ request }) {
         return badRequest({ fields, fieldErrors });
     }
 
-    return null;
 
     if (password !== confirmPassword) {
         // console.log({ match: password === confirmPassword });

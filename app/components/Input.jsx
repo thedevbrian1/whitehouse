@@ -16,6 +16,8 @@ const Input = forwardRef(({ type, name, id, placeholder, fieldError, onBlur, def
             setIsClientError(true);
         }
     }, [transition.submission]);
+
+    // FIXME: Fix flashing of error state when submitting
     return (
         <>
 

@@ -69,7 +69,9 @@ export async function action({ request }) {
 
     const matchedEmployee = await getEmployeeByMobile(phone);
     if (!matchedEmployee) {
-        throw new Response('Employee does not exist');
+        throw new Response('Employee does not exist', {
+            status: 400
+        });
     }
 
     if (name !== matchedEmployee.name) {

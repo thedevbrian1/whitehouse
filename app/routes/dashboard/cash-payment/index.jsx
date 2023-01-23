@@ -22,7 +22,6 @@ export function links() {
 export async function loader({ request }) {
     const session = await getSession(request);
     const successStatus = session.get('success');
-    // console.log({ Month: new Date().toLocaleString('default', { month: 'long' }).toLowerCase() });
     return json({ successStatus }, {
         headers: {
             "Set-Cookie": await sessionStorage.commitSession(session)

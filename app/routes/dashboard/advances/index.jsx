@@ -69,16 +69,6 @@ export default function Advances() {
                         </div>
                     )
             }
-            {/* <Dialog isOpen={showDialog} onDismiss={close}>
-                <button className="close-button" onClick={close}>
-                    <VisuallyHidden>Close</VisuallyHidden>
-                    <span aria-hidden>X</span>
-                </button>
-                <p>This is a dialog content</p>
-
-                <button type="submit" form="delete">Delete</button>
-
-            </Dialog> */}
         </div>
     );
 }

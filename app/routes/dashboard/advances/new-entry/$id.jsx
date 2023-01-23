@@ -6,22 +6,11 @@ import { getEmployeeById } from "../../../../models/employee.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount } from "../../../../utils";
 
-// export function links() {
-//     return [
-//         {
-//             rel: "stylesheet",
-//             href: toastStyles
-//         }
-//     ];
-// }
-
 export async function loader({ request, params }) {
     const session = await getSession(request);
-    // const successStatus = session.get('success');
-    // console.log({ successStatus });
     const id = params.id;
     const employee = await getEmployeeById(id);
-    // console.log({ employee });
+
     return json({ employee }, {
         headers: {
             "Set-Cookie": await sessionStorage.commitSession(session)
@@ -45,7 +34,6 @@ export async function action({ request, params }) {
     // Get all advance values first
     const employee = await getEmployeeById(id);
     const employeeSalary = employee.salary;
-    const employeeAdvances = employee.advance;
 
     const totalAdvance = getCurrentTotalAdvance(employee);
 
@@ -82,22 +70,11 @@ export default function AdvancePersonalDetails() {
     const totalAdvance = getCurrentTotalAdvance(data.employee);
 
     const allowedAdvance = maxAdvance - totalAdvance;
-    // console.log({ data });
-    // function success() {
-    //     return toast.success('Success!', {
-    //         position: toast.POSITION.BOTTOM_RIGHT
-    //     });
-    // }
 
     useEffect(() => {
         formRef.current?.reset();
     }, [transition.submission]);
 
-    // useEffect(() => {
-    //     if (data.successStatus === true) {
-    //         success();
-    //     }
-    // }, [data.successStatus]);
     return (
         <div className="px-3 py-2 space-y-2">
             <h2 className="font-semibold">Employee details</h2>
@@ -127,7 +104,6 @@ export default function AdvancePersonalDetails() {
                     </button>
                 </fieldset>
             </Form>
-            {/* <ToastContainer /> */}
         </div>
     );
 }

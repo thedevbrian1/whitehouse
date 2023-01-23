@@ -1,11 +1,6 @@
 import { Form, Link, useActionData, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { useRef, useEffect } from "react";
-// import algoliasearch from "algoliasearch";
-
-// import { useState } from "react";
-// import { Dialog } from "@reach/dialog";
-// import { VisuallyHidden } from "@reach/visually-hidden";
 import Heading from "../../../components/Heading";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { badRequest, validateEmail, validateName, validateNationalId, validatePhone, validateAmount } from "../../../utils";
@@ -14,13 +9,8 @@ import Label from "~/components/Label";
 import { getSession, sessionStorage } from "~/session.server";
 import Input from "~/components/Input";
 
-// const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
-// const index = searchClient.initIndex('employees');
 
 export async function action({ request }) {
-    // const formData = Object.fromEntries(await request.formData());
-    // const searchClient = algoliasearch(process.env.ALGOLIA_PROJECT_ID, process.env.ALGOLIA_ADMIN_API_KEY);
-    // const index = searchClient.initIndex('employees');
     const formData = await request.formData();
 
     const name = formData.get('name');
@@ -53,15 +43,9 @@ export async function action({ request }) {
 
     // Create new employee
     const employee = await createEmployee(name, phone, email, nationalId, salary);
-    const employeeId = employee.id;
 
     const session = await getSession(request);
     session.flash('success', true);
-    // const algoliaTenantRecord = { name, phone, employeeId, email };
-    // const re = await index.saveObject(algoliaTenantRecord, { autoGenerateObjectIDIfNotExist: true });
-
-    // console.log({ re });
-    // console.log({ employee });
 
     return redirect('/dashboard/employees', {
         headers: {
@@ -86,15 +70,6 @@ export default function NewEntry() {
     const emailRef = useRef(null);
     const salaryRef = useRef(null);
 
-    // const [showDialog, setShowDialog] = useState(true);
-
-    // function open() {
-    //     setShowDialog(true);
-    // }
-
-    // function close() {
-    //     setShowDialog(false);
-    // }
     useEffect(() => {
         nameRef.current?.focus();
 

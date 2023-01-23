@@ -1,8 +1,5 @@
 import { PlusIcon } from "@heroicons/react/outline";
 import { Link, useLoaderData } from "@remix-run/react";
-// import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
-// import { VisuallyHidden } from "@reach/visually-hidden";
-import dialogStyles from "@reach/dialog/styles.css";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
 import TableHeader from "../../../components/TableHeader";
@@ -15,10 +12,6 @@ import { useEffect, useRef } from "react";
 
 export function links() {
     return [
-        {
-            rel: "stylesheet",
-            href: dialogStyles
-        },
         {
             rel: "stylesheet",
             href: toastStyles
@@ -124,27 +117,6 @@ export default function EmployeesIndex() {
                         </div>
                     )
             }
-
-            {/* <Form method="post" id="delete">
-                <input type="hidden" name="confirm" value="confirm" />
-                <button
-                    type="button"
-                    className="px-6 py-3 bg-red-500"
-                    onClick={open}
-                >
-                    Delete
-                </button>
-            </Form> */}
-            {/* <Dialog isOpen={showDialog} onDismiss={close}>
-                <button className="close-button" onClick={close}>
-                    <VisuallyHidden>Close</VisuallyHidden>
-                    <span aria-hidden>X</span>
-                </button>
-                <p>This is a dialog content</p>
-
-                <button type="submit" form="delete">Delete</button>
-
-            </Dialog> */}
             <ToastContainer />
         </div>
     );

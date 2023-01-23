@@ -66,8 +66,9 @@ export default function CashPaymentSlug() {
     }, [location]);
     return (
         <div>
-            <p className="text-light-black text-lg font-semibold">Enter tenant details below</p>
+            <p className="text-light-black text-lg font-semibold">Enter amount below</p>
             <Form method="post" className="mt-1" key={data.id}>
+                {/* TODO: Use readonly input fields or just a div with info */}
                 <fieldset className="space-y-1">
                     <div>
                         <label htmlFor="name" className="text-light-black">
@@ -78,6 +79,7 @@ export default function CashPaymentSlug() {
                             type="text"
                             name="name"
                             id="name"
+                            readOnly
                             defaultValue={actionData ? actionData?.fields.name : data.name}
                             className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
                         />

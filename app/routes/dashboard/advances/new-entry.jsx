@@ -1,43 +1,12 @@
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { Link, Outlet, useCatch } from "@remix-run/react";
-import algoliasearch from "algoliasearch";
-import { Highlight, Hits, InstantSearch, SearchBox } from "react-instantsearch-hooks-web";
-import algoliaStyles from "instantsearch.css/themes/satellite.css";
 import Heading from "../../../components/Heading";
 import { EmployeeCombobox } from "../../resources/employees";
 
-// This works
-const searchClient = algoliasearch('KG5XNDOMR2', '6f538d8d106d0b4e0d5be4d7bfd92f29');
-// ---------------------------------------------------------------------------------------
 
-// const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
 
-export function links() {
-    return [
-        {
-            rel: "stylesheet",
-            href: algoliaStyles
-        },
-        // {
-        //     rel: "stylesheet",
-        //     href: comboboxStyles
-        // }
-    ];
-}
 export async function loader() {
-    // const employees = await getEmployees();
-    // const index = searchClient.initIndex('employees');
 
-
-    // const record = { objectId: 1, name: 'test_record' }
-
-    // try {
-    //     await index.saveObjects(employees, { autoGenerateObjectIDIfNotExist: true }).wait();
-    //     await index.search('').then(({ hits }) => console.log(hits[0]))
-
-    // } catch (error) {
-    //     console.log(error);
-    // }
     return null;
 }
 export default function Advance() {
@@ -50,13 +19,6 @@ export default function Advance() {
             <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
                 <div className="space-y-4">
                     <h2 className=" text-light-black text-md font-semibold">Select an employee to issue an advance</h2>
-                    {/* <InstantSearch searchClient={searchClient} indexName="employees">
-                        <SearchBox />
-                        <div className="max-h-96 overflow-y-scroll">
-
-                            <Hits hitComponent={Hit} />
-                        </div>
-                    </InstantSearch> */}
                     <EmployeeCombobox />
                 </div>
                 <div className="w-full border border-slate-200 px-3 py-3 rounded-lg">
@@ -68,18 +30,6 @@ export default function Advance() {
     )
 }
 
-function Hit({ hit }) {
-    // console.log({ hit })
-    return (
-        <Link to={`${hit.employeeId}`}>
-            <p className="text-light-black">
-                <Highlight attribute="name" hit={hit} />
-                <br />
-                {hit.phone}
-            </p>
-        </Link>
-    )
-}
 export function CatchBoundary() {
     const caught = useCatch();
     return (
