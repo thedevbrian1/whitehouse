@@ -138,7 +138,7 @@ export default function CashPaymentIndex() {
 
     //TODO: Focus management
     return (
-        <div>
+        <div className="px-3 py-2 space-y-2">
             <h2 className="text-light-black text-lg font-semibold">Enter tenant details below</h2>
             <Form method="post" className="mt-1" ref={formRef}>
                 <fieldset className="space-y-1">
