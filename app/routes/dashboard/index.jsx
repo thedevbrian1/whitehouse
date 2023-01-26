@@ -1,6 +1,6 @@
 import DashboardCard from "../../components/DashboardCard";
 import { getTransactions } from "~/models/transaction.server";
-import { useCatch, useLoaderData } from "@remix-run/react";
+import { Link, useCatch, useLoaderData } from "@remix-run/react";
 
 // TODO: Display correct amount from the database
 // TODO: Display vacant houses from the database
