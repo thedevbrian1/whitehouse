@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-//TODO: Form validation
+
 export async function createHouse(plotNo, houseNo, tenantId) {
     // Check if house exists
     const houses = await getHouses();

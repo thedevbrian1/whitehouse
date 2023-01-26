@@ -1,6 +1,12 @@
 import { prisma } from "~/db.server";
-// TODO: Check if employee exists in the db first
+
 export async function createEmployee(name, phone, email, nationalId, salary) {
+    const employee = await getEmployeeByMobile(phone);
+    if (employee) {
+        throw new Response('Employee already exists!', {
+            status: 400
+        });
+    }
     return prisma.employee.create({
         data: {
             name,
