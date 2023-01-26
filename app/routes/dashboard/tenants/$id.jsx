@@ -9,12 +9,23 @@ import Heading from "../../../components/Heading";
 export async function loader({ params }) {
     const tenantId = params.id;
     const tenant = await getTenantById(tenantId);
+
+    const tenantTransactions = tenant.transactions.map(transaction => {
+        return {
+            id: transaction.id,
+            amount: transaction.amount,
+            month: new Date(transaction.createdAt).toLocaleString('default', { month: 'long' })
+        };
+    });
+
+    // console.log({ tenantTransactions });
     // console.log({ tenant });
     if (!tenant) {
         throw new Response('Tenant details not found!', {
             status: 404
         });
     }
+
 
     return tenant;
 }
@@ -51,11 +62,13 @@ export function meta({ data }) {
     };
 }
 
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
 export default function House() {
     const actionData = useActionData();
     const data = useLoaderData();
     // console.log({ data });
-    const months = Object.entries(data.years).slice(2, 14);
+    // const months = Object.entries(data.years).slice(2, 14);
 
     // COMMENTED OUT FOR NOW
     // const years = data.years.map(year => {
@@ -67,6 +80,14 @@ export default function House() {
         submit(event.currentTarget, { replace: true })
     }
 
+    const tenantTransactions = data.transactions.map(transaction => {
+        return {
+            id: transaction.id,
+            amount: transaction.amount,
+            month: new Date(transaction.createdAt).toLocaleString('default', { month: 'long' })
+        };
+    });
+
     const transactions = data.transactions.map((transaction) => {
         return Object.values(transaction).slice(1, 4);
     });
@@ -74,9 +95,40 @@ export default function House() {
     transactions.forEach((transaction, index) => transaction.splice(0, 0, index + 1));
     transactions.forEach((transaction) => transaction.splice(3, 1, new Date(transaction[3]).toDateString()));
 
+    const paidMonths = data.transactions.map(transaction => new Date(transaction.createdAt).toLocaleString('default', { month: 'long' }))
+    console.log({ paidMonths });
+
+    const paidAmounts = data.transactions.map(transaction => transaction.amount);
+    console.log({ paidAmounts });
+
+    function getPaidStatus(month) {
+        // Extract months from the tenantTransactions in to an array ✅
+        // Extract amounts from the tenantTransactions in to an array ✅
+        // Check if the current month in the months array is present in the array from the db ✅
+        // If it's present, get it's index ✅
+        // Use the index to check for the amount in the amounts array ✅
+        // If the amount >= 200 return 'paid' ✅
+        // If the amount > 0 and < 200 return 'partial' ✅
+        // Extract an array of no of months till the current date
+        // If the length of the monthsArray != length of months from tenantTransactions, determine the missing month and mark it as 'arrears'
+        // Alternatively you can check the arrears from the db
+
+        const monthIndex = paidMonths.findIndex(paidMonth => paidMonth === month);
+        if (monthIndex !== -1) {
+            const paidAmount = paidAmounts[monthIndex];
+            if (paidAmount >= 200) {
+                return 'paid';
+            } else if (paidAmount > 0 && paidAmount < 200) {
+                return 'partial';
+            }
+        }
+        // TODO: Get arrears
+        return 'not paid';
+    }
+
     return (
         <div className="w-full space-y-4 lg:max-w-5xl mx-auto pr-10 lg:pr-0">
-            <Link to=".." className="text-black hover:underline hover:text-blue-500">
+            <Link to="/dashboard/tenants" className="text-black hover:underline hover:text-blue-500">
                 <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
             </Link>
             {/* <h1 className="font-bold text-2xl mt-3">House {`${data.house.plotNumber} / ${data.house.houseNumber}`}</h1> */}
@@ -102,7 +154,7 @@ export default function House() {
                                     {/* {years.map(year => (
                                         <option value={year.year} key={year.id}>{year.year}</option>
                                     ))} */}
-                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
                                 </select>
                             </Form>
                         </div>
@@ -110,20 +162,22 @@ export default function House() {
                     <div className="grid grid-cols-3 lg:grid-cols-4  gap-4 mt-4">
                         {actionData
                             ? actionData?.map((month, index) => (
-                                <div key={index} className={`border border-slate-100 grid place-items-center h-12 ${month[1] === 'paid' ? 'bg-green-500 text-white' : month[1] === 'not paid' ? 'bg-red-500 text-white' : 'bg-gray-200'}`}>
-                                    {month[0].charAt(0).toUpperCase() + month[0].slice(1)}
+                                <div key={index} className={`border border-slate-100 grid place-items-center text-xs md:text-sm lg:text-base h-12 px-1 ${getPaidStatus(month) === 'paid'
+                                    ? 'bg-green-500 text-white'
+                                    : getPaidStatus(month) === 'partial'
+                                        ? 'bg-orange-300'
+                                        : 'bg-gray-100'} `}>
+                                    {month}
                                 </div>
                             ))
                             :
                             months.map((month, index) => (
-                                <div key={index} className={`border border-slate-100 grid place-items-center text-xs md:text-sm lg:text-base h-12 px-1 ${month[1] >= 200
+                                <div key={index} className={`border border-slate-100 grid place-items-center text-xs md:text-sm lg:text-base h-12 px-1 ${getPaidStatus(month) === 'paid'
                                     ? 'bg-green-500 text-white'
-                                    : (month[1] > 0 && month[1] < 200)
-                                        ? 'bg-orange-200'
-                                        : month[1] === 0
-                                            ? 'bg-red-500 text-white'
-                                            : 'bg-gray-200'}`}>
-                                    {month[0].charAt(0).toUpperCase() + month[0].slice(1)}
+                                    : getPaidStatus(month) === 'partial'
+                                        ? 'bg-orange-300'
+                                        : 'bg-gray-100'} `}>
+                                    {month}
                                 </div>
                             ))}
                     </div>
@@ -166,25 +220,39 @@ function TenantDetail({ name, value }) {
 export function CatchBoundary() {
     const caught = useCatch();
     return (
-        <div>
-            <p>Error!</p>
-            <p>Status {caught.status}</p>
-            <pre>
-                <code>
-                    {caught.data}
-                </code>
-            </pre>
-            <Link to="/dashboard/plots" className="text-blue-500 underline">
-                <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
-            </Link>
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <pre>
+                    <code>
+                        Status {caught.status}
+                    </code>
+                </pre>
+                <p className="font-semibold mb-4">{caught.data}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
         </div>
     );
 }
 
+// TODO: Insert error to logfile
 export function ErrorBoundary({ error }) {
+    console.error(error);
     return (
-        <div>
-            Oops! Error fetching tenant details.
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <p className=" mb-4">{error.message}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
         </div>
-    )
+    );
 }

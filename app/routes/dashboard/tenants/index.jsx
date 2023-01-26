@@ -316,33 +316,39 @@ function TableRow({ tenant }) {
 export function CatchBoundary() {
     const caught = useCatch();
     return (
-        <div className="w-full h-screen grid lg:place-items-center">
-            <div className="px-2 pt-10 lg:pt-0">
-                <p className="font-bold text-xl">Error!</p>
-                <p>Status {caught.status}</p>
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
                 <pre>
-                    <code className="font-semibold">
-                        {caught.data}
+                    <code>
+                        Status {caught.status}
                     </code>
                 </pre>
-                <div className="flex gap-5">
-                    <Link to="/dashboard/tenants" className="text-blue-500 underline">
-                        <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
-                    </Link>
-                    <Link to="new-entry" className="text-blue-500 underline">
-                        Create new tenant
-                    </Link>
-                </div>
+                <p className="font-semibold mb-4">{caught.data}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
             </div>
         </div>
     );
-
 }
 
-export function ErrorBoundary() {
+// TODO: Insert error to logfile
+export function ErrorBoundary({ error }) {
+    console.error(error);
     return (
-        <div>
-            Oops!! No tenants found
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <p className=" mb-4">{error.message}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
         </div>
     );
 }

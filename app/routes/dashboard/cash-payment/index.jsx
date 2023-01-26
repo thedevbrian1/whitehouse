@@ -33,6 +33,8 @@ export async function action({ request }) {
     const formData = await request.formData();
     const name = formData.get('name');
     const phone = formData.get('phone');
+    const year = formData.get('year');
+    const month = formData.get('month');
     const amount = formData.get('amount');
 
     const fields = {
@@ -90,6 +92,9 @@ export async function action({ request }) {
     // } else if (amount === 0) {
     //     status = 'not paid'
     // }
+
+    // TODO: Record arrears correctly in the db
+    // TODO: Add year and month dropdown so that users can select the month to pay for themselves.
 
     const res = await createTenantPayment(tenantId, status);
     const transaction = await createCashTransaction(Number(amount), 'Cash', tenantId);
@@ -169,6 +174,32 @@ export default function CashPaymentIndex() {
                             fieldError={actionData?.fieldErrors.phone}
                         />
 
+                    </div>
+
+                    <div className="flex justify-between">
+                        <div>
+                            <label htmlFor="year">Select year</label>
+                            <select
+                                name="year"
+                                id="year"
+                                className="px-3 h-7 ml-3 bg-[#f8f8ff] border border-[#c0c0c0] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label htmlFor="month">Select month</label>
+                            <select
+                                name="month"
+                                id="month"
+                                className="h-7 px-3 ml-3 bg-[#f8f8ff] border border-[#c0c0c0] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div>

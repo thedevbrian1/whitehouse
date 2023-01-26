@@ -24,6 +24,7 @@ export async function loader({ request }) {
     return tenant.name;
 }
 // TODO: Add search functionality (for names, plot & house nos)
+
 export default function Dashboard() {
     const data = useLoaderData();
     const transition = useTransition();
