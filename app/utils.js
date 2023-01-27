@@ -152,6 +152,21 @@ export function validateCheckbox(value) {
   }
 }
 
+export function validateYear(year) {
+  const yearRegex = /^20\d{2}$/;
+  if (!year.match(yearRegex)) {
+    return 'Year should be between 2000 and 2099';
+  }
+}
+
+export function validateMonth(month) {
+  if (!months.includes(month)) {
+    return 'Invalid month';
+  }
+}
+
 export function badRequest(data) {
   return json(data, { status: 404 });
 }
+
+export const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

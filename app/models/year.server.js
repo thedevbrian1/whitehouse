@@ -3,7 +3,9 @@ import { getTenant } from "./tenant.server";
 
 export async function createTenantPayment(tenantId, status) {
     // const currentYear = new Date().getFullYear();
-    // const month = new Date().toLocaleString('default', { month: 'long' }).toLowerCase();
+    const month = new Date().toLocaleString('default', { month: 'long' }).toLowerCase();
+
+    let monthObject = { [month]: status };
     // Check if tenant exists
     const tenant = await getTenant(tenantId);
     if (!tenant) {
@@ -16,9 +18,7 @@ export async function createTenantPayment(tenantId, status) {
         where: {
             tenantId
         },
-        data: {
-            november: status
-        }
+        data: monthObject
     });
 }
 

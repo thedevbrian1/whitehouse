@@ -67,12 +67,53 @@ export default function House() {
         submit(event.currentTarget, { replace: true })
     }
 
-    const transactions = data.transactions.map((transaction) => {
-        return Object.values(transaction).slice(1, 4);
+    const tenantTransactions = data.transactions.map(transaction => {
+        return {
+            // id: transaction.id,
+            type: transaction.type,
+            amount: transaction.amount,
+            date: new Date(transaction.createdAt).toDateString()
+        };
     });
-    // console.log({ transactions });
+
+    const transactions = tenantTransactions.map((transaction) => {
+        return Object.values(transaction);
+    });
+
     transactions.forEach((transaction, index) => transaction.splice(0, 0, index + 1));
-    transactions.forEach((transaction) => transaction.splice(3, 1, new Date(transaction[3]).toDateString()));
+    // console.log({ transactions });
+
+    const paidMonths = data.transactions.map(transaction => new Date(transaction.createdAt).toLocaleString('default', { month: 'long' }))
+    console.log({ paidMonths });
+
+    const paidAmounts = data.transactions.map(transaction => transaction.amount);
+    console.log({ paidAmounts });
+
+    function getPaidStatus(month) {
+        // Extract months from the tenantTransactions in to an array ✅
+        // Extract amounts from the tenantTransactions in to an array ✅
+        // Check if the current month in the months array is present in the array from the db ✅
+        // If it's present, get it's index ✅
+        // Use the index to check for the amount in the amounts array ✅
+        // If the amount >= 200 return 'paid' ✅
+        // If the amount > 0 and < 200 return 'partial' ✅
+        // Extract an array of no of months till the current date
+        // If the length of the monthsArray != length of months from tenantTransactions, determine the missing month and mark it as 'arrears'
+        // Alternatively you can check the arrears from the db
+
+        // TODO: Highlight paid months
+        const monthIndex = paidMonths.findIndex(paidMonth => paidMonth === month);
+        if (monthIndex !== -1) {
+            const paidAmount = paidAmounts[monthIndex];
+            if (paidAmount >= 200) {
+                return 'paid';
+            } else if (paidAmount > 0 && paidAmount < 200) {
+                return 'partial';
+            }
+        }
+        // TODO: Get arrears
+        return 'not paid';
+    }
 
     return (
         <div className="w-full space-y-4 lg:max-w-5xl mx-auto pr-10 lg:pr-0">

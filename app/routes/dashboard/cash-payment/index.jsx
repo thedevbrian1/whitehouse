@@ -1,4 +1,4 @@
-import { Form, useActionData, useCatch, useLoaderData, useTransition } from "@remix-run/react";
+import { Form, Link, useActionData, useCatch, useFetcher, useLoaderData, useTransition } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -6,8 +6,11 @@ import toastStyles from "react-toastify/dist/ReactToastify.css";
 import { getTenants } from "../../../models/tenant.server";
 import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
-import { badRequest, validateAmount, validateName, validatePhone } from "../../../utils";
-import { createCashTransaction } from "../../../models/transaction.server";
+import { badRequest, months, trimPhone, validateAmount, validateMonth, validateName, validatePhone, validateYear } from "../../../utils";
+import { createCashTransaction, getTenantTransactions } from "../../../models/transaction.server";
+import Input from "~/components/Input";
+import Select from "~/components/Select";
+import { createArrear } from "~/models/arrear.server";
 
 export function links() {
     return [
@@ -37,73 +40,129 @@ export async function action({ request }) {
     const name = formData.get('name');
     const phone = formData.get('phone');
     const amount = formData.get('amount');
+    const action = formData.get('_action');
 
-    const fields = {
-        name,
-        phone,
-        amount
-    };
+    const trimmedPhone = trimPhone(phone);
 
-    const fieldErrors = {
-        name: validateName(name),
-        phone: validatePhone(phone),
-        amount: validateAmount(amount)
-    };
+    const date = new Date();
+    const lastDayofMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-    // Return errors if any
+    console.log({ lastDayofMonth });
 
-    if (Object.values(fieldErrors).some(Boolean)) {
-        return badRequest({ fields, fieldErrors });
-    }
+    if (action === 'arrear') {
+        // Check if there are transactions for the current month
+        // Set arrear to the db (200 - transactions)
+        // 
+        const currentMonth = date.toLocaleString('default', { month: 'long' });
+        const amountToPay = 200;
 
-    // Record payment in the database
+        console.log('Setting arrears...')
+        const tenant = await getTenantByMobile(trimmedPhone);
+        const tenantId = tenant.id;
 
-    const tenants = await getTenants();
-    const matchedTenant = tenants.find(tenant => tenant.mobile === phone);
-    if (!matchedTenant) {
-        throw new Response('Tenant does not exist!', {
-            status: 400
+        const tenantTransactions = await getTenantTransactions(tenantId);
+        console.log({ tenantTransactions });
+
+        const currentMonthTransactions = tenantTransactions.filter(element => element.paidMonth === currentMonth);
+
+        const amounts = currentMonthTransactions.map(element => element.amount);
+        const totalAmount = amounts.reduce((prev, current) => prev + current);
+        console.log({ totalAmount });
+
+        const balance = amountToPay - totalAmount;
+        if (balance > 0) {
+            const arrear = await createArrear(balance, month, '2022', tenantId);
+            console.log({ arrear });
+
+        }
+
+        return null;
+    } else {
+
+
+        console.log({ year });
+        console.log({ month });
+
+        const fields = {
+            name,
+            phone,
+            year,
+            month,
+            amount
+        };
+
+        const fieldErrors = {
+            name: validateName(name),
+            phone: validatePhone(trimmedPhone),
+            year: validateYear(year),
+            month: validateMonth(month),
+            amount: validateAmount(amount)
+        };
+
+        // Return errors if any
+
+        if (Object.values(fieldErrors).some(Boolean)) {
+            return badRequest({ fields, fieldErrors });
+        }
+
+        // Record payment in the database
+
+        const matchedTenant = await getTenantByMobile(trimmedPhone);
+        if (!matchedTenant) {
+            throw new Response('Tenant does not exist!', {
+                status: 400
+            });
+        }
+
+        if (name !== matchedTenant.name) {
+            throw new Response('Name and phone do not match!', {
+                status: 400
+            });
+        }
+
+        const tenantId = matchedTenant.id;
+        let status = null;
+        //get amount
+        //check if month is paid
+        //if not paid, subtract 200 from amount
+        //update month to paid
+        //update arrears. Subtract remaining amount from arrears
+        //if arrears > 0 divide amount by 200 to get the no of months
+        //update the monthly status of the no of calculated unpaid months
+
+
+
+
+        //
+        // check if there are arrears
+        // if (amount >= 200) {
+        //     status = 'paid'
+        // } else if (amount > 0 && amount < 200) {
+        //     status = 'partial'
+        // } else if (amount === 0) {
+        //     status = 'not paid'
+        // }
+
+        // TODO: Record arrears correctly in the db
+        // TODO: Add year and month dropdown so that users can select the month to pay for themselves.
+
+        const res = await createTenantPayment(tenantId, status);
+        const transaction = await createCashTransaction(Number(amount), 'Cash', month, year, tenantId);
+        // console.log({ transaction });
+        // console.log({ res });
+
+        const session = await getSession(request);
+        session.flash("success", true);
+
+        logPaymentDetails(matchedTenant.email, amount, 'Cash');
+        console.log(matchedTenant.email);
+
+        return redirect('/dashboard/cash-payment', {
+            headers: {
+                "Set-Cookie": await sessionStorage.commitSession(session)
+            }
         });
     }
-    const tenantId = matchedTenant.id;
-    let status = null;
-    //get amount
-    //check if month is paid
-    //if not paid, subtract 200 from amount
-    //update month to paid
-    //update arrears. Subtract remaining amount from arrears
-    //if arrears > 0 divide amount by 200 to get the no of months
-    //update the monthly status of the no of calculated unpaid months
-
-
-
-
-    //
-    // check if there are arrears
-    // if (amount >= 200) {
-    //     status = 'paid'
-    // } else if (amount > 0 && amount < 200) {
-    //     status = 'partial'
-    // } else if (amount === 0) {
-    //     status = 'not paid'
-    // }
-
-    const res = await createTenantPayment(tenantId, status);
-    const transaction = await createCashTransaction(Number(amount), 'Cash', tenantId);
-    // console.log({ transaction });
-    // console.log({ res });
-
-    const session = await getSession(request);
-    session.flash("success", true);
-
-    logPaymentDetails(matchedTenant.email, amount, 'Cash');
-    console.log(matchedTenant.email);
-
-    return redirect('/dashboard/cash-payment', {
-        headers: {
-            "Set-Cookie": await sessionStorage.commitSession(session)
-        }
-    });
 }
 
 export default function CashPaymentIndex() {
@@ -172,13 +231,29 @@ export default function CashPaymentIndex() {
                             defaultValue={actionData?.fields.phone}
                             className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
                         />
-                        {
-                            actionData?.fieldErrors.phone
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.phone}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
+
+                    </div>
+
+                    <div className="flex justify-between md:justify-start md:gap-x-16">
+                        <div className="flex flex-col text-light-black">
+                            <label htmlFor="year">Select year</label>
+                            <Select
+                                name='year'
+                                id='year'
+                                options={[2023, 2022]}
+                                fieldError={actionData?.fieldErrors.year}
+                            />
+                        </div>
+
+                        <div className="flex flex-col text-light-black">
+                            <label htmlFor="month">Select month</label>
+                            <Select
+                                name='month'
+                                id='month'
+                                options={months}
+                                fieldError={actionData?.fieldErrors.month}
+                            />
+                        </div>
                     </div>
 
                     <div>
@@ -206,10 +281,35 @@ export default function CashPaymentIndex() {
                     </button>
                 </fieldset>
             </Form>
+
+            <ArrearForm />
+
             <ToastContainer />
         </div>
     )
 }
+
+function ArrearForm() {
+    const fetcher = useFetcher();
+
+    return (
+        <fetcher.Form method="post">
+            <label htmlFor="phone">Enter phone</label>
+            <input type="text" name="phone" id='phone' className="w-full px-3 py-2 border  rounded text-black" />
+            <label htmlFor="month">Enter month</label>
+            <input type="text" name="month" id='month' className="w-full px-3 py-2 border  rounded text-black" />
+            <button
+                type="submit"
+                className="bg-red-500 text-white text-center w-full rounded px-6 py-2"
+                name="_action"
+                value="arrear"
+            >
+                {fetcher.submission ? 'Processing...' : 'Set arrear'}
+            </button>
+        </fetcher.Form>
+    );
+}
+
 
 export function CatchBoundary() {
     const caught = useCatch();
