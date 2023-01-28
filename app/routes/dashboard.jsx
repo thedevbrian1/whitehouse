@@ -24,6 +24,7 @@ export async function loader({ request }) {
     return tenant.name;
 }
 // TODO: Add search functionality (for names, plot & house nos)
+
 export default function Dashboard() {
     const data = useLoaderData();
     const transition = useTransition();
@@ -141,7 +142,7 @@ export default function Dashboard() {
                         </li>
                     </ul>
                 </div>
-                <div className={`w-full flex-1 ml-14 lg:ml-72 px-4 lg:px-6 pt-4 ${transition.state === 'loading' ? 'opacity-50' : ''}`}>
+                <div className={`w-full min-h-screen flex-1 ml-14 lg:ml-72 px-4 lg:px-6 pt-4 ${transition.state === 'loading' ? 'opacity-50' : ''}`}>
                     <Outlet />
                 </div>
             </main>

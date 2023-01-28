@@ -1,23 +1,23 @@
-import { useActionData } from "@remix-run/react";
-import { forwardRef, useRef, useState, useEffect } from "react";
+import { useTransition } from "@remix-run/react";
+import { forwardRef, useState, useEffect } from "react";
 
-// TODO: Focus management
 const Input = forwardRef(({ type, name, id, placeholder, fieldError, onBlur, defaultValue }, ref) => {
-    // const actionData = useActionData();
     const [isClientError, setIsClientError] = useState(true);
     const errorState = isClientError && fieldError;
-    // const inputRef = useRef(null);
+
+    const transition = useTransition();
 
     function handleChange() {
         setIsClientError(false);
     }
 
-    // useEffect(() => {
-    //     if (fieldError) {
-    //     }
-    //     inputRef.current?.focus()
-    // }, []);
-    // TODO: Always display error messages upon multiple submissions. Use a clean up function maybe
+    useEffect(() => {
+        if (transition.state === 'submitting') {
+            setIsClientError(true);
+        }
+    }, [transition.submission]);
+
+    // FIXME: Fix flashing of error state when submitting
     return (
         <>
 

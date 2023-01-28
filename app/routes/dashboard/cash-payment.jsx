@@ -1,14 +1,7 @@
-import { Link, Outlet, useActionData, useCatch, useTransition } from "@remix-run/react";
-import algoliasearch from "algoliasearch";
-import algoliaStyles from "instantsearch.css/themes/satellite.css";
+import { Link, Outlet, useCatch } from "@remix-run/react";
 import { useEffect, useRef } from "react";
-import { Highlight, Hits, InstantSearch, SearchBox } from "react-instantsearch-hooks-web";
 import Heading from "../../components/Heading";
-import { getTenants } from "../../models/tenant.server";
 import { TenantCombobox } from "../resources/tenants";
-
-const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
-const index = searchClient.initIndex('tenants');
 
 export function meta() {
     return {
@@ -17,40 +10,7 @@ export function meta() {
     };
 }
 
-export function links() {
-    return [
-        {
-            rel: "stylesheet",
-            href: algoliaStyles
-        }
-    ];
-}
-
-export async function loader({ params }) {
-    // const tenant = await getTenant(params.id);
-    // console.log({ tenant });
-    return null;
-}
-export async function action({ request }) {
-    const formData = await request.formData();
-    const action = formData.get('_action');
-
-    const tenants = await getTenants();
-    if (action === 'index') {
-        try {
-            await index.saveObjects(tenants, { autoGenerateObjectIDIfNotExist: true }).wait();
-            // await index.search('').then(({ hits }) => console.log(hits[0]))
-
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
-    return null;
-}
 export default function CashPayment() {
-    // const transition = useTransition();
-    // const actionData = useActionData();
     const searchRef = useRef(null);
 
     useEffect(() => {
@@ -58,20 +18,11 @@ export default function CashPayment() {
     }, []);
     return (
         <div className="space-y-4">
-            {/* <Link to=".." className="text-black hover:underline hover:text-blue-500">
-                <ArrowLeftIcon className="w-5 h-5 inline" /> Back to payroll menu
-            </Link> */}
             <Heading title='Tenant cash payment' />
             <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
                 <div className="space-y-4">
-                    <h2 className=" text-light-black text-md mb-2">Select a tenant to record cash payment</h2>
-                    {/* <InstantSearch searchClient={searchClient} indexName="tenants">
-                        <SearchBox ref={searchRef} />
-                        <div className="max-h-96 overflow-y-scroll">
+                    <h2 className=" text-light-black text-lg mb-2 font-semibold">Select a tenant to record cash payment</h2>
 
-                            <Hits hitComponent={Hit} />
-                        </div>
-                    </InstantSearch> */}
                     <TenantCombobox />
                 </div>
                 <div className="w-full border border-slate-200 px-3 py-3 rounded-lg">
@@ -79,63 +30,48 @@ export default function CashPayment() {
                     <Outlet />
                 </div>
             </div>
-            {/* <Form method="post">
-                <input type="hidden" value="index" />
-                <button
-                    type="sumbit"
-                    name="_action"
-                    value="index"
-                    className="bg-blue-500 px-6 py-2 rounded text-white"
-                >
-                    {transition.submission && transition.submission.formData.get('_action') === "index" ? 'Indexing...' : 'Index algolia'}
-                </button>
-            </Form> */}
+
         </div>
     );
 }
 
-function Hit({ hit }) {
-    // console.log({ hit })
-    return (
-        <Link to={`${hit.tenantId}`}>
-            {/* <p className="text-light-black">
-                <Highlight attribute="name" hit={hit} />
-                <br />
-                {hit.mobile}
-            </p> */}
-            <div className="text-light-black">
-                <p>
-                    <Highlight attribute="name" hit={hit} />
-                </p>
-                <p>Plot {hit.plotNo} / House {hit.houseNo}</p>
-            </div>
-        </Link>
-    )
-}
 
 export function CatchBoundary() {
     const caught = useCatch();
     return (
-        <div>
-            <h1>Error!</h1>
-            <pre>
-                <code>
-                    Status {caught.status}
-                </code>
-            </pre>
-            <p>{caught.data}</p>
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <pre>
+                    <code>
+                        Status {caught.status}
+                    </code>
+                </pre>
+                <p className="font-semibold mb-4">{caught.data}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
         </div>
     );
 }
 
 // TODO: Insert error to logfile
 export function ErrorBoundary({ error }) {
+    console.error(error);
     return (
-        <div>
-            <h1 className="font-bold text-lg">Error</h1>
-            <p>{error.message}</p>
-            {/* <p>The stack trace is:</p>
-            <pre>{error.stack}</pre> */}
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <p className=" mb-4">{error.message}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
         </div>
-    )
+    );
 }

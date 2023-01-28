@@ -1,11 +1,12 @@
-import { Form, Link, useActionData, useCatch, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData, useCatch, useLoaderData, useTransition } from "@remix-run/react";
 import { json, redirect } from "@remix-run/server-runtime";
-import { useEffect, useRef, useTransition } from "react";
+import { useEffect, useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
+import Input from "~/components/Input";
 import Label from "~/components/Label";
-import { createAdvance, getAdvancesById } from "../../../../models/advance.server";
-import { getEmployees } from "../../../../models/employee.server";
+import { createAdvance } from "../../../../models/advance.server";
+import { getEmployeeByMobile } from "../../../../models/employee.server";
 import { getSession, sessionStorage } from "../../../../session.server";
 import { badRequest, validateAmount, validateName, validatePhone } from "../../../../utils";
 import { getCurrentTotalAdvance } from "./$id";
@@ -66,20 +67,19 @@ export async function action({ request }) {
 
     // Record payment in the database
 
-    // const tenants = await getTenants();
-    // const matchedTenant = tenants.find(tenant => tenant.mobile === phone);
-    // if (!matchedTenant) {
-    //     throw new Response('Tenant does not exist!', {
-    //         status: 400
-    //     });
-    // }
-    // const tenantId = matchedTenant.id;
-
-    const employees = await getEmployees();
-    const matchedEmployee = employees.find(employee => employee.mobile === phone);
+    const matchedEmployee = await getEmployeeByMobile(phone);
     if (!matchedEmployee) {
-        throw new Response('Employee does not exist');
+        throw new Response('Employee does not exist', {
+            status: 400
+        });
     }
+
+    if (name !== matchedEmployee.name) {
+        throw new Response('Name and phone do not match', {
+            status: 400
+        });
+    }
+
     const employeeId = matchedEmployee.id;
     const employeeSalary = matchedEmployee.salary;
 
@@ -122,7 +122,9 @@ export default function AdvanceIndex() {
 
 
     useEffect(() => {
-        formRef.current?.reset();
+        if (!actionData?.fieldErrors) {
+            formRef.current?.reset();
+        }
     }, [transition.submission]);
 
     useEffect(() => {
@@ -136,31 +138,24 @@ export default function AdvanceIndex() {
     }, [data.success]);
 
     return (
-        <div>
-            {/* <button onClick={success}>Notify!</button> */}
-            <h2 className="text-light-black font-semibold">Enter employee details below</h2>
-            <Form method="post" className="" ref={formRef}>
+        <div className="px-3 py-2 space-y-2">
+            <h2 className="text-light-black text-lg font-semibold">Enter employee details below</h2>
+            <Form method="post" ref={formRef}>
                 <fieldset className="space-y-1">
                     <div>
                         <label htmlFor="name" className="text-light-black">
                             Name
                         </label>
                         {/* <Label htmlFor='name' text='Name' /> */}
-                        <input
+                        <Input
                             // ref={nameRef}
                             type="text"
                             name="name"
                             id="name"
-                            defaultValue={actionData?.fields.name}
-                            className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='John Doe'
+                            fieldError={actionData?.fieldErrors.name}
                         />
-                        {
-                            actionData?.fieldErrors.name
-                                ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                    {actionData.fieldErrors.name}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
+
 
                     </div>
                     <div>
@@ -168,21 +163,14 @@ export default function AdvanceIndex() {
                             Phone
                         </label>
                         {/* <Label htmlFor='phone' text='Phone' /> */}
-                        <input
+                        <Input
                             // ref={phoneRef}
                             type="text"
                             name="phone"
                             id="phone"
-                            defaultValue={actionData?.fields.phone}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='0712 345 678'
+                            fieldError={actionData?.fieldErrors.phone}
                         />
-                        {
-                            actionData?.fieldErrors.phone
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.phone}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
                     </div>
 
                     <div>
@@ -190,21 +178,13 @@ export default function AdvanceIndex() {
                             Amount
                         </label>
                         {/* <Label htmlFor='amount' text='Amount' /> */}
-                        <input
-                            // ref={salaryRef}
+                        <Input
+                            // ref={amountRef}
                             type="text"
                             name="amount"
                             id="amount"
-                            defaultValue={actionData?.fields.amount}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.amount ? 'border-red-700' : 'border-gray-400'}`}
+                            fieldError={actionData?.fieldErrors.amount}
                         />
-                        {
-                            actionData?.fieldErrors.amount
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.amount}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
                     </div>
                     <button type="submit" className="bg-blue-600 px-6 py-2 text-white text-center w-full rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Processing...' : 'Pay'}

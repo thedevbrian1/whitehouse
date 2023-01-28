@@ -1,4 +1,4 @@
-import { Form, Link, useActionData, useTransition } from "@remix-run/react";
+import { Form, Link, useActionData, useCatch, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { useEffect, useRef } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
@@ -9,16 +9,11 @@ import { createTenant, getTenants } from "../../../models/tenant.server";
 import { createUser, isEmailUsed } from "../../../models/user.server";
 import { createHouse } from "../../../models/house.server";
 import Input from "../../../components/Input";
-// import algoliasearch from "algoliasearch";
 import Label from "~/components/Label";
-
-// const searchClient = algoliasearch('KG5XNDOMR2', 'cfeaac376bb4e97c121d8056ba0dbb48');
-// const index = searchClient.initIndex('tenants');
 
 
 export async function loader() {
     const tenants = await getTenants();
-    // console.log({ tenants });
     return null;
 }
 export async function action({ request }) {
@@ -82,7 +77,16 @@ export async function action({ request }) {
         });
     }
 
-    const tenant = await createTenant(name, phone, email, Number(nationalId), moveInDate, vehicleRegistration);
+    let modifiedPhone = null;
+
+    if (trimmedPhone.length === 12) {
+        modifiedPhone = '0' + trimmedPhone.slice(3);
+        console.log({ modifiedPhone });
+    } else if (trimmedPhone.length === 10) {
+        modifiedPhone = trimmedPhone;
+    }
+
+    const tenant = await createTenant(name, modifiedPhone, email, Number(nationalId), moveInDate, vehicleRegistration);
 
     const tenantId = tenant.id;
 
@@ -90,10 +94,6 @@ export async function action({ request }) {
     // console.log({ res });
 
     const user = await createUser(email, password);
-
-    // const algoliaTenantRecord = { name, phone, tenantId, email, houseNo, plotNo };
-    // const re = await index.saveObject(algoliaTenantRecord, { autoGenerateObjectIDIfNotExist: true });
-    // console.log({ re });
 
     const session = await getSession(request);
     session.flash('success', true);
@@ -143,230 +143,131 @@ export default function NewTenantEntry() {
         }
     }, [actionData]);
     return (
-        <div className="space-y-4 max-w-5xl mx-auto">
+        <div className="space-y-4 max-w-5xl mx-auto pb-8">
             <Link to=".." className="text-black hover:underline hover:text-blue-500">
                 <ArrowLeftIcon className="w-5 h-5 inline" /> Back to tenants
             </Link>
             <Heading title='Add tenant' />
             <p className="text-light-black"><em>(Fields marked with * are compulsory)</em></p>
+
+            <h2 className=" text-light-black text-lg font-semibold">Enter tenant details below</h2>
             <Form method="post">
                 <fieldset >
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-x-5">
                         <div>
-                            {/* <label htmlFor="name" className="text-black">
-                                Full name *
-                            </label> */}
                             <Label htmlFor='name' text='Full name *' />
-                            <input
+                            <Input
                                 ref={nameRef}
-                                type="text"
-                                name="name"
-                                id="name"
-                                // defaultValue={actionData?.fields.name}
-                                className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
+                                type='text'
+                                name='name'
+                                id='name'
+                                placeholder='John Doe'
+                                fieldError={actionData?.fieldErrors.name}
                             />
-                            {
-                                actionData?.fieldErrors.name
-                                    ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                        {actionData.fieldErrors.name}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
+                        </div>
+                        <div>
+                            <Label htmlFor='phone' text='Phone *' />
+                            <Input
+                                ref={phoneRef}
+                                type='text'
+                                name='phone'
+                                id='phone'
+                                placeholder='0712 345 678'
+                                fieldError={actionData?.fieldErrors.phone}
+                            />
 
                         </div>
                         <div>
-                            {/* <label htmlFor="phone" className="text-black">
-                                Phone *
-                            </label> */}
-                            <Label htmlFor='phone' text='Phone *' />
-                            <input
-                                ref={phoneRef}
-                                type="text"
-                                name="phone"
-                                id="phone"
-                                // defaultValue={actionData?.fields.phone}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
-                            />
-                            {
-                                actionData?.fieldErrors.phone
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.phone}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
-                        </div>
-                        <div>
-                            {/* <label htmlFor="nationalId" className="text-black">
-                                National Id *
-                            </label> */}
                             <Label htmlFor='nationalId' text='National id *' />
-                            <input
+                            <Input
                                 ref={nationalIdRef}
-                                type="number"
-                                name="nationalId"
-                                id="nationalId"
-                                maxLength={8}
-                                defaultValue={actionData?.fields.nationalId}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.nationalId ? 'border-red-700' : 'border-gray-400'}`}
+                                type='number'
+                                name='nationalId'
+                                id='nationalId'
+                                fieldError={actionData?.fieldErrors.nationalId}
+                            // maxLength={8}
+
                             />
-                            {
-                                actionData?.fieldErrors.nationalId
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.nationalId}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
+
                         </div>
-                        {/* <div>
-                        <label htmlFor="email" className="text-black">
-                            Email *
-                        </label>
-                        <input
-                            ref={emailRef}
-                            type="email"
-                            name="email"
-                            id="email"
-                            defaultValue={actionData?.fields.email}
-                            className={`block w-full px-3 py-2 border rounded text-black invalid:border-pink-500 invalid:text-pink-600 focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.email ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.email
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.email}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-                    </div> */}
                         <div>
-                            {/* <label htmlFor="plotNo" className="text-black">
-                                Plot number *
-                            </label> */}
                             <Label htmlFor='plotNo' text='Plot number *' />
-                            <input
+                            <Input
                                 ref={plotNoRef}
                                 type="number"
                                 name="plotNo"
                                 id="plotNo"
-                                min={1}
-                                max={67}
-                                defaultValue={actionData?.fields.salary}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.plotNo ? 'border-red-700' : 'border-gray-400'}`}
+                                // min={1}
+                                // max={67}
+                                fieldError={actionData?.fieldErrors.plotNo}
+
                             />
-                            {
-                                actionData?.fieldErrors.plotNo
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.plotNo}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
                         </div>
                         <div>
-                            {/* <label htmlFor="houseNo" className="text-black">
-                                House number *
-                            </label> */}
+
                             <Label htmlFor='houseNo' text='House number *' />
-                            <input
+                            <Input
                                 ref={houseNoRef}
                                 type="text"
                                 name="houseNo"
                                 id="houseNo"
-                                defaultValue={actionData?.fields.houseNo}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.houseNo ? 'border-red-700' : 'border-gray-400'}`}
+                                fieldError={actionData?.fieldErrors.houseNo}
                             />
-                            {
-                                actionData?.fieldErrors.houseNo
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.houseNo}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
+
                         </div>
                         <div>
-                            {/* <label htmlFor="date" className="text-black">
-                                Move in date
-                            </label> */}
                             <Label htmlFor='date' text='Move in date' />
-                            <input
+                            <Input
                                 ref={dateRef}
                                 type="date"
                                 name="date"
                                 id="date"
-                                defaultValue={actionData?.fields.moveInDate}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.moveInDate ? 'border-red-700' : 'border-gray-400'}`}
+                                fieldError={actionData?.fieldErrors.moveInDate}
                             />
-                            {
-                                actionData?.fieldErrors.moveInDate
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.moveInDate}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
                         </div>
                         <div>
-                            {/* <label htmlFor="vehicleRegistration" className="text-black">
-                                Vehicle registration
-                            </label> */}
                             <Label htmlFor='vehicleRegistration' text='Vehicle registration' />
-                            <input
+                            <Input
                                 ref={vehicleRegRef}
                                 type="text"
                                 name="vehicleRegistration"
                                 id="vehicleRegistration"
-                                defaultValue={actionData?.fields.vehicleRegistration}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.vehicleRegistration ? 'border-red-700' : 'border-gray-400'}`}
+                                fieldError={actionData?.fieldErrors.vehicleRegistration}
                             />
-                            {
-                                actionData?.fieldErrors.vehicleRegistration
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.vehicleRegistration}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
                         </div>
 
                     </div>
-                    <h3 className="font-semibold text-lg">Account information</h3>
-                    <em>This info will be used to log in to the White House app</em>
+                    <h3 className="font-semibold text-lg text-light-black">Account information</h3>
+                    <em className="text-light-black">This info will be used to log in to the White House app</em>
                     <div className="grid lg:grid-cols-2 gap-1 lg:gap-4 mt-2">
                         <div>
-                            {/* <label htmlFor="email" className="text-black">
-                                Email *
-                            </label> */}
                             <Label htmlFor='email' text='Email *' />
                             <Input
                                 ref={emailRef}
                                 type="email"
                                 name="email"
                                 id="email"
-                                placeholder=""
+                                placeholder="johndoe@gmail.com"
                                 fieldError={actionData?.fieldErrors.email}
                             />
                         </div>
                         <div>
-                            {/* <label htmlFor="password" className="text-black">
-                                Password *
-                            </label> */}
                             <Label htmlFor='password' text='Password *' />
                             <Input
                                 ref={passwordRef}
                                 type="password"
                                 name="password"
                                 id="password"
-                                placeholder=""
                                 fieldError={actionData?.fieldErrors.password}
                             />
                         </div>
                         <div>
-                            {/* <label htmlFor="confirmPassword" className="text-black">
-                                Confirm password *
-                            </label> */}
                             <Label htmlFor='confirmPassword' text='Confirm password *' />
                             <Input
                                 ref={confirmPasswordRef}
                                 type="password"
                                 name="confirmPassword"
                                 id="confirmPassword"
-                                placeholder=""
                                 fieldError={actionData?.fieldErrors.confirmPassword}
                             />
 
@@ -377,6 +278,46 @@ export default function NewTenantEntry() {
                     </button>
                 </fieldset>
             </Form>
+        </div>
+    );
+}
+
+export function CatchBoundary() {
+    const caught = useCatch();
+    return (
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <pre>
+                    <code>
+                        Status {caught.status}
+                    </code>
+                </pre>
+                <p className="font-semibold mb-4">{caught.data}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
+        </div>
+    );
+}
+
+// TODO: Insert error to logfile
+export function ErrorBoundary({ error }) {
+    console.error(error);
+    return (
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <p className=" mb-4">{error.message}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
         </div>
     );
 }

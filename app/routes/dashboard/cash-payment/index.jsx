@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
-import { getTenants } from "../../../models/tenant.server";
+import { getTenantByMobile } from "../../../models/tenant.server";
 import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
 import { badRequest, months, trimPhone, validateAmount, validateMonth, validateName, validatePhone, validateYear } from "../../../utils";
@@ -24,7 +24,6 @@ export function links() {
 export async function loader({ request }) {
     const session = await getSession(request);
     const successStatus = session.get('success');
-    // console.log({ Month: new Date().toLocaleString('default', { month: 'long' }).toLowerCase() });
     return json({ successStatus }, {
         headers: {
             "Set-Cookie": await sessionStorage.commitSession(session)
@@ -33,12 +32,11 @@ export async function loader({ request }) {
 }
 
 export async function action({ request }) {
-    // throw new Response('Tenant does not exist!', {
-    //     status: 404
-    // });
     const formData = await request.formData();
     const name = formData.get('name');
     const phone = formData.get('phone');
+    const year = formData.get('year');
+    const month = formData.get('month');
     const amount = formData.get('amount');
     const action = formData.get('_action');
 
@@ -194,42 +192,35 @@ export default function CashPaymentIndex() {
 
     //TODO: Focus management
     return (
-        <div>
-            <p className="text-light-black text-lg font-semibold">Enter tenant details below</p>
+        <div className="px-3 py-2 space-y-2">
+            <h2 className="text-light-black text-lg font-semibold">Enter tenant details below</h2>
             <Form method="post" className="mt-1" ref={formRef}>
                 <fieldset className="space-y-1">
                     <div>
                         <label htmlFor="name" className="text-light-black">
                             Name
                         </label>
-                        <input
+                        <Input
                             // ref={nameRef}
                             type="text"
                             name="name"
                             id="name"
-                            defaultValue={actionData?.fields.name}
-                            className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='John Doe'
+                            fieldError={actionData?.fieldErrors.name}
                         />
-                        {
-                            actionData?.fieldErrors.name
-                                ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                    {actionData.fieldErrors.name}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
 
                     </div>
                     <div>
                         <label htmlFor="phone" className="text-light-black">
                             Phone
                         </label>
-                        <input
+                        <Input
                             // ref={phoneRef}
                             type="text"
                             name="phone"
                             id="phone"
-                            defaultValue={actionData?.fields.phone}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
+                            placeholder='0712 345 678'
+                            fieldError={actionData?.fieldErrors.phone}
                         />
 
                     </div>
@@ -260,21 +251,14 @@ export default function CashPaymentIndex() {
                         <label htmlFor="amount" className="text-light-black">
                             Amount
                         </label>
-                        <input
+                        <Input
                             // ref={salaryRef}
                             type="text"
                             name="amount"
                             id="amount"
-                            defaultValue={actionData?.fields.amount}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.amount ? 'border-red-700' : 'border-gray-400'}`}
+                            fieldError={actionData?.fieldErrors.amount}
                         />
-                        {
-                            actionData?.fieldErrors.amount
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.amount}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
+
                     </div>
                     <button type="submit" className="bg-blue-600 px-6 py-2 text-white text-center w-full rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Processing...' : 'Pay'}
@@ -322,18 +306,19 @@ export function CatchBoundary() {
                     {caught.data}
                 </code>
             </pre>
-
+            <Link to="." className="text-blue-500 underline">
+                Try again
+            </Link>
         </div>
     );
 }
 
 export function ErrorBoundary({ error }) {
+    console.error(error);
     return (
         <div>
             <h1>Error!</h1>
             <p>{error.message}</p>
-            <p>The stack trace is:</p>
-            <pre>{error.stack}</pre>
         </div>
     );
 }

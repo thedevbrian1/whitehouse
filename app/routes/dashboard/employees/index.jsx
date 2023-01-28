@@ -1,8 +1,5 @@
 import { PlusIcon } from "@heroicons/react/outline";
-import { Link, useLoaderData } from "@remix-run/react";
-// import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
-// import { VisuallyHidden } from "@reach/visually-hidden";
-import dialogStyles from "@reach/dialog/styles.css";
+import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import { toast, ToastContainer } from "react-toastify";
 import toastStyles from "react-toastify/dist/ReactToastify.css";
 import TableHeader from "../../../components/TableHeader";
@@ -15,10 +12,6 @@ import { useEffect, useRef } from "react";
 
 export function links() {
     return [
-        {
-            rel: "stylesheet",
-            href: dialogStyles
-        },
         {
             rel: "stylesheet",
             href: toastStyles
@@ -43,13 +36,6 @@ export async function loader({ request }) {
             "Set-Cookie": await sessionStorage.commitSession(session)
         }
     });
-}
-
-export async function action({ request }) {
-    const formData = await request.formData();
-    const confirm = formData.get('confirm');
-    // console.log({ confirm });
-    return null;
 }
 
 export default function EmployeesIndex() {
@@ -79,17 +65,6 @@ export default function EmployeesIndex() {
         }
     }, [data.success]);
 
-    // console.log({ Employees: tableData });
-
-    // const [showDialog, setShowDialog] = useState(false);
-
-    // function open() {
-    //     setShowDialog(true);
-    // }
-
-    // function close() {
-    //     setShowDialog(false);
-    // }
     return (
         <div className="space-y-4 lg:max-w-5xl mx-auto pr-10 lg:pr-0">
             <Heading title='Employees' />
@@ -124,28 +99,47 @@ export default function EmployeesIndex() {
                         </div>
                     )
             }
-
-            {/* <Form method="post" id="delete">
-                <input type="hidden" name="confirm" value="confirm" />
-                <button
-                    type="button"
-                    className="px-6 py-3 bg-red-500"
-                    onClick={open}
-                >
-                    Delete
-                </button>
-            </Form> */}
-            {/* <Dialog isOpen={showDialog} onDismiss={close}>
-                <button className="close-button" onClick={close}>
-                    <VisuallyHidden>Close</VisuallyHidden>
-                    <span aria-hidden>X</span>
-                </button>
-                <p>This is a dialog content</p>
-
-                <button type="submit" form="delete">Delete</button>
-
-            </Dialog> */}
             <ToastContainer />
+        </div>
+    );
+}
+
+export function CatchBoundary() {
+    const caught = useCatch();
+    return (
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <pre>
+                    <code>
+                        Status {caught.status}
+                    </code>
+                </pre>
+                <p className="font-semibold mb-4">{caught.data}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
+        </div>
+    );
+}
+
+// TODO: Insert error to logfile
+export function ErrorBoundary({ error }) {
+    console.error(error);
+    return (
+        <div className="w-full h-screen grid justify-center">
+            <div className="mt-20">
+                <div className="w-20 h-20 lg:w-40 lg:h-40">
+                    <img src="/space.svg" alt="A handcraft illustration of space" className="w-full h-full" />
+
+                </div>
+                <h1 className="font-bold text-2xl md:text-3xl">Error!</h1>
+                <p className=" mb-4">{error.message}</p>
+                <Link to="." className="text-blue-500 hover:text-blue-400 underline">Try again</Link>
+            </div>
         </div>
     );
 }

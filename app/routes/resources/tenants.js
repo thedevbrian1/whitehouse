@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { Form, Link, useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import { Combobox, ComboboxInput, ComboboxList, ComboboxOption, ComboboxPopover } from "@reach/combobox";
 import comboboxStyles from "@reach/combobox/styles.css";
 import { useSpinDelay } from "spin-delay";
@@ -21,9 +21,11 @@ export async function loader({ request }) {
     await requireUser(request);
     const url = new URL(request.url);
     const query = url.searchParams.get('query');
-    console.log({ query });
+
     invariant(typeof query === 'string', 'query is required');
-    const tenants = await searchTenants(query);
+
+    let trimmedQuery = query.trim().split(' ').join('');
+    const tenants = await searchTenants(trimmedQuery);
     if (!tenants) {
         throw new Response('No employees found!', {
             status: 404

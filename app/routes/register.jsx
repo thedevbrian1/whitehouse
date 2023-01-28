@@ -42,6 +42,12 @@ export async function action({ request }) {
     // const termsAndConditions = formData.get('termsAndConditions');
 
     const trimmedPhone = trimPhone(phone);
+    // console.log({ phone });
+    // console.log({ trimmedPhone });
+
+    // if (trimmedPhone.includes('+')) {
+    //     console.log('Has plus');
+    // }
 
     const fields = {
         name,
@@ -67,18 +73,14 @@ export async function action({ request }) {
         vehicleRegistration: validateVehicleRegistration(vehicleRegistration)
     };
 
-
-    // console.log({ phone });
-
-    // console.log({ trimmedPhone });
-    // return null;
     // // Return errors if any
     if (Object.values(fieldErrors).some(Boolean)) {
         return badRequest({ fields, fieldErrors });
     }
 
+
     if (password !== confirmPassword) {
-        console.log({ match: password === confirmPassword });
+        // console.log({ match: password === confirmPassword });
         return badRequest({
             fields, fieldErrors: {
                 confirmPassword: 'Password does not match',
@@ -94,7 +96,17 @@ export async function action({ request }) {
         });
     }
 
-    const tenant = await createTenant(name, phone, email, Number(nationalId), date, vehicleRegistration);
+    let modifiedPhone = null;
+
+    if (trimmedPhone.length === 12) {
+        modifiedPhone = '0' + trimmedPhone.slice(3);
+        // console.log({ modifiedPhone });
+    } else if (trimmedPhone.length === 10) {
+        modifiedPhone = trimmedPhone;
+    }
+    // return null;
+
+    const tenant = await createTenant(name, modifiedPhone, email, Number(nationalId), date, vehicleRegistration);
 
     const tenantId = tenant.id;
 
@@ -104,7 +116,7 @@ export async function action({ request }) {
     const user = await createUser(email, password);
     // console.log({ res });
 
-    logRegistrationDetails(name, email, phone, plotNo, houseNo);
+    logRegistrationDetails(name, email, modifiedPhone, plotNo, houseNo);
 
     return redirect('/success');
 }
@@ -230,16 +242,9 @@ export default function Register() {
                                 name="plotNo"
                                 id="plotNo"
                                 placeholder=""
-                                // fieldError={actionData?.fieldErrors.plotNo}
-                                className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.plotNo ? 'border-red-700' : 'border-gray-400'}`}
+                                fieldError={actionData?.fieldErrors.plotNo}
                             />
-                            {
-                                actionData?.fieldErrors.plotNo
-                                    ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                        {actionData.fieldErrors.plotNo}
-                                    </span>)
-                                    : <>&nbsp;</>
-                            }
+
                         </div>
                         <div>
                             {/* <label htmlFor="houseNo" className="text-black">

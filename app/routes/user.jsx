@@ -12,17 +12,16 @@ export function meta() {
 
 export async function loader({ request }) {
     const user = await requireUser(request);
-    // console.log({ user });
     const userEmail = user.email;
     const tenant = await getTenantByEmail(userEmail);
-    // console.log({ tenant });
+
     if (!tenant) {
         throw new Response('User details not found!', {
             status: 404
         });
     }
-    return tenant.name;
 
+    return tenant.name;
 }
 
 export default function UserPage() {

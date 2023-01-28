@@ -1,15 +1,16 @@
 import { Form, useActionData, useLoaderData, useLocation, useTransition } from "@remix-run/react";
 import { redirect } from "@remix-run/server-runtime";
 import { useEffect, useRef } from "react";
-import { getTenant, getTenantByMobile } from "../../../models/tenant.server";
+import { getTenantById } from "../../../models/tenant.server";
 import { createTenantPayment } from "../../../models/year.server";
 import { getSession, sessionStorage } from "../../../session.server";
-import { badRequest, validateName, validatePhone, validateAmount } from "../../../utils";
+import { badRequest, validateAmount } from "../../../utils";
 import { createCashTransaction } from "../../../models/transaction.server";
+import Input from "~/components/Input";
 
 export async function loader({ params }) {
     const tenantId = params.id;
-    const tenant = await getTenant(tenantId);
+    const tenant = await getTenantById(tenantId);
     // console.log({ tenant });
     return tenant;
 }
@@ -17,31 +18,23 @@ export async function loader({ params }) {
 export async function action({ request, params }) {
     const tenantId = params.id;
     const formData = await request.formData();
-    const name = formData.get('name');
-    const phone = formData.get('phone');
     const amount = formData.get('amount');
+
     const fieldErrors = {
-        name: validateName(name),
-        phone: validatePhone(phone),
         amount: validateAmount(amount),
     };
 
-    const fields = {
-        name,
-        phone
-    }
 
     if (Object.values(fieldErrors).some(Boolean)) {
-        return badRequest({ fields, fieldErrors });
+        return badRequest({ fieldErrors });
     }
     // Check if tenant exists
     // Record amount in the database
     let status = 'paid';
     const res = await createTenantPayment(tenantId, status);
     const transaction = await createCashTransaction(Number(amount), 'Cash', tenantId);
-    const matchedTenant = await getTenantByMobile(phone);
+    const matchedTenant = await getTenantById(tenantId);
 
-    console.log({ matchedTenant });
 
     const session = await getSession(request);
     session.flash("success", true);
@@ -66,71 +59,28 @@ export default function CashPaymentSlug() {
         amountRef.current?.focus();
     }, [location]);
     return (
-        <div>
-            <p className="text-light-black text-lg font-semibold">Enter tenant details below</p>
+        <div className="px-3 py-2 space-y-2">
+            <h2 className="font-semibold text-lg text-light-black">Employee details</h2>
+            <div className="text-gray-800">
+                <p>Name: &nbsp; <span className="text-light-black">{data.name}</span></p>
+                <p>Phone: &nbsp; <span className="text-light-black">{data.mobile}</span></p>
+                <p>Plot {data.house.plotNumber} / House {data.house.houseNumber}</p>
+            </div>
             <Form method="post" className="mt-1" key={data.id}>
+                {/* TODO: Use readonly input fields or just a div with info */}
                 <fieldset className="space-y-1">
-                    <div>
-                        <label htmlFor="name" className="text-light-black">
-                            Name
-                        </label>
-                        <input
-                            // ref={nameRef}
-                            type="text"
-                            name="name"
-                            id="name"
-                            defaultValue={actionData ? actionData?.fields.name : data.name}
-                            className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.name ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.name
-                                ? (<span className="pt-1 text-red-700 inline text-sm" id="email-error">
-                                    {actionData.fieldErrors.name}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-
-                    </div>
-                    <div>
-                        <label htmlFor="phone" className="text-light-black">
-                            Phone
-                        </label>
-                        <input
-                            // ref={phoneRef}
-                            type="text"
-                            name="phone"
-                            id="phone"
-                            defaultValue={actionData ? actionData?.fields.phone : data.mobile}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.phone ? 'border-red-700' : 'border-gray-400'}`}
-                        />
-                        {
-                            actionData?.fieldErrors.phone
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.phone}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
-                    </div>
-
+                    <h3 className="text-light-black font-semibold">Enter amount below</h3>
                     <div>
                         <label htmlFor="amount" className="text-light-black">
                             Amount
                         </label>
-                        <input
+                        <Input
                             ref={amountRef}
                             type="text"
                             name="amount"
                             id="amount"
-                            // defaultValue={actionData?.fields.amount}
-                            className={`block w-full px-3 py-2 border rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${actionData?.fieldErrors.amount ? 'border-red-700' : 'border-gray-400'}`}
+                            fieldError={actionData?.fieldErrors.amount}
                         />
-                        {
-                            actionData?.fieldErrors.amount
-                                ? (<span className="pt-1 text-red-700 text-sm" id="email-error">
-                                    {actionData.fieldErrors.amount}
-                                </span>)
-                                : <>&nbsp;</>
-                        }
                     </div>
                     <button type="submit" className="bg-blue-600 px-6 py-2 text-white text-center w-full rounded focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500">
                         {transition.submission ? 'Processing...' : 'Pay'}

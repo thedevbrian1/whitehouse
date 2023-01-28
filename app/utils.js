@@ -92,7 +92,7 @@ export function validateMPESACode(code) {
 }
 
 export function trimPhone(phone) {
-  return phone.replace(/\s+/g, '');
+  return phone.replace(/\D+/g, '');
 }
 
 export function validatePhone(phone) {

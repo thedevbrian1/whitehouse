@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import { getTenant } from "./tenant.server";
+import { getTenantById } from "./tenant.server";
 
 export async function createTenantPayment(tenantId, status) {
     // const currentYear = new Date().getFullYear();
@@ -7,7 +7,7 @@ export async function createTenantPayment(tenantId, status) {
 
     let monthObject = { [month]: status };
     // Check if tenant exists
-    const tenant = await getTenant(tenantId);
+    const tenant = await getTenantById(tenantId);
     if (!tenant) {
         throw new Response('Tenant does not exist!', {
             status: 400
