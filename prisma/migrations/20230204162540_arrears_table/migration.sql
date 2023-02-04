@@ -20,6 +20,20 @@ CREATE TABLE "Arrear" (
 
 -- RedefineTables
 PRAGMA foreign_keys=OFF;
+CREATE TABLE "new_Transaction" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "type" TEXT NOT NULL,
+    "amount" INTEGER NOT NULL,
+    "paidMonth" TEXT NOT NULL,
+    "paidYear" TEXT NOT NULL,
+    "tenantId" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Transaction_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+INSERT INTO "new_Transaction" ("amount", "createdAt", "id", "tenantId", "type", "updatedAt") SELECT "amount", "createdAt", "id", "tenantId", "type", "updatedAt" FROM "Transaction";
+DROP TABLE "Transaction";
+ALTER TABLE "new_Transaction" RENAME TO "Transaction";
 CREATE TABLE "new_Tenant" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
@@ -36,19 +50,5 @@ DROP TABLE "Tenant";
 ALTER TABLE "new_Tenant" RENAME TO "Tenant";
 CREATE UNIQUE INDEX "Tenant_mobile_key" ON "Tenant"("mobile");
 CREATE UNIQUE INDEX "Tenant_email_key" ON "Tenant"("email");
-CREATE TABLE "new_Transaction" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "type" TEXT NOT NULL,
-    "amount" INTEGER NOT NULL,
-    "paidMonth" TEXT NOT NULL,
-    "paidYear" TEXT NOT NULL,
-    "tenantId" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Transaction_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant" ("id") ON DELETE SET NULL ON UPDATE CASCADE
-);
-INSERT INTO "new_Transaction" ("amount", "createdAt", "id", "tenantId", "type", "updatedAt") SELECT "amount", "createdAt", "id", "tenantId", "type", "updatedAt" FROM "Transaction";
-DROP TABLE "Transaction";
-ALTER TABLE "new_Transaction" RENAME TO "Transaction";
 PRAGMA foreign_key_check;
 PRAGMA foreign_keys=ON;
