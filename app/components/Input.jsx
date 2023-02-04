@@ -28,6 +28,7 @@ const Input = forwardRef(({ type, name, id, placeholder, fieldError, onBlur, def
                 id={id}
                 placeholder={placeholder}
                 onChange={handleChange}
+                defaultValue={defaultValue}
                 onBlur={(event => onBlur(event))}
                 className={`block w-full px-3 py-2 border  rounded text-black focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${errorState ? 'border-red-700' : 'border-gray-400'}`}
             />

@@ -64,12 +64,17 @@ export async function action({ request }) {
         const currentMonthTransactions = tenantTransactions.filter(element => element.paidMonth === currentMonth);
 
         const amounts = currentMonthTransactions.map(element => element.amount);
-        const totalAmount = amounts.reduce((prev, current) => prev + current);
+
+        let totalAmount = 0;
+        if (amounts.length > 0) {
+            totalAmount = amounts.reduce((prev, current) => prev + current);
+
+        }
         console.log({ totalAmount });
 
         const balance = amountToPay - totalAmount;
         if (balance > 0) {
-            const arrear = await createArrear(balance, month, '2022', tenantId);
+            const arrear = await createArrear(balance, month, '2023', tenantId);
             console.log({ arrear });
 
         }

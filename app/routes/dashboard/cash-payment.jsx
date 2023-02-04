@@ -19,10 +19,10 @@ export default function CashPayment() {
     return (
         <div className="space-y-4">
             <Heading title='Tenant cash payment' />
-            <div className="grid lg:grid-cols-2 gap-x-5 max-w-md lg:max-w-5xl lg:pr-20">
+            <div className="grid lg:grid-cols-2 gap-5 max-w-md lg:max-w-5xl lg:pr-20">
                 <div className="space-y-4">
                     <h2 className=" text-light-black text-lg mb-2 font-semibold">Select a tenant to record cash payment</h2>
-
+                    {/* TODO: Fix mobile responsivenness */}
                     <TenantCombobox />
                 </div>
                 <div className="w-full border border-slate-200 px-3 py-3 rounded-lg">

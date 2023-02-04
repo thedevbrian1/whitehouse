@@ -7,7 +7,6 @@ import toastStyles from "react-toastify/dist/ReactToastify.css";
 import { getTenants } from "~/models/tenant.server";
 import Heading from "../../../components/Heading";
 import TableHeader from "../../../components/TableHeader";
-// import { prisma } from "~/db.server";
 import { createHouse, clearDatabase } from "../../../models/house.server";
 
 // import { getTenants } from "../../../models/tenant.server";
@@ -25,6 +24,7 @@ export function links() {
 
 export async function loader({ request }) {
     const tenants = await getTenants();
+    console.log({ tenants });
     const session = await getSession(request);
     const successStatus = session.get('success');
 
@@ -107,10 +107,18 @@ export default function PlotsIndex() {
 
     // console.log('Plots: ', plots);
 
-    const plotOneTenants = data.tenants.filter(tenant => tenant.house.plotNumber === 1);
-    // const plotOneHouses = data.filter(house => house.plotNumber === 1);
+    const plotOneTenants = data.tenants.filter(tenant => tenant.house.plotNumber === 1)
+    // .map(tenant => {
+    //     return {
+    //         house: tenant.house.houseNumber,
+    //         name: tenant.name,
+    //         mobile: tenant.mobile,
+    //         moveInDate: tenant.moveInDate,
+    //         arrears: tenant.arrears.reduce((prev, current) => prev.amount + current.amount)
+    //     }
+    // });
 
-    // console.log({ plotOneHouses });
+    console.log({ plotOneTenants });
 
     const transition = useTransition();
     // const fetcher = useFetcher();
@@ -125,7 +133,7 @@ export default function PlotsIndex() {
     const today = new Date().toLocaleDateString();
 
     const desktopTableHeadings = ['House number', 'Tenant name', 'Phone', 'Move in date', 'Total arrears', 'Last paid'];
-    const mobileTableHeadings = ['H/No.', 'Name', 'Arrears', 'Last paid'];
+    // const mobileTableHeadings = ['H/No.', 'Name', 'Arrears', 'Last paid'];
 
     function success() {
         toastId.current = toast.success('Tenant added successfully!', {
@@ -155,8 +163,23 @@ export default function PlotsIndex() {
                     <PlusIcon className="w-4 lg:w-5 h-4 lg:h-5 inline" /> Add Tenant
                 </Link>
             </div>
-
+            {/* TODO: Show if individual plots are vacant */}
             <div className="mt-5 space-y-3">
+                <Form method="post" ref={formRef} onChange={handleSelectChange}>
+                    <label htmlFor="plot">Select plot</label>
+                    <input type="hidden" name="_action" value="selectPlot" />
+                    <select
+                        name="plot"
+                        id="plot"
+                        className="w-20 h-7 px-2 ml-3 bg-[#f8f8ff] border border-[#c0c0c0] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    >
+                        {
+                            plots.map((plot, index) => (
+                                <option key={index} value={plot}>{plot}</option>
+                            ))
+                        }
+                    </select>
+                </Form>
                 {
                     plotOneTenants.length === 0 && !actionData
                         // plotOneHouses.length === 0 && !actionData
@@ -169,24 +192,7 @@ export default function PlotsIndex() {
                         </div>
                         : (
                             <>
-                                <Form method="post" ref={formRef} onChange={handleSelectChange}>
-                                    <label htmlFor="plot">Select plot</label>
-                                    <input type="hidden" name="_action" value="selectPlot" />
-                                    <select
-                                        name="plot"
-                                        id="plot"
-                                        className="w-20 h-7 px-2 ml-3 bg-[#f8f8ff] border border-[#c0c0c0] rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                    >
-                                        {/* {plots.map((plot) => (
-                                            <option key={plot.id} value={plot.plot}>{plot.plot}</option>
-                                        ))} */}
-                                        {
-                                            plots.map((plot, index) => (
-                                                <option key={index} value={plot}>{plot}</option>
-                                            ))
-                                        }
-                                    </select>
-                                </Form>
+
                                 <div>
                                     <h1 className="text-lg font-semibold">Plot {actionData ? actionData[0].house.plotNumber : 1} </h1>
                                     <div className="max-w-xs sm:max-w-2xl md:max-w-3xl lg:max-w-none overflow-x-auto">
@@ -255,6 +261,7 @@ export default function PlotsIndex() {
 // }
 
 function TableRow({ tenant }) {
+    const totalArrears = tenant.arrears.map(tenant => tenant.amount).reduce((prev, current) => prev + current)
     return (
         <tr className="text-sm lg:text-base">
             <td className="border border-slate-300 text-center py-2 px-6">
@@ -272,10 +279,10 @@ function TableRow({ tenant }) {
                 {tenant.mobile}
             </td>
             <td className="border border-slate-300 text-center px-6">
-                {new Date(tenant.moveInDate).toLocaleDateString()}
+                {new Date(tenant.moveInDate).toLocaleDateString() !== 'Invalid Date' ? new Date(tenant.moveInDate).toLocaleDateString() : 'N/A'}
             </td>
             <td className="border border-slate-300 text-center px-6">
-                {tenant.arrears}
+                {totalArrears}
             </td>
             <td className="border border-slate-300 text-center px-6">
 

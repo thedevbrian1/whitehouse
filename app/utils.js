@@ -119,11 +119,16 @@ export function validateNationalId(nationalId) {
 export function validatePlotNumber(plotNo) {
   if (typeof plotNo !== "number" || !plotNo) {
     return 'Plot number is invalid';
+  } else if (plotNo > 67) {
+    return 'Plot should be 1-67'
   }
 }
 
 export function validateHouseNumber(houseNo) {
-  if (typeof houseNo !== "string" || !houseNo) {
+  const houseRegex = /[A-Za-z]*?[0-9]+[A-Za-z]?/;
+  if (houseNo.length > 4) {
+    return 'No of characters should be less than 5';
+  } else if (!houseNo.match(houseRegex)) {
     return 'House number is invalid';
   }
 }

@@ -5,6 +5,8 @@ import TableHeader from "../../../components/TableHeader";
 import TableRow from "../../../components/TableRow";
 import { getTenantById } from "../../../models/tenant.server";
 import Heading from "../../../components/Heading";
+import { getSession } from "~/session.server";
+import { redirect } from "@remix-run/server-runtime";
 
 export async function loader({ params }) {
     const tenantId = params.id;
@@ -34,26 +36,13 @@ export async function action({ request, params }) {
     const formData = await request.formData();
     const selectedYear = formData.get('year');
 
-    const plotNo = params.plot.trim();
-    const houseNo = params.house.trim();
+    const id = params.id;
 
-    // console.log('Year from action: ', selectedYear);
+    const session = await getSession(request);
+    session.set("selectedYear", selectedYear);
 
-    // Get specific year details from db
-    const house = await getHouse(plotNo, houseNo);
-    const years = house.years;
+    return redirect(`/tenants/${id}`);
 
-    // console.log('Years from action: ', years);
-    // Compare year from the action with year from the database
-    const matchedYear = years.find(year => year.year === Number(selectedYear));
-
-    // console.log('Matched year: ', matchedYear);
-
-    const months = Object.entries(matchedYear).slice(2, 14);
-
-    // console.log('Months from action: ', months);
-
-    return months;
 }
 
 export function meta({ data }) {
@@ -85,6 +74,7 @@ export default function House() {
             // id: transaction.id,
             type: transaction.type,
             amount: transaction.amount,
+            // month: transaction.paidMonth,
             date: new Date(transaction.createdAt).toDateString()
         };
     });
@@ -96,31 +86,53 @@ export default function House() {
     transactions.forEach((transaction, index) => transaction.splice(0, 0, index + 1));
     // console.log({ transactions });
 
-    const paidMonths = data.transactions.map(transaction => new Date(transaction.createdAt).toLocaleString('default', { month: 'long' }))
+    const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+
+    const paidMonths = data.transactions.map(transaction => transaction.paidMonth);
     console.log({ paidMonths });
 
-    const paidAmounts = data.transactions.map(transaction => transaction.amount);
-    console.log({ paidAmounts });
+
+    const arrears = data.arrears;
+    console.log({ arrears });
+
+    const totalArrears = data.arrears.map(arrear => arrear.amount).reduce((prev, current) => prev + current);
 
     function getPaidStatus(month) {
         // Extract months from the tenantTransactions in to an array ✅
-        // Extract amounts from the tenantTransactions in to an array ✅
-        // Check if the current month in the months array is present in the array from the db ✅
-        // If it's present, get it's index ✅
-        // Use the index to check for the amount in the amounts array ✅
-        // If the amount >= 200 return 'paid' ✅
-        // If the amount > 0 and < 200 return 'partial' ✅
-        // Extract an array of no of months till the current date
-        // If the length of the monthsArray != length of months from tenantTransactions, determine the missing month and mark it as 'arrears'
-        // Alternatively you can check the arrears from the db
+        // Extract amounts from the tenantTransactions for the current month in to an array ✅
+        // Check if the current month in the months array is present in the transactions table ✅
+        // If it's present, get it's transactions ✅
+        // Add all amounts of the selected month
+        // If the total amount >= 200 return 'paid' ✅
+        // If the total amount > 0 and < 200 return 'partial' ✅
+        // Check arrears for each month from db
+        // If there's an arrear return 'arrear'
+
+        const currentMonthPaidAmounts = data.transactions.filter(element => element.paidMonth === month).map(transaction => transaction.amount);
+
+        console.log({ currentMonthPaidAmounts });
+
+        let totalAmount;
+        if (currentMonthPaidAmounts.length > 0) {
+            totalAmount = currentMonthPaidAmounts.reduce((prev, current) => prev + current);
+        }
+
+        const currentMonthArrears = arrears.filter(element => element.month === month);
+
+        console.log({ currentMonthArrears });
 
         const monthIndex = paidMonths.findIndex(paidMonth => paidMonth === month);
         if (monthIndex !== -1) {
-            const paidAmount = paidAmounts[monthIndex];
-            if (paidAmount >= 200) {
+            // const paidAmount = paidAmounts[monthIndex];
+            if (totalAmount >= 200) {
                 return 'paid';
-            } else if (paidAmount > 0 && paidAmount < 200) {
+            } else if (totalAmount > 0 && totalAmount < 200) {
                 return 'partial';
+            }
+        }
+        if (currentMonthArrears.length !== 0) {
+            if (currentMonthArrears[0].amount === 200) {
+                return 'arrear';
             }
         }
         // TODO: Get arrears
@@ -140,7 +152,7 @@ export default function House() {
                     <div className="text-gray-900">
                         <TenantDetail name="Tenant" value={data.name} />
                         <TenantDetail name="Phone" value={data.mobile} />
-                        <TenantDetail name="Arrears" value={`Ksh ${data.arrears}`} />
+                        <TenantDetail name="Arrears" value={`Ksh ${totalArrears}`} />
                     </div>
                     <div className="mt-4 py-1">
                         <div className="flex flex-col gap-3 lg:gap-0 lg:flex-row justify-between">
@@ -156,18 +168,22 @@ export default function House() {
                                         <option value={year.year} key={year.id}>{year.year}</option>
                                     ))} */}
                                     <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
                                 </select>
                             </Form>
                         </div>
                     </div>
                     <div className="grid grid-cols-3 lg:grid-cols-4  gap-4 mt-4">
+                        {/* TODO: Get the data for the selected year */}
                         {actionData
                             ? actionData?.map((month, index) => (
                                 <div key={index} className={`border border-slate-100 grid place-items-center text-xs md:text-sm lg:text-base h-12 px-1 ${getPaidStatus(month) === 'paid'
                                     ? 'bg-green-500 text-white'
                                     : getPaidStatus(month) === 'partial'
                                         ? 'bg-orange-300'
-                                        : 'bg-gray-100'} `}>
+                                        : getPaidStatus(month) === 'arrear'
+                                            ? 'bg-red-500 text-white'
+                                            : 'bg-gray-100'} `}>
                                     {month}
                                 </div>
                             ))
@@ -177,7 +193,9 @@ export default function House() {
                                     ? 'bg-green-500 text-white'
                                     : getPaidStatus(month) === 'partial'
                                         ? 'bg-orange-300'
-                                        : 'bg-gray-100'} `}>
+                                        : getPaidStatus(month) === 'arrear'
+                                            ? 'bg-red-500 text-white'
+                                            : 'bg-gray-100'} `}>
                                     {month}
                                 </div>
                             ))}

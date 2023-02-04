@@ -16,7 +16,6 @@ export async function createTenant(name, phone, email, nationalId, moveInDate, v
             mobile: phone,
             email,
             nationalId,
-            arrears: 0,
             moveInDate,
             years: {
                 create: {
@@ -34,6 +33,7 @@ export async function getTenants() {
             house: true,
             years: true,
             transactions: true,
+            arrears: true,
         }
     });
 }
@@ -47,6 +47,7 @@ export async function getTenantById(tenantId) {
             house: true,
             years: true,
             transactions: true,
+            arrears: true,
         }
     });
 }
@@ -59,7 +60,8 @@ export async function getTenantByMobile(mobile) {
         include: {
             house: true,
             years: true,
-            transactions: true
+            transactions: true,
+            arrears: true,
         }
     });
 }
@@ -72,7 +74,8 @@ export async function getTenantByEmail(email) {
         include: {
             house: true,
             years: true,
-            transactions: true
+            transactions: true,
+            arrears: true,
         }
     });
 }

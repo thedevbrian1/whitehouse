@@ -1,6 +1,9 @@
 import DashboardCard from "../../components/DashboardCard";
 import { getTransactions } from "~/models/transaction.server";
 import { Link, useCatch, useLoaderData } from "@remix-run/react";
+import { getTenants } from "~/models/tenant.server";
+import { getEmployees } from "~/models/employee.server";
+import { json } from "@remix-run/server-runtime";
 
 // TODO: Display correct amount from the database
 // TODO: Display vacant houses from the database
@@ -12,8 +15,22 @@ export function meta() {
 }
 
 export async function loader() {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Intl.DateTimeFormat("en-US", { month: 'long' }).format(new Date());
+
     const transactions = await getTransactions();
-    return transactions;
+
+    const annualTotalAmount = transactions.filter(transaction => transaction.paidYear === String(currentYear)).map(transaction => transaction.amount).reduce((prev, current) => prev + current);
+
+    const monthlyTotalAmount = transactions.filter(transaction => (transaction.paidYear === String(currentYear)) && (transaction.paidMonth === String(currentMonth))).map(transaction => transaction.amount).reduce((prev, current) => prev + current);
+
+    const tenants = await getTenants();
+    const numberOfTenants = tenants.length;
+
+    const employees = await getEmployees();
+    const numberOfEmployees = employees.length;
+
+    return json({ numberOfEmployees, numberOfTenants, annualTotalAmount, monthlyTotalAmount });
 }
 
 export default function DashboardIndex() {
@@ -22,19 +39,19 @@ export default function DashboardIndex() {
     const details = [
         {
             title: 'Annual total',
-            amount: 'Ksh 300,000',
+            amount: `Ksh ${data.annualTotalAmount}`,
         },
         {
             title: 'Monthly total',
-            amount: 'Ksh 29,800',
+            amount: `Ksh ${data.monthlyTotalAmount}`,
         },
         {
             title: 'Number of Tenants',
-            amount: '400',
+            amount: data.numberOfTenants,
         },
         {
             title: 'Total employees',
-            amount: '6',
+            amount: data.numberOfEmployees,
         },
     ];
     // const totalAmount = data.reduce((prev, current) => prev.amount + current.amount);

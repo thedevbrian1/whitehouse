@@ -68,7 +68,7 @@ export async function action({ request }) {
         });
     }
 
-    const moveInDate = new Date(date);
+    // const moveInDate = new Date(date);
 
     const usedEmail = await isEmailUsed(email);
     if (usedEmail) {
@@ -86,7 +86,7 @@ export async function action({ request }) {
         modifiedPhone = trimmedPhone;
     }
 
-    const tenant = await createTenant(name, modifiedPhone, email, Number(nationalId), moveInDate, vehicleRegistration);
+    const tenant = await createTenant(name, modifiedPhone, email, Number(nationalId), date, vehicleRegistration);
 
     const tenantId = tenant.id;
 
@@ -162,7 +162,7 @@ export default function NewTenantEntry() {
                                 name='name'
                                 id='name'
                                 placeholder='John Doe'
-                                fieldError={actionData?.fieldErrors.name}
+                                fieldError={actionData?.fieldErrors?.name}
                             />
                         </div>
                         <div>
@@ -173,7 +173,7 @@ export default function NewTenantEntry() {
                                 name='phone'
                                 id='phone'
                                 placeholder='0712 345 678'
-                                fieldError={actionData?.fieldErrors.phone}
+                                fieldError={actionData?.fieldErrors?.phone}
                             />
 
                         </div>
@@ -184,7 +184,7 @@ export default function NewTenantEntry() {
                                 type='number'
                                 name='nationalId'
                                 id='nationalId'
-                                fieldError={actionData?.fieldErrors.nationalId}
+                                fieldError={actionData?.fieldErrors?.nationalId}
                             // maxLength={8}
 
                             />
@@ -199,7 +199,7 @@ export default function NewTenantEntry() {
                                 id="plotNo"
                                 // min={1}
                                 // max={67}
-                                fieldError={actionData?.fieldErrors.plotNo}
+                                fieldError={actionData?.fieldErrors?.plotNo}
 
                             />
                         </div>
@@ -211,7 +211,7 @@ export default function NewTenantEntry() {
                                 type="text"
                                 name="houseNo"
                                 id="houseNo"
-                                fieldError={actionData?.fieldErrors.houseNo}
+                                fieldError={actionData?.fieldErrors?.houseNo}
                             />
 
                         </div>
@@ -222,7 +222,7 @@ export default function NewTenantEntry() {
                                 type="date"
                                 name="date"
                                 id="date"
-                                fieldError={actionData?.fieldErrors.moveInDate}
+                                fieldError={actionData?.fieldErrors?.moveInDate}
                             />
                         </div>
                         <div>
@@ -232,7 +232,7 @@ export default function NewTenantEntry() {
                                 type="text"
                                 name="vehicleRegistration"
                                 id="vehicleRegistration"
-                                fieldError={actionData?.fieldErrors.vehicleRegistration}
+                                fieldError={actionData?.fieldErrors?.vehicleRegistration}
                             />
                         </div>
 
