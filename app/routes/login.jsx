@@ -162,6 +162,7 @@ export default function LoginPage() {
                 aria-describedby="password-error"
                 className="w-full rounded border border-gray-500 px-2 py-1 text-lg focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <span className="text-xs"><Link to="/forgot-pass">forgot password?</Link></span>
 
               {actionData?.errors?.password && (
                 <div className="pt-1 text-red-700" id="password-error">

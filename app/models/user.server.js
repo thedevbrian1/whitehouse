@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
+import { redirect} from "@remix-run/node";
 
 import { prisma } from "~/db.server";
+import { sendEmail, makeId } from "~/utils.js"
 
 export async function getUserById(id) {
   return prisma.user.findUnique({ where: { id } });
@@ -23,6 +25,57 @@ export async function createUser(email, password) {
       },
     },
   });
+}
+
+export async function updateUserPassword(emailTo){  
+  const currUser = await getUserByEmail(emailTo);
+  
+  if (!currUser) {
+    throw new Response('The tenant email does not exist!', {
+        status: 400
+    });
+  }
+
+  const newPassword = await makeId(8);
+  // console.log(newPassword);
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  const tenantId = currUser.id;
+
+  await prisma.user.update({
+    where: {
+        id: tenantId
+    },
+    data: {
+        password: {
+          update: {
+            hash: hashedPassword,
+          },
+        },
+    }
+  });
+
+  const userName = currUser.name;
+    
+  await sendEmail(newPassword, emailTo, userName);
+
+  return redirect("/login");
+}
+
+export async function updateUserDetails(email, password){  
+  const hashedPassword = await bcrypt.hash(password, 10);
+  return prisma.user.update({
+    where:{
+      email
+    },
+    data: {
+      password: {
+        update: {
+          hash: hashedPassword,
+        },
+      },
+    }
+  })
 }
 
 export async function deleteUserByEmail(email) {
